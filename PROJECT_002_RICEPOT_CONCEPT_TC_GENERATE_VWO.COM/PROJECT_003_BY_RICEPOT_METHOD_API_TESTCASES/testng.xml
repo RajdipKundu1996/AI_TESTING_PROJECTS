@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Restful Booker API Test Suite" verbose="2">
+
+    <test name="API Tests">
+        <classes>
+            <class name="com.restfulbooker.tests.HealthCheckTest"/>
+            <class name="com.restfulbooker.tests.AuthTest"/>
+            <class name="com.restfulbooker.tests.GetBookingTest"/>
+            <class name="com.restfulbooker.tests.CreateBookingTest"/>
+            <class name="com.restfulbooker.tests.UpdateBookingTest"/>
+            <class name="com.restfulbooker.tests.DeleteBookingTest"/>
+        </classes>
+    </test>
+
+</suite>
