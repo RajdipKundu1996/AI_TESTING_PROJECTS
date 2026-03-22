@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VWO Test Coverage Report</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f4f7f6;
+            --surface: #ffffff;
+            --text-primary: #1a1e2d;
+            --text-secondary: #6b7280;
+            --accent-primary: #4338ca;
+            --accent-secondary: #indigo;
+            --success: #059669;
+            --success-bg: #ecfdf5;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+            --border-light: #e5e7eb;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 3rem 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* HEADER SECTION */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            padding: 2rem 2.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            border-left: 8px solid var(--accent-primary);
+        }
+
+        .header-info h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .header-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .date-badge {
+            background: var(--bg-body);
+            padding: 0.75rem 1.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            border: 1px solid var(--border-light);
+        }
+
+        /* METRICS OVERVIEW GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+        }
+
+        .metric-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .text-accent {
+            color: var(--accent-primary);
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .text-warning {
+            color: var(--warning);
+        }
+
+        .metric-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* MAIN CONTENT ROW */
+        .content-row {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            background: #fafafa;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* PROGRESS BARS */
+        .coverage-list {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .coverage-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .coverage-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coverage-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .coverage-stats {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .progress-track {
+            height: 12px;
+            background: var(--border-light);
+            border-radius: 999px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-fill.success {
+            background: var(--success);
+        }
+
+        .progress-fill.danger {
+            background: var(--danger);
+        }
+
+        /* CIRCULAR CHART COMPONENT */
+        .chart-container {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .donut-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(var(--success) 0deg 338deg,
+                    var(--danger) 338deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .donut-inner {
+            width: 140px;
+            height: 140px;
+            background: var(--surface);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .donut-inner span {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .donut-inner small {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+
+        .chart-legend {
+            margin-top: 2rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+
+        .legend-item.pass-bg {
+            background: var(--success-bg);
+            border-color: #a7f3d0;
+        }
+
+        .legend-item.fail-bg {
+            background: var(--danger-bg);
+            border-color: #fecaca;
+        }
+
+        .legend-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-success {
+            background: var(--success);
+        }
+
+        .dot-danger {
+            background: var(--danger);
+        }
+
+        .legend-value {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .full-table th,
+        .full-table td {
+            padding: 1rem 2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .full-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            background: #fafafa;
+        }
+
+        .full-table td {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pill-pass {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .pill-fail {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        /* DEFECT HIGHLIGHT */
+        .defect-banner {
+            background: var(--danger-bg);
+            border-left: 6px solid var(--danger);
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            margin: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .defect-banner h3 {
+            margin: 0;
+            color: var(--danger);
+            font-size: 1.1rem;
+        }
+
+        .defect-banner p {
+            margin: 0;
+            color: #991b1b;
+            font-size: 0.95rem;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .dashboard {
+                max-width: 100%;
+                gap: 1rem;
+            }
+
+            .metric-card,
+            .dashboard-header,
+            .panel {
+                box-shadow: none;
+                border: 1px solid #e5e7eb;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <header class="dashboard-header">
+            <div class="header-info">
+                <h1>Test Coverage Report</h1>
+                <p>VWO Login Dashboard | Test Cycle: 001</p>
+            </div>
+            <div class="date-badge">Generated: March 22, 2026</div>
+        </header>
+
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-title">Requirements Identified</span>
+                <span class="metric-value text-accent">34</span>
+                <span class="metric-subtitle">Total Scenarios Mapped</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-title">Test Cases Executed</span>
+                <span class="metric-value text-primary">17</span>
+                <span class="metric-subtitle">Across 3 Core Modules</span>
+            </div>
+            <div class="metric-card" style="border-bottom: 4px solid var(--success);">
+                <span class="metric-title">Coverage Pass Rate</span>
+                <span class="metric-value text-success">94%</span>
+                <span class="metric-subtitle">16 of 17 Passed</span>
+            </div>
+            <div class="metric-card" style="border-bottom: 4px solid var(--danger);">
+                <span class="metric-title">Outstanding Defects</span>
+                <span class="metric-value text-danger">1</span>
+                <span class="metric-subtitle">High Priority Issue</span>
+            </div>
+        </section>
+
+        <section class="content-row">
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Module Coverage Breakdown</h2>
+                </div>
+                <div class="coverage-list">
+
+                    <div class="coverage-item">
+                        <div class="coverage-meta">
+                            <span class="coverage-label">Functional Authentication</span>
+                            <span class="coverage-stats">8 Cases (7 Pass, 1 Fail)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill success" style="width: 87.5%;"></div>
+                            <div class="progress-fill danger" style="width: 12.5%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="coverage-item">
+                        <div class="coverage-meta">
+                            <span class="coverage-label">UI/UX & Input Validation</span>
+                            <span class="coverage-stats">5 Cases (5 Pass, 0 Fail)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill success" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="coverage-item">
+                        <div class="coverage-meta">
+                            <span class="coverage-label">Accessibility & Compatibility</span>
+                            <span class="coverage-stats">4 Cases (4 Pass, 0 Fail)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill success" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="defect-banner">
+                    <h3>Identified Defect: BUG-AUTH-001 (Priority: High)</h3>
+                    <p>Inaccurate error message displayed on invalid login attempt. System returns generic "You are not
+                        allowed to login." instead of the expected PRD-specified validation message.</p>
+                </div>
+
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Execution Summary</h2>
+                </div>
+                <div class="chart-container">
+                    <div class="donut-chart">
+                        <div class="donut-inner">
+                            <span>94%</span>
+                            <small>Yield</small>
+                        </div>
+                    </div>
+
+                    <div class="chart-legend">
+                        <div class="legend-item pass-bg">
+                            <div class="legend-label">
+                                <div class="legend-dot dot-success"></div>
+                                Passed Tests
+                            </div>
+                            <div class="legend-value text-success">16</div>
+                        </div>
+                        <div class="legend-item fail-bg">
+                            <div class="legend-label">
+                                <div class="legend-dot dot-danger"></div>
+                                Failed Tests
+                            </div>
+                            <div class="legend-value text-danger">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>Test Execution Log</h2>
+            </div>
+            <table class="full-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TC-AUTH-001</td>
+                        <td>Functional</td>
+                        <td>Verify successful login with valid credentials</td>
+                        <td><span class="status-pill pill-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC-AUTH-002</td>
+                        <td>Functional</td>
+                        <td>Verify login failure with wrong password</td>
+                        <td><span class="status-pill pill-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC-AUTH-003</td>
+                        <td>Functional</td>
+                        <td>Verify login failure with non-registered email</td>
+                        <td><span class="status-pill pill-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC-AUTH-004</td>
+                        <td>Functional</td>
+                        <td>Verify clear error message on invalid input parameters</td>
+                        <td><span class="status-pill pill-fail">Fail</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC-VAL-002</td>
+                        <td>Validation</td>
+                        <td>Verify real-time email format validation on blur</td>
+                        <td><span class="status-pill pill-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC-ACC-002</td>
+                        <td>Accessibility</td>
+                        <td>Verify screen reader (ARIA) compatibility</td>
+                        <td><span class="status-pill pill-pass">Pass</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+
+</body>
+
+</html>
