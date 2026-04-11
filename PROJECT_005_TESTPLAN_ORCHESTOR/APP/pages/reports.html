@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports — QA-Gen AI | eMudhra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="130" height="32" style="filter: brightness(1.1)">
+        <circle cx="40" cy="40" r="38" fill="#f58220" />
+        <path d="M40 20 A20 20 0 1 0 40 60 L40 50 A10 10 0 1 1 40 30" fill="white" />
+        <rect x="40" y="35" width="25" height="10" fill="white" />
+        <text x="90" y="55" font-family="Outfit, sans-serif" font-weight="800" font-size="38" fill="white">eMudhra</text>
+      </svg>
+      <div class="brand-divider" style="width:1px; height:20px; background:var(--border-subtle); margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span data-tokens>0</span> tokens</div>
+      <div class="profile-trigger" id="profileTrigger"><div class="avatar" data-user-initials>AS</div><div class="profile-info"><div class="p-name" data-user-name></div><div class="p-role" data-user-role></div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <button class="dropdown-item" data-action="edit-profile">👤 Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">⚙ Settings</button>
+          <button class="dropdown-item" data-action="about">ℹ About</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">↩ Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <div class="sidebar-section"><div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section"><div class="sidebar-label">Admin</div><a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a></div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto"><button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button></div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">📊 Reports & Analytics</h1>
+      <p class="page-subtitle">Quantitative insights on PRDs analyzed, test plans, test cases, and automation coverage.</p>
+    </div>
+
+    <div class="report-summary-grid">
+      <div class="report-summary-card"><div class="report-summary-icon">📄</div><div class="report-summary-val" id="rptPrdCount">0</div><div class="report-summary-label">PRDs Analyzed</div></div>
+      <div class="report-summary-card"><div class="report-summary-icon">📋</div><div class="report-summary-val" id="rptPlanCount">0</div><div class="report-summary-label">Test Plans Generated</div></div>
+      <div class="report-summary-card"><div class="report-summary-icon">🧪</div><div class="report-summary-val" id="rptTcCount">0</div><div class="report-summary-label">Test Cases Created</div></div>
+      <div class="report-summary-card"><div class="report-summary-icon">🤖</div><div class="report-summary-val" id="rptAutoCount">0</div><div class="report-summary-label">Automation Scripts</div></div>
+    </div>
+
+    <div class="reports-grid">
+      <div class="card report-chart-card">
+        <div class="card-header"><div class="card-title">📈 Generation Trends</div></div>
+        <canvas id="trendsChart" height="200"></canvas>
+      </div>
+      <div class="card report-chart-card">
+        <div class="card-header"><div class="card-title">🍩 Output Distribution</div></div>
+        <canvas id="distChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">📑 Recent Generation History</div></div>
+      <div style="max-height:300px;overflow-y:auto">
+        <table class="data-table" id="historyTable">
+          <thead><tr><th>#</th><th>PRD Title</th><th>Test Cases</th><th>Coverage</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <footer class="app-footer"><div class="footer-brand-row"><div class="footer-emudhra-logo"><svg viewBox="0 0 50 50" width="24" height="24"><circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2"/><text x="25" y="31" text-anchor="middle" fill="white" font-size="14" font-weight="bold">e</text></svg>eMudhra</div></div><div class="footer-text">© 2026 eMudhra. All rights reserved.</div><div class="footer-star">✦</div></footer>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">⚙ Settings</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect"><option value="dark">🌙 Dark</option><option value="light">☀ Light</option><option value="system">💻 System</option></select></div></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Saved!','success');closeModal('settingsModal')">Save</button></div></div></div>
+<div class="modal-overlay" id="aboutModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">ℹ About</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p style="color:var(--text-secondary);line-height:1.7"><a href="https://www.emudhra.com" target="_blank" style="color:var(--accent-blue)">www.emudhra.com</a> — eMudhra delivers PKI, Digital Signatures, and enterprise cybersecurity services globally.</p></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal>Close</button></div></div></div>
+<div class="modal-overlay" id="confirmModal" style="display:none"><div class="modal" style="max-width:380px"><div class="modal-header"><div class="modal-title">⚠ Confirm</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button class="btn btn-danger" id="confirmOk">Yes</button></div></div></div>
+
+<script src="../js/shared.js"></script>
+<script>
+  const projects = AppState.projects;
+  const projCount = projects.length;
+
+  document.getElementById('rptPrdCount').textContent = projCount;
+  document.getElementById('rptPlanCount').textContent = projCount;
+  document.getElementById('rptTcCount').textContent = projects.reduce((s,p) => s + (p.testCases||0), 0);
+  document.getElementById('rptAutoCount').textContent = Math.round(projects.reduce((s,p) => s + (p.testCases||0), 0) * 0.3);
+
+  // History table
+  const tbody = document.getElementById('historyTableBody');
+  if (tbody) {
+    tbody.innerHTML = projects.length ? projects.map((p,i) => `<tr><td>${i+1}</td><td>${p.title}</td><td>${p.testCases}</td><td>${p.coverage}%</td><td><span class="status-badge active">${p.status}</span></td><td>${p.date}</td></tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">No data yet. Analyze a PRD to see reports.</td></tr>';
+  }
+
+  // Bar Chart
+  function drawTrends() {
+    const c = document.getElementById('trendsChart');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    c.width = c.offsetWidth || 400; c.height = 200;
+    const data = [3, 7, 12, 8, 15, 20, projCount || 2];
+    const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const pad = {top:20,right:10,bottom:30,left:30};
+    const cW = c.width-pad.left-pad.right, cH = c.height-pad.top-pad.bottom;
+    const maxV = Math.max(...data, 1);
+    const barW = cW/data.length * 0.6;
+    const gap = cW/data.length;
+
+    data.forEach((v,i) => {
+      const x = pad.left + i*gap + (gap-barW)/2;
+      const h = (v/maxV)*cH;
+      const y = pad.top+cH-h;
+      const grad = ctx.createLinearGradient(x,y,x,pad.top+cH);
+      grad.addColorStop(0, '#3b82f6');
+      grad.addColorStop(1, '#8b5cf6');
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, h, [4,4,0,0]);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.fillStyle = 'rgba(168,184,204,0.5)'; ctx.font = '9px Inter';
+      ctx.fillText(labels[i], x + barW/2 - 8, pad.top+cH+16);
+    });
+  }
+
+  // Donut
+  function drawDist() {
+    const c = document.getElementById('distChart');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    c.width = c.offsetWidth || 300; c.height = 200;
+    const cx = c.width/2, cy = 100, r = 70, inner = 42;
+    const segs = [{v:40,c:'#3b82f6'},{v:30,c:'#c9a84c'},{v:20,c:'#10b981'},{v:10,c:'#8b5cf6'}];
+    let start = -Math.PI/2;
+    segs.forEach(s => {
+      const a = (s.v/100)*Math.PI*2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,start+a); ctx.closePath();
+      ctx.fillStyle = s.c; ctx.fill(); start += a;
+    });
+    ctx.beginPath(); ctx.arc(cx,cy,inner,0,Math.PI*2); ctx.fillStyle = '#0a1628'; ctx.fill();
+    ctx.fillStyle = '#f0f4f8'; ctx.font = 'bold 14px Outfit'; ctx.textAlign = 'center';
+    ctx.fillText('Distribution', cx, cy+5);
+
+    // Legend
+    const legend = [['Test Plans','#3b82f6'],['Test Cases','#c9a84c'],['Automation','#10b981'],['Coverage','#8b5cf6']];
+    legend.forEach((l,i) => {
+      const lx = 20 + (i%2) * (c.width/2 - 10);
+      const ly = 185 + Math.floor(i/2) * 14;
+      ctx.fillStyle = l[1]; ctx.fillRect(lx, ly-6, 8, 8);
+      ctx.fillStyle = 'rgba(168,184,204,0.7)'; ctx.font = '9px Inter'; ctx.textAlign = 'left';
+      ctx.fillText(l[0], lx+12, ly);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { drawTrends(); drawDist(); }, 100); });
+</script>
+</body>
+</html>

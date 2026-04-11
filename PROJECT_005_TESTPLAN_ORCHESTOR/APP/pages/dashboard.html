@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — QA-Gen AI | eMudhra</title>
+  <meta name="description" content="QA-Gen AI Dashboard — Monitor test coverage, tokens, subscription, and project activity." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body class="page-fade">
+<div class="app-layout">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="130" height="32" style="filter: brightness(1.1)">
+        <circle cx="40" cy="40" r="38" fill="#f58220" />
+        <path d="M40 20 A20 20 0 1 0 40 60 L40 50 A10 10 0 1 1 40 30" fill="white" />
+        <rect x="40" y="35" width="25" height="10" fill="white" />
+        <text x="90" y="55" font-family="Outfit, sans-serif" font-weight="800" font-size="38" fill="white">eMudhra</text>
+      </svg>
+      <div class="brand-divider" style="width:1px; height:20px; background:var(--border-subtle); margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge" title="Token Usage">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>100,000</span> tokens
+      </div>
+      <div class="sub-badge sub-green" id="subBadge" title="Subscription Status">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+        <span data-sub-days>365 days</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="Notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notification-badge"></div></button>
+      </div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>AS</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name>Alex Smith</div>
+          <div class="p-role" data-user-role>Project Manager</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+            <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+          </div>
+          <button class="dropdown-item" data-action="edit-profile">👤 Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">⚙ Settings</button>
+          <button class="dropdown-item" data-action="about">ℹ About Us</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">↩ Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a href="home.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Test Management
+      </a>
+      <a href="analysis.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Project Analysis
+      </a>
+      <a href="reports.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        User Management
+      </a>
+      <a href="admin.html#security" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Security Logs
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="ai-status-bar" id="aiStatusBar">
+      <div class="status-group">
+        <span class="status-label">AI Health Check:</span>
+        <div class="status-badge checking" id="status-ollama">
+          <div class="status-dot"></div>
+          <span class="status-engine">Ollama</span>
+          <span class="status-text">Connecting...</span>
+        </div>
+        <div class="status-badge checking" id="status-groq">
+          <div class="status-dot"></div>
+          <span class="status-engine">Groq</span>
+          <span class="status-text">Connecting...</span>
+        </div>
+        <div class="status-badge checking" id="status-gemini">
+          <div class="status-dot"></div>
+          <span class="status-engine">Gemini</span>
+          <span class="status-text">Connecting...</span>
+        </div>
+      </div>
+    </div>
+    <!-- ROW 1: User + Token/Subscription -->
+    <div class="dash-hero-row">
+      <div class="card dash-user-card">
+        <div class="dash-user-top">
+          <div class="avatar xl" data-user-initials>AS</div>
+          <div class="dash-user-info">
+            <div class="dash-user-name" data-user-name>Alex Smith</div>
+            <div class="dash-user-role" data-user-role>Project Manager</div>
+            <div class="dash-user-email" data-user-email>alex.smith@emudhra.com</div>
+          </div>
+        </div>
+        <div class="dash-user-meta">
+          <div class="user-meta-item clickable" id="lastLoginClickable" title="Click to see login history">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+            <div>
+              <div class="meta-label">Last Login</div>
+              <div class="meta-value" data-user-login-time>—</div>
+            </div>
+            <span class="meta-arrow">→</span>
+          </div>
+          <div class="user-meta-item clickable" id="activeProjectClickable" title="Click to see project details">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <div>
+              <div class="meta-label">Active Projects</div>
+              <div class="meta-value" id="activeProjectCount">0</div>
+            </div>
+            <span class="meta-arrow">→</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Token & Subscription Cards -->
+      <div class="token-sub-col">
+        <div class="card token-card">
+          <div class="ts-header">
+            <div class="ts-icon" style="background:rgba(59,130,246,0.12);color:var(--accent-blue)">⚡</div>
+            <div>
+              <div class="ts-label">Token Usage</div>
+              <div class="ts-value"><span data-tokens>0</span> <span class="ts-max">/ 100,000</span></div>
+            </div>
+          </div>
+          <div class="progress-bar" style="margin-top:10px">
+            <div class="progress-fill progress-blue" id="tokenProgress" style="width:100%"></div>
+          </div>
+          <div class="ts-note">Each analysis consumes 1 token</div>
+        </div>
+        <div class="card sub-card">
+          <div class="ts-header">
+            <div class="ts-icon" id="subIcon" style="background:rgba(16,185,129,0.12);color:var(--accent-green)">📅</div>
+            <div>
+              <div class="ts-label">Subscription</div>
+              <div class="ts-value"><span data-sub-days>365 days</span></div>
+            </div>
+          </div>
+          <div class="progress-bar" style="margin-top:10px">
+            <div class="progress-fill" id="subProgress" style="width:100%"></div>
+          </div>
+          <div class="ts-note">Renew before expiry to maintain access</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(59,130,246,0.12);color:var(--accent-blue)">📋</div>
+        <div class="stat-info">
+          <div class="stat-label">Total Test Cases</div>
+          <div class="stat-value counter" data-target="165">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245,158,11,0.12);color:var(--accent-amber)">📂</div>
+        <div class="stat-info">
+          <div class="stat-label">Active Projects</div>
+          <div class="stat-value counter" data-target="3">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(16,185,129,0.12);color:var(--accent-green)">✓</div>
+        <div class="stat-info">
+          <div class="stat-label">Passed Tests</div>
+          <div class="stat-value"><span class="counter" data-target="78">0</span>%</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(239,68,68,0.12);color:var(--accent-red)">🐛</div>
+        <div class="stat-info">
+          <div class="stat-label">Open Defects</div>
+          <div class="stat-value counter" data-target="2">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Models + Connections -->
+    <div class="two-col-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚡ Model Active</div>
+          <button class="btn btn-sm btn-outline" data-action="models">Configure</button>
+        </div>
+        <div class="model-list" id="modelList"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔗 Connections</div>
+          <button class="btn btn-sm btn-outline" data-action="integrations">Configure</button>
+        </div>
+        <div class="model-list" id="connectionList"></div>
+      </div>
+    </div>
+
+    <!-- ROW 4: Charts -->
+    <div class="charts-grid">
+      <div class="card chart-card">
+        <div class="card-header"><div class="card-title">Test Coverage Overview</div></div>
+        <canvas id="coverageChart" height="200"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Activity Feed</div></div>
+        <div class="activity-list" id="activityList"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-brand-row">
+      <div class="footer-emudhra-logo">
+        <svg viewBox="0 0 50 50" width="24" height="24"><circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2"/><text x="25" y="31" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Inter">e</text></svg>
+        eMudhra
+      </div>
+    </div>
+    <div class="footer-text">© 2026 eMudhra. All rights reserved. · Powered by eMudhra Digital Services.</div>
+    <div class="footer-star">✦</div>
+  </footer>
+</div>
+
+<!-- MODALS -->
+<!-- Login History Modal -->
+<div class="modal-overlay" id="loginHistoryModal" style="display:none">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header"><div class="modal-title">🕐 Login History</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body" style="max-height:400px;overflow-y:auto">
+      <table class="data-table" id="loginHistoryTable">
+        <thead><tr><th>Date</th><th>Time</th><th>User</th></tr></thead>
+        <tbody id="loginHistoryBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Active Projects Modal -->
+<div class="modal-overlay" id="projectsModal" style="display:none">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><div class="modal-title">📂 Active Projects</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body" style="max-height:400px;overflow-y:auto">
+      <table class="data-table" id="projectsTable">
+        <thead><tr><th>PRD Title</th><th>Status</th><th>Test Cases</th><th>Coverage</th><th>Date</th></tr></thead>
+        <tbody id="projectsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⚙ Settings</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div class="form-group-dark">
+        <label class="form-label-dark">Theme</label>
+        <select class="form-input-dark" id="themeSelect">
+          <option value="dark">🌙 Dark Mode</option>
+          <option value="light">☀ Light Mode</option>
+          <option value="system">💻 System Default</option>
+          <option value="custom">🎨 Custom</option>
+        </select>
+      </div>
+      <div class="form-group-dark">
+        <label class="form-label-dark">Clear Conversation History</label>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:6px">This will clear chat history and reset analysis percentages. Security logs will NOT be deleted.</p>
+        <button class="btn btn-danger" id="clearHistoryBtn">🗑 Clear All History</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" onclick="showToast('Settings saved!','success');closeModal('settingsModal')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">👤 Edit Profile</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:center;margin-bottom:16px"><div class="avatar lg" data-user-initials>AS</div></div>
+      <div class="form-group-dark"><label class="form-label-dark">Full Name</label><input type="text" class="form-input-dark" id="editName" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email" class="form-input-dark" id="editEmail" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Role</label><input type="text" class="form-input-dark" id="editRole" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- About Us Modal -->
+<div class="modal-overlay" id="aboutModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">ℹ About QA-Gen AI</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:'Outfit';font-size:2rem;font-weight:800;color:var(--text-primary)">QA-Gen AI</div>
+        <div style="color:var(--text-muted);font-size:0.82rem">v2.1.0 · Enterprise Edition</div>
+      </div>
+      <div style="background:rgba(10,22,40,0.8);border-radius:12px;padding:18px;margin-bottom:14px">
+        <div style="font-weight:800;margin-bottom:6px;color:var(--gold-300)">About eMudhra</div>
+        <p style="color:var(--text-secondary);font-size:0.85rem;line-height:1.7">
+          <a href="https://www.emudhra.com" target="_blank" style="color:var(--accent-blue)">www.emudhra.com</a> — eMudhra is a leading digital identity and trust services company headquartered in Bangalore, India. As a licensed Certifying Authority (CA) and globally recognized Trust Service Provider, eMudhra delivers cutting-edge PKI solutions, Digital Signatures, e-Authentication, and enterprise-grade cybersecurity services.
+        </p>
+        <p style="color:var(--text-secondary);font-size:0.85rem;line-height:1.7;margin-top:10px">
+          QA-Gen AI leverages artificial intelligence to automate test plan creation, test case generation, and automation scripts — powered by eMudhra's secure enterprise technology stack.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="https://www.emudhra.com" target="_blank" class="btn btn-gold">Visit eMudhra.com</a>
+      <button class="btn btn-outline" data-close-modal>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Integrations Modal -->
+<div class="modal-overlay" id="integrationsModal" style="display:none">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header"><div class="modal-title">🔗 Integration Setup</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div class="integration-tabs">
+        <button class="int-tab active" data-int="jira">JIRA</button>
+        <button class="int-tab" data-int="testrail">TestRail</button>
+        <button class="int-tab" data-int="azure">Azure DevOps</button>
+      </div>
+      <div class="int-form" id="intForm">
+        <div class="form-group-dark">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+             <label class="form-label-dark">Base URL</label>
+             <button class="btn btn-sm btn-outline" id="syncIntegrationBtn">🔄 Synchronize</button>
+          </div>
+          <input type="text" class="form-input-dark" id="intBaseUrl" placeholder="https://your-instance.atlassian.net" />
+        </div>
+        <div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email" class="form-input-dark" id="intEmail" placeholder="your-email@emudhra.com" /></div>
+        <div class="form-group-dark"><label class="form-label-dark">API Key</label><input type="password" class="form-input-dark" id="intApiKey" placeholder="Enter API key or token" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close-modal>Cancel</button>
+      <button class="btn btn-success" id="testConnectionBtn">🔌 Test Connection</button>
+      <button class="btn btn-primary" id="saveIntegrationBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Models Modal -->
+<div class="modal-overlay" id="modelsModal" style="display:none">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header"><div class="modal-title">🤖 AI Model Activation</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div class="integration-tabs">
+        <button class="int-tab active" data-model="ollama">🦙 Ollama</button>
+        <button class="int-tab" data-model="groq">⚡ Groq</button>
+        <button class="int-tab" data-model="gemini">💎 Gemini</button>
+      </div>
+      <div class="int-form" id="modelForm">
+        <div class="form-group-dark">
+          <label class="form-label-dark">Model Version Selection</label>
+          <div style="display:flex; gap:8px;">
+            <select class="form-input-dark" id="modelVersionSelect" style="flex:1">
+              <option value="gemma3:latest">gemma3:latest (installed)</option>
+              <option value="qwen3:8b">qwen3:8b (installed)</option>
+              <option value="llama3.1:latest">llama3.1:latest (installed)</option>
+              <option value="qwen2.5-coder:latest">qwen2.5-coder:latest (installed)</option>
+              <option value="gemma3:1b">gemma3:1b (installed)</option>
+            </select>
+            <button class="btn btn-sm btn-outline" id="syncModelBtn">🔄 Synchronize</button>
+          </div>
+        </div>
+        <div class="form-group-dark"><label class="form-label-dark">Base URL</label><input type="text" class="form-input-dark" id="modelBaseUrl" placeholder="http://localhost:11434" /></div>
+        <div class="form-group-dark"><label class="form-label-dark">API Key</label><input type="password" class="form-input-dark" id="modelApiKey" placeholder="Enter API key (optional for Ollama)" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close-modal>Cancel</button>
+      <button class="btn btn-success" id="testModelBtn">🔌 Test Connection</button>
+      <button class="btn btn-primary" id="saveModelBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirmModal" style="display:none">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header"><div class="modal-title">⚠ Confirm Action</div><button class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary);line-height:1.6"></p></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close-modal id="confirmCancel">No</button>
+      <button class="btn btn-danger" id="confirmOk">Yes, Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/shared.js?v=9"></script>
+<script src="../js/ai_engine.js?v=9"></script>
+<script src="../js/dashboard.js?v=9"></script>
+</body>
+</html>

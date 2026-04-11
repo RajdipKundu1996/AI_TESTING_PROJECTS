@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Analysis — QA-Gen AI | eMudhra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="130" height="32" style="filter: brightness(1.1)">
+        <circle cx="40" cy="40" r="38" fill="#f58220" />
+        <path d="M40 20 A20 20 0 1 0 40 60 L40 50 A10 10 0 1 1 40 30" fill="white" />
+        <rect x="40" y="35" width="25" height="10" fill="white" />
+        <text x="90" y="55" font-family="Outfit, sans-serif" font-weight="800" font-size="38" fill="white">eMudhra</text>
+      </svg>
+      <div class="brand-divider" style="width:1px; height:20px; background:var(--border-subtle); margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span data-tokens>0</span> tokens</div>
+      <div class="sub-badge sub-green" id="subBadge"><span data-sub-days>365 days</span></div>
+      <div class="profile-trigger" id="profileTrigger"><div class="avatar" data-user-initials>AS</div><div class="profile-info"><div class="p-name" data-user-name></div><div class="p-role" data-user-role></div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <button class="dropdown-item" data-action="edit-profile">👤 Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">⚙ Settings</button>
+          <button class="dropdown-item" data-action="about">ℹ About</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">↩ Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <div class="sidebar-section"><div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="analysis.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section"><div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto"><button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button></div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">🔍 Project Analysis</h1>
+      <p class="page-subtitle">In-depth analysis of PRD coverage, module breakdown, and gap detection.</p>
+    </div>
+
+    <!-- Analysis Summary Cards -->
+    <div class="analysis-grid">
+      <div class="card analysis-card">
+        <div class="analysis-ring-wrap"><canvas id="prdRing" width="120" height="120"></canvas><div class="ring-label"><span class="ring-val" id="prdRingVal">0</span><span class="ring-pct">%</span></div></div>
+        <div class="analysis-card-title">PRD Coverage</div>
+        <div class="analysis-card-sub">Requirement extraction rate</div>
+      </div>
+      <div class="card analysis-card">
+        <div class="analysis-ring-wrap"><canvas id="tcRing" width="120" height="120"></canvas><div class="ring-label"><span class="ring-val" id="tcRingVal">0</span><span class="ring-pct">%</span></div></div>
+        <div class="analysis-card-title">Test Coverage</div>
+        <div class="analysis-card-sub">Test case annotation rate</div>
+      </div>
+      <div class="card analysis-card">
+        <div class="analysis-ring-wrap"><canvas id="autoRing" width="120" height="120"></canvas><div class="ring-label"><span class="ring-val" id="autoRingVal">0</span><span class="ring-pct">%</span></div></div>
+        <div class="analysis-card-title">Automation Coverage</div>
+        <div class="analysis-card-sub">Scripts vs test cases ratio</div>
+      </div>
+      <div class="card analysis-card">
+        <div class="analysis-ring-wrap"><canvas id="gapRing" width="120" height="120"></canvas><div class="ring-label"><span class="ring-val" id="gapRingVal">0</span><span class="ring-pct">%</span></div></div>
+        <div class="analysis-card-title">Gap Score</div>
+        <div class="analysis-card-sub">Identified coverage gaps</div>
+      </div>
+    </div>
+
+    <!-- Module Breakdown -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><div class="card-title">📊 Module-wise Analysis</div></div>
+      <div class="module-bars" id="moduleBars"></div>
+    </div>
+
+    <!-- BLAST Framework Coverage -->
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎯 BLAST Framework Coverage</div></div>
+      <div class="blast-grid" id="blastGrid"></div>
+    </div>
+  </main>
+  <footer class="app-footer"><div class="footer-brand-row"><div class="footer-emudhra-logo"><svg viewBox="0 0 50 50" width="24" height="24"><circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2"/><text x="25" y="31" text-anchor="middle" fill="white" font-size="14" font-weight="bold">e</text></svg>eMudhra</div></div><div class="footer-text">© 2026 eMudhra. All rights reserved.</div><div class="footer-star">✦</div></footer>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">⚙ Settings</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect"><option value="dark">🌙 Dark</option><option value="light">☀ Light</option><option value="system">💻 System</option></select></div><div class="form-group-dark"><button class="btn btn-danger" id="clearHistoryBtn">🗑 Clear History</button></div></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Settings saved!','success');closeModal('settingsModal')">Save</button></div></div></div>
+<div class="modal-overlay" id="aboutModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">ℹ About</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p style="color:var(--text-secondary);line-height:1.7"><a href="https://www.emudhra.com" target="_blank" style="color:var(--accent-blue)">www.emudhra.com</a> — eMudhra is a leading digital identity and trust services company delivering PKI solutions and enterprise cybersecurity services globally.</p></div><div class="modal-footer"><a href="https://www.emudhra.com" target="_blank" class="btn btn-gold">Visit eMudhra.com</a><button class="btn btn-outline" data-close-modal>Close</button></div></div></div>
+<div class="modal-overlay" id="confirmModal" style="display:none"><div class="modal" style="max-width:380px"><div class="modal-header"><div class="modal-title">⚠ Confirm</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button class="btn btn-danger" id="confirmOk">Yes</button></div></div></div>
+
+<script src="../js/shared.js"></script>
+<script>
+  // Animated ring chart
+  function drawRing(id, pct, color) {
+    const c = document.getElementById(id);
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const cx=60,cy=60,r=48,lw=10;
+    ctx.clearRect(0,0,120,120);
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=lw;ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+(pct/100)*Math.PI*2);ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();
+  }
+
+  // Get stored percentages (or defaults)
+  const prdPct = parseInt(localStorage.getItem('qa_gen_prd_pct')) || 0;
+  const tcPct = parseInt(localStorage.getItem('qa_gen_tc_pct')) || 0;
+  const autoPct = prdPct > 0 ? Math.min(100, Math.round(tcPct * 0.6)) : 0;
+  const gapPct = prdPct > 0 ? Math.max(0, 100 - prdPct) : 0;
+
+  function animateRings() {
+    const rings = [
+      { id: 'prdRing', val: 'prdRingVal', pct: prdPct, color: '#3b82f6' },
+      { id: 'tcRing', val: 'tcRingVal', pct: tcPct, color: '#c9a84c' },
+      { id: 'autoRing', val: 'autoRingVal', pct: autoPct, color: '#10b981' },
+      { id: 'gapRing', val: 'gapRingVal', pct: gapPct, color: '#ef4444' }
+    ];
+    rings.forEach(r => {
+      let current = 0;
+      const interval = setInterval(() => {
+        current += 1;
+        if (current > r.pct) { current = r.pct; clearInterval(interval); }
+        drawRing(r.id, current, r.color);
+        document.getElementById(r.val).textContent = current;
+      }, 15);
+    });
+  }
+
+  // Module bars
+  function renderModuleBars() {
+    const el = document.getElementById('moduleBars');
+    if (!el) return;
+    const modules = [
+      { name: 'Login & Auth', pct: prdPct > 0 ? 95 : 0, color: '#3b82f6' },
+      { name: 'Dashboard', pct: prdPct > 0 ? 88 : 0, color: '#8b5cf6' },
+      { name: 'PRD Input & Upload', pct: prdPct > 0 ? 92 : 0, color: '#06b6d4' },
+      { name: 'Output Display', pct: prdPct > 0 ? 85 : 0, color: '#f59e0b' },
+      { name: 'History Panel', pct: prdPct > 0 ? 78 : 0, color: '#10b981' },
+      { name: 'Profile & Settings', pct: prdPct > 0 ? 90 : 0, color: '#ec4899' }
+    ];
+    el.innerHTML = modules.map(m => `
+      <div class="module-bar-row">
+        <div class="module-bar-label">${m.name}</div>
+        <div class="module-bar-track"><div class="module-bar-fill" style="width:${m.pct}%;background:${m.color}"></div></div>
+        <div class="module-bar-pct" style="color:${m.color}">${m.pct}%</div>
+      </div>
+    `).join('');
+  }
+
+  // BLAST
+  function renderBlast() {
+    const el = document.getElementById('blastGrid');
+    if (!el) return;
+    const items = [
+      { letter: 'B', name: 'Business Flow', desc: 'End-to-end user journey coverage', pct: prdPct > 0 ? 90 : 0, color: '#3b82f6' },
+      { letter: 'L', name: 'Logic Coverage', desc: 'Decision points and conditional paths', pct: prdPct > 0 ? 85 : 0, color: '#8b5cf6' },
+      { letter: 'S', name: 'Security', desc: 'Auth, session, and input validation', pct: prdPct > 0 ? 80 : 0, color: '#f43f5e' },
+      { letter: 'T', name: 'Technology & UI', desc: 'Components, layout, responsiveness', pct: prdPct > 0 ? 92 : 0, color: '#10b981' }
+    ];
+    el.innerHTML = items.map(b => `
+      <div class="blast-item">
+        <div class="blast-letter" style="background:${b.color}20;color:${b.color};border:1px solid ${b.color}40">${b.letter}</div>
+        <div class="blast-info">
+          <div class="blast-name">${b.name}</div>
+          <div class="blast-desc">${b.desc}</div>
+          <div class="progress-bar" style="margin-top:6px"><div class="progress-fill" style="width:${b.pct}%;background:${b.color}"></div></div>
+        </div>
+        <div class="blast-pct" style="color:${b.color}">${b.pct}%</div>
+      </div>
+    `).join('');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    animateRings();
+    renderModuleBars();
+    renderBlast();
+  });
+</script>
+</body>
+</html>
