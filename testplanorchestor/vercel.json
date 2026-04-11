@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "public": true,
+  "rewrites": [
+    { "source": "/", "destination": "/APP/index.html" },
+    { "source": "/(css|js|pages|images|fonts|icons)/(.*)", "destination": "/APP/$1/$2" }
+  ]
+}
