@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Management — QA-Gen AI | eMudhra</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <link rel="stylesheet" href="../css/home.css" />
+</head>
+
+<body>
+  <div class="app-layout">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="130" height="32" style="filter: brightness(1.1)">
+          <circle cx="40" cy="40" r="38" fill="#f58220" />
+          <path d="M40 20 A20 20 0 1 0 40 60 L40 50 A10 10 0 1 1 40 30" fill="white" />
+          <rect x="40" y="35" width="25" height="10" fill="white" />
+          <text x="90" y="55" font-family="Outfit, sans-serif" font-weight="800" font-size="38" fill="white">eMudhra</text>
+        </svg>
+        <div class="brand-divider" style="width:1px; height:20px; background:var(--border-subtle); margin:0 4px"></div>
+        <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="token-badge" title="Token Usage"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg><span data-tokens>0</span> tokens</div>
+        <div class="sub-badge sub-green" id="subBadge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+          </svg><span data-sub-days>365 days</span></div>
+        <div class="profile-trigger" id="profileTrigger">
+          <div class="avatar" data-user-initials>AS</div>
+          <div class="profile-info">
+            <div class="p-name" data-user-name></div>
+            <div class="p-role" data-user-role></div>
+          </div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+          <div class="dropdown" id="profileDropdown" style="display:none">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+              <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+              <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+            </div>
+            <button class="dropdown-item" data-action="edit-profile">👤 Edit Profile</button>
+            <button class="dropdown-item" data-action="settings">⚙ Settings</button>
+            <button class="dropdown-item" data-action="about">ℹ About Us</button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item danger" data-action="logout">↩ Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>Overview</a>
+        <a href="home.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>Test Management</a>
+        <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>Project Analysis</a>
+        <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>Reports</a>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">History</div>
+        <div id="historyList"></div>
+        <button class="btn btn-sm btn-outline" id="clearHistoryBtn" style="margin:8px 10px 0;width:calc(100% - 20px)">🗑
+          Clear History</button>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section" style="margin-top:auto"><button class="nav-item" data-action="logout"><svg
+            class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>Logout</button></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="ai-status-bar" id="aiStatusBar">
+        <div class="status-group">
+          <span class="status-label">AI Health Check:</span>
+          <div class="status-badge" id="status-openrouter">
+            <div class="status-dot"></div>
+            <span class="status-engine">OpenRouter</span>
+            <span class="status-text">Connecting...</span>
+          </div>
+          <div class="status-badge checking" id="status-deepseek">
+            <div class="status-dot"></div>
+            <span class="status-engine">DeepSeek</span>
+            <span class="status-text">Connecting...</span>
+          </div>
+          <div class="status-badge checking" id="status-mistral">
+            <div class="status-dot"></div>
+            <span class="status-engine">Mistral</span>
+            <span class="status-text">Connecting...</span>
+          </div>
+          <div class="status-badge checking" id="status-groq">
+            <div class="status-dot"></div>
+            <span class="status-engine">Groq</span>
+            <span class="status-text">Connecting...</span>
+          </div>
+        </div>
+      </div>
+      <div class="home-layout">
+        <!-- LEFT: Input Area -->
+        <div class="input-col">
+          <div class="card input-card">
+            <div class="card-header">
+              <div class="card-title">📝 TC Orchestrator — PRD Input</div>
+              <div class="model-select-wrap">
+                <select class="model-select" id="selectedModel">
+                  <option value="openrouter">🌌 OpenRouter</option>
+                  <option value="deepseek">🐳 DeepSeek</option>
+                  <option value="mistral">🌪️ Mistral</option>
+                  <option value="groq">⚡ Groq</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-body">
+              <textarea class="prd-textarea" id="prdTextarea"
+                placeholder="Paste or type your PRD here... (Or attach a file below)&#10;&#10;Example: 'Login system with username/password. Dashboard showing AI model status. PRD upload and test generation.'"></textarea>
+              <div class="input-actions">
+                <div class="file-upload-area" id="dropZone">
+                  <label class="attach-btn" for="fileInput">
+                    <span class="p-icon">📎</span>
+                    <span>Attach File</span>
+                  </label>
+                  <input type="file" id="fileInput" hidden accept=".pdf,.docx,.xlsx,.csv,.png,.jpeg" />
+                  <div class="file-chips">
+                    <span class="chip">.pdf</span><span class="chip">.docx</span><span class="chip">.xlsx</span>
+                  </div>
+                  <!-- Upload Loader -->
+                  <div id="uploadLoader" style="display:none;position:absolute;inset:0;background:rgba(10,22,40,0.9);z-index:10;border-radius:var(--radius-md);display:none;align-items:center;justify-content:center;gap:10px;font-size:0.8rem;color:var(--accent-blue)">
+                    <div class="spinner" style="width:16px;height:16px;border-width:2px"></div>
+                    <span>Please wait...</span>
+                  </div>
+                </div>
+                <div class="file-preview" id="filePreview" style="display:none">
+                  <span class="file-icon" id="filePrevIcon">📕</span>
+                  <div class="file-details">
+                    <span class="file-name" id="filePrevName">file.pdf</span>
+                    <span class="file-size" id="filePrevSize">0 KB</span>
+                  </div>
+                  <button class="file-remove" id="fileRemoveBtn">✕</button>
+                </div>
+                <div class="action-row">
+                  <!-- Automation Language Selector -->
+                  <select class="auto-lang-select" id="autoLangSelect" title="Automation Script Language">
+                    <option value="java">☕ Java + Selenium</option>
+                    <option value="python">🐍 Python + Selenium</option>
+                    <option value="playwright">🎭 Playwright (JS)</option>
+                  </select>
+                  <button class="btn btn-primary btn-lg analyze-btn" id="analyzePrdBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Analyze PRD
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Output Area -->
+        <div class="output-col">
+          <!-- Stats (hidden until output exists) -->
+          <div class="output-stats-grid" id="outputStatsGrid" style="display:none">
+            <div class="output-stat">
+              <div class="os-icon" style="color:var(--accent-blue)">📋</div>
+              <div class="os-info">
+                <div class="os-label">Test Plan</div>
+                <div class="os-value" id="planStatus">—</div>
+              </div>
+            </div>
+            <div class="output-stat">
+              <div class="os-icon" style="color:var(--gold-400)">🧪</div>
+              <div class="os-info">
+                <div class="os-label">Test Case Coverage</div>
+                <div class="os-value" id="tcCountDisplay">—</div>
+              </div>
+            </div>
+            <div class="output-stat">
+              <div class="os-icon" style="color:var(--accent-green)">📊</div>
+              <div class="os-info">
+                <div class="os-label">Scenarios</div>
+                <div class="os-value" id="covCountDisplay">—</div>
+              </div>
+            </div>
+            <div class="output-stat">
+              <div class="os-icon" style="color:var(--accent-purple)">🤖</div>
+              <div class="os-info">
+                <div class="os-label">Automation</div>
+                <div class="os-value" id="autoCountDisplay">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Grid (shown when no output) -->
+          <div class="feature-grid" id="featureGrid">
+            <div class="feature-card">
+              <div class="feature-icon" style="background:rgba(59,130,246,0.12);color:var(--accent-blue)">📋</div>
+              <h3>Test Plan</h3>
+              <p>RICEPOT + BLAST analysis</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon" style="background:rgba(201,168,76,0.12);color:var(--gold-400)">🗂</div>
+              <h3>Scenarios</h3>
+              <p>BLAST-categorized flows</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon" style="background:rgba(16,185,129,0.12);color:var(--accent-green)">🧪</div>
+              <h3>Test Cases</h3>
+              <p>Structured table format</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon" style="background:rgba(139,92,246,0.12);color:var(--accent-purple)">🤖</div>
+              <h3>Automation</h3>
+              <p>Multi-language scripts</p>
+            </div>
+          </div>
+
+          <!-- Output Area (hidden until generated) -->
+          <div id="outputArea" style="display:none">
+            <div class="output-tabs">
+              <button class="out-tab active" data-tab="testplan">📋 Test Plan</button>
+              <button class="out-tab" data-tab="scenarios">🗂 Scenarios</button>
+              <button class="out-tab" data-tab="testcases">🧪 Test Cases</button>
+              <button class="out-tab" data-tab="automation">🤖 Automation</button>
+              <div class="out-tab-actions">
+                <button class="btn btn-sm btn-outline" id="copyOutputBtn" title="Copy Output">📋 Copy</button>
+                <button class="btn btn-sm btn-gold" id="exportBtn" title="Export">📤 Export</button>
+              </div>
+            </div>
+            <!-- Loading Indicator -->
+            <div class="output-loading" id="outputLoading" style="display:none">
+              <div class="ai-loader">
+                <div class="ring r1"></div>
+                <div class="ring r2"></div>
+                <div class="ring r3"></div>
+                <div class="ai-core">AI</div>
+              </div>
+              <div class="loading-step" id="loadingStep">Initializing...</div>
+            </div>
+            <div class="output-stream" id="outputStream"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="app-footer">
+      <div class="footer-brand-row">
+        <div class="footer-emudhra-logo"><svg viewBox="0 0 50 50" width="24" height="24">
+            <circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2" /><text x="25" y="31"
+              text-anchor="middle" fill="white" font-size="14" font-weight="bold">e</text>
+          </svg>eMudhra</div>
+      </div>
+      <div class="footer-text">© 2026 eMudhra. All rights reserved.</div>
+      <div class="footer-star">✦</div>
+    </footer>
+  </div>
+
+  <!-- Export Modal -->
+  <div class="modal-overlay" id="exportModal" style="display:none">
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <div class="modal-title">📤 Export Output</div><button class="modal-close" data-close-modal>✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-muted);font-size:0.78rem;margin-bottom:14px">Test Cases export as .xlsx only. Other
+          outputs support multiple formats.</p>
+        <div class="export-list">
+          <div class="export-row" id="export-xlsx"><span>📗</span><span>Export Test Cases (.xlsx)</span></div>
+          <div class="export-row" id="export-md"><span>📝</span><span>Export as Markdown (.md)</span></div>
+          <div class="export-row" id="export-pdf"><span>📕</span><span>Export as PDF (.pdf)</span></div>
+          <div class="export-row" id="export-docx"><span>📘</span><span>Export as Word (.docx)</span></div>
+          <div class="export-row" id="export-csv"><span>📊</span><span>Export as CSV (.csv)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings/About/Integrations/Models Modals -->
+  <div class="modal-overlay" id="settingsModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">⚙ Settings</div><button class="modal-close" data-close-modal>✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark"
+            id="themeSelect">
+            <option value="dark">🌙 Dark</option>
+            <option value="light">☀ Light</option>
+            <option value="system">💻 System</option>
+            <option value="custom">🎨 Custom</option>
+          </select></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline" data-close-modal>Cancel</button><button
+          class="btn btn-primary"
+          onclick="applyTheme(document.getElementById('themeSelect').value);showToast('Theme saved!','success');closeModal('settingsModal')">Save</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="editProfileModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">👤 Edit Profile</div><button class="modal-close" data-close-modal>✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-dark"><label class="form-label-dark">Full Name</label><input type="text"
+            class="form-input-dark" id="editName" /></div>
+        <div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email"
+            class="form-input-dark" id="editEmail" /></div>
+        <div class="form-group-dark"><label class="form-label-dark">Role</label><input type="text"
+            class="form-input-dark" id="editRole" /></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline" data-close-modal>Cancel</button><button
+          class="btn btn-primary" id="saveProfileBtn">Save</button></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="aboutModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">ℹ About QA-Gen AI</div><button class="modal-close" data-close-modal>✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align:center;font-family:'Outfit';font-size:1.8rem;font-weight:800;margin-bottom:8px">QA-Gen AI
+        </div>
+        <p style="color:var(--text-secondary);line-height:1.7;font-size:0.85rem"><a href="https://www.emudhra.com"
+            target="_blank" style="color:var(--accent-blue)">www.emudhra.com</a> — eMudhra delivers digital identity and
+          enterprise cybersecurity solutions globally.</p>
+      </div>
+      <div class="modal-footer"><a href="https://www.emudhra.com" target="_blank" class="btn btn-gold">Visit
+          eMudhra</a><button class="btn btn-outline" data-close-modal>Close</button></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="confirmModal" style="display:none">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <div class="modal-title">⚠ Confirm Action</div><button class="modal-close" data-close-modal>✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage" style="color:var(--text-secondary);line-height:1.6"></p>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button
+          class="btn btn-danger" id="confirmOk">Yes, Confirm</button></div>
+    </div>
+  </div>
+
+  <script src="../js/shared.js?v=9"></script>
+  <script src="../js/ai_engine.js?v=9"></script>
+  <script src="../js/dashboard.js?v=9"></script>
+  <script src="../js/home.js?v=9"></script>
+</body>
+
+</html>

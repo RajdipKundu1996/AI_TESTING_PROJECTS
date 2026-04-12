@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — QA-Gen AI | eMudhra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="130" height="32" style="filter: brightness(1.1)">
+        <circle cx="40" cy="40" r="38" fill="#f58220" />
+        <path d="M40 20 A20 20 0 1 0 40 60 L40 50 A10 10 0 1 1 40 30" fill="white" />
+        <rect x="40" y="35" width="25" height="10" fill="white" />
+        <text x="90" y="55" font-family="Outfit, sans-serif" font-weight="800" font-size="38" fill="white">eMudhra</text>
+      </svg>
+      <div class="brand-divider" style="width:1px; height:20px; background:var(--border-subtle); margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span data-tokens>0</span> tokens</div>
+      <div class="profile-trigger" id="profileTrigger"><div class="avatar" data-user-initials>AS</div><div class="profile-info"><div class="p-name" data-user-name></div><div class="p-role" data-user-role></div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <button class="dropdown-item" data-action="edit-profile">👤 Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">⚙ Settings</button>
+          <button class="dropdown-item" data-action="about">ℹ About</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">↩ Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <div class="sidebar-section"><div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section"><div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto"><button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button></div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">🛡 Admin Panel</h1>
+      <p class="page-subtitle">User management, concurrent sessions, security logs, and platform information.</p>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:16px">
+      <button class="btn btn-sm btn-primary admin-tab active" data-admin-tab="users">👥 User Management</button>
+      <button class="btn btn-sm btn-outline admin-tab" data-admin-tab="security">🔒 Security Logs</button>
+      <button class="btn btn-sm btn-outline admin-tab" data-admin-tab="about">ℹ About Us</button>
+    </div>
+
+    <!-- User Management Section -->
+    <div class="admin-section" id="adminUsers">
+      <div class="admin-grid">
+        <div class="card concurrent-users-card">
+          <div class="card-header"><div class="card-title">👥 Concurrent Users</div><div style="font-size:0.78rem;color:var(--accent-green);font-weight:700" id="concurrentCount">4 online</div></div>
+          <div class="user-location-list" id="userLocationList"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 User Stats</div></div>
+          <div style="display:flex;flex-direction:column;gap:14px;padding:8px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:0.82rem;color:var(--text-secondary)">Total Registered Users</span><span style="font-size:1.2rem;font-weight:800;color:var(--text-white)">12</span></div>
+            <div class="progress-bar"><div class="progress-fill progress-blue" style="width:33%"></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:0.82rem;color:var(--text-secondary)">Active Sessions</span><span style="font-size:1.2rem;font-weight:800;color:var(--accent-green)">4</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:0.82rem;color:var(--text-secondary)">Tokens Consumed (Total)</span><span style="font-size:1.2rem;font-weight:800;color:var(--accent-amber)" id="tokensConsumedTotal">0</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:0.82rem;color:var(--text-secondary)">Domain Restriction</span><span style="font-size:0.82rem;font-weight:700;color:var(--accent-blue)">@emudhra.com</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Logs Section -->
+    <div class="admin-section" id="adminSecurity" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔒 Security Logs</div>
+          <div style="font-size:0.72rem;color:var(--accent-amber);font-weight:700">⚠ Logs cannot be cleared</div>
+        </div>
+        <div class="logs-container">
+          <table class="data-table" id="securityLogsTable">
+            <thead><tr><th>Date</th><th>Time</th><th>Activity</th><th>Type</th><th>User</th></tr></thead>
+            <tbody id="securityLogsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Us Section -->
+    <div class="admin-section" id="adminAbout" style="display:none">
+      <div class="card" style="max-width:700px">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-family:'Outfit';font-size:2.5rem;font-weight:800;color:var(--text-white)">QA-Gen AI</div>
+          <div style="color:var(--gold-300);font-size:0.9rem;font-weight:700;margin-top:4px">Powered by eMudhra Digital Services</div>
+          <div style="color:var(--text-muted);font-size:0.82rem;margin-top:2px">v2.1.0 · Enterprise Edition</div>
+        </div>
+
+        <div style="background:rgba(10,22,40,0.8);border-radius:12px;padding:22px;margin-bottom:16px;border:1px solid var(--border-gold)">
+          <div style="font-weight:800;margin-bottom:10px;color:var(--gold-300);font-size:1rem">About eMudhra</div>
+          <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.8">
+            <a href="https://www.emudhra.com" target="_blank" style="color:var(--accent-blue);font-weight:700">www.emudhra.com</a> — eMudhra Limited is a leading global provider of digital identity solutions and trust services, headquartered in Bangalore, India. As a licensed Certifying Authority (CA) under the Indian IT Act and a globally recognized Trust Service Provider, eMudhra delivers cutting-edge solutions across:
+          </p>
+          <ul style="color:var(--text-secondary);font-size:0.85rem;line-height:1.8;margin:12px 0;padding-left:20px">
+            <li><strong>Public Key Infrastructure (PKI)</strong> — Enterprise-grade certificate management</li>
+            <li><strong>Digital Signatures</strong> — Legally binding e-signatures (DSC, eSign)</li>
+            <li><strong>e-Authentication</strong> — Multi-factor identity verification</li>
+            <li><strong>Enterprise Cybersecurity</strong> — Zero-trust architectures and compliance</li>
+            <li><strong>IoT Security</strong> — Device identity and secure communication</li>
+          </ul>
+          <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.8">
+            eMudhra serves <strong>900+ enterprise customers</strong> across 70+ countries, including major financial institutions, government agencies, and Fortune 500 companies. Listed on both BSE and NSE, eMudhra is committed to making the digital world more secure and trustworthy.
+          </p>
+        </div>
+
+        <div style="text-align:center;padding:12px">
+          <a href="https://www.emudhra.com" target="_blank" class="btn btn-gold btn-lg">🌐 Visit www.emudhra.com</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="app-footer"><div class="footer-brand-row"><div class="footer-emudhra-logo"><svg viewBox="0 0 50 50" width="24" height="24"><circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2"/><text x="25" y="31" text-anchor="middle" fill="white" font-size="14" font-weight="bold">e</text></svg>eMudhra</div></div><div class="footer-text">© 2026 eMudhra. All rights reserved.</div><div class="footer-star">✦</div></footer>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">⚙ Settings</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect"><option value="dark">🌙 Dark</option><option value="light">☀ Light</option><option value="system">💻 System</option></select></div></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Saved!','success');closeModal('settingsModal')">Save</button></div></div></div>
+<div class="modal-overlay" id="aboutModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">ℹ About</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p style="color:var(--text-secondary)"><a href="https://www.emudhra.com" target="_blank" style="color:var(--accent-blue)">www.emudhra.com</a> — eMudhra Digital Services.</p></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal>Close</button></div></div></div>
+<div class="modal-overlay" id="confirmModal" style="display:none"><div class="modal" style="max-width:380px"><div class="modal-header"><div class="modal-title">⚠ Confirm</div><button class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button class="btn btn-danger" id="confirmOk">Yes</button></div></div></div>
+
+<script src="../js/shared.js"></script>
+<script>
+  // Admin Tabs
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('btn-primary'); t.classList.add('btn-outline'); t.classList.remove('active'); });
+      tab.classList.add('btn-primary', 'active'); tab.classList.remove('btn-outline');
+      document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+      const id = tab.dataset.adminTab;
+      if (id === 'users') document.getElementById('adminUsers').style.display = 'block';
+      if (id === 'security') document.getElementById('adminSecurity').style.display = 'block';
+      if (id === 'about') document.getElementById('adminAbout').style.display = 'block';
+    });
+  });
+
+  // Handle hash for direct link to security
+  if (window.location.hash === '#security') {
+    document.querySelector('.admin-tab[data-admin-tab="security"]')?.click();
+  }
+
+  // Concurrent users simulation
+  const mockUsers = [
+    { name: 'Alex Smith', location: 'Bangalore, India', flag: '🇮🇳', status: 'active', session: '12 min' },
+    { name: 'QA Engineer', location: 'Hyderabad, India', flag: '🇮🇳', status: 'active', session: '45 min' },
+    { name: 'Demo User', location: 'London, UK', flag: '🇬🇧', status: 'idle', session: '2 hr' },
+    { name: 'Tech Lead', location: 'Dubai, UAE', flag: '🇦🇪', status: 'active', session: '8 min' }
+  ];
+
+  const userList = document.getElementById('userLocationList');
+  if (userList) {
+    userList.innerHTML = mockUsers.map(u => `
+      <div class="user-loc-row">
+        <div class="user-loc-flag">${u.flag}</div>
+        <div class="user-loc-info">
+          <div class="user-loc-name">${u.name}</div>
+          <div class="user-loc-place">${u.location} · ${u.session}</div>
+        </div>
+        <div class="user-loc-status" style="color:${u.status === 'active' ? 'var(--accent-green)' : 'var(--accent-amber)'}">● ${u.status}</div>
+        <button class="session-terminate-btn" onclick="this.closest('.user-loc-row').style.opacity='0.3';showToast('Session terminated for ${u.name}','warning')">Terminate</button>
+      </div>
+    `).join('');
+  }
+
+  // Tokens consumed
+  document.getElementById('tokensConsumedTotal').textContent = (SYSTEM.MAX_TOKENS - AppState.tokens).toLocaleString();
+
+  // Security Logs — permanent, read from AppState.logs
+  const logsBody = document.getElementById('securityLogsBody');
+  if (logsBody) {
+    const logs = AppState.logs;
+    const typeColors = { auth: '#10b981', navigation: '#3b82f6', token: '#f59e0b', integration: '#8b5cf6', model: '#06b6d4', profile: '#ec4899', info: '#6b7f96', generation: '#f97316' };
+    logsBody.innerHTML = logs.length ? logs.map(l => `
+      <tr>
+        <td>${l.date}</td>
+        <td>${l.time}</td>
+        <td>${l.activity}</td>
+        <td><span style="color:${typeColors[l.type] || '#6b7f96'};font-weight:700;font-size:0.72rem;text-transform:uppercase">${l.type}</span></td>
+        <td>${l.user}</td>
+      </tr>
+    `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No logs recorded yet. Use the application to generate logs.</td></tr>';
+  }
+</script>
+</body>
+</html>
