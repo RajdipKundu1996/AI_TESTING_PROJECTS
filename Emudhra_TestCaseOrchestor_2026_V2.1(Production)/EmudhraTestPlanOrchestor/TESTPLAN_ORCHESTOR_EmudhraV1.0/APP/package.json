@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "node start.js",
+    "start": "node render_server.js",
+    "start:local": "node start.js",
     "backend": "node backend/src/services/server.js",
     "relay": "node backend/src/services/ollama_relay.js",
     "recorder": "node backend/src/services/recorder_backend.js",

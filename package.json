@@ -1,0 +1,9 @@
+{
+  "name": "nirikshanai-render-entrypoint",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm ci --prefix \"Emudhra_TestCaseOrchestor_2026_V2.1(Production)/EmudhraTestPlanOrchestor/TESTPLAN_ORCHESTOR_EmudhraV1.0/APP\"",
+    "start": "node \"Emudhra_TestCaseOrchestor_2026_V2.1(Production)/EmudhraTestPlanOrchestor/TESTPLAN_ORCHESTOR_EmudhraV1.0/APP/render_server.js\""
+  }
+}

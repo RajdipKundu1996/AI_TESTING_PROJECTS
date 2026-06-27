@@ -69,7 +69,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
 
   // Prefer network for API calls, fallback to cache only for explicit static assets.
-  if (url.pathname.startsWith('/mistral_test') || url.port === '11435') {
+  if (url.pathname.startsWith('/relay') || url.pathname.startsWith('/api/') || url.pathname === '/health' || url.port === '11435') {
     event.respondWith(
       fetch(req).catch(() => caches.match(req))
     );

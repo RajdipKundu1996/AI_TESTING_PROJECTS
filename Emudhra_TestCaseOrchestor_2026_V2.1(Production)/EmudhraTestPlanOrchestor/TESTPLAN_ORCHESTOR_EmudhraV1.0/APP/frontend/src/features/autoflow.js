@@ -224,7 +224,7 @@ async function startRecording() {
     }
 
     if (!AF.wsConnected) {
-      afToast('⚠️ Cannot reach Playwright backend on port 3001. Make sure "node start.js" is running.', 'error', 8000);
+      afToast('⚠️ Cannot reach the recorder backend. Please retry in a moment.', 'error', 8000);
       if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h.01M15 9h.01M9 15s1 2 3 2 3-2 3-2"/></svg> Start Recording'; }
       return;
     }
@@ -1887,7 +1887,8 @@ function connectRecorderWS() {
   }
   try {
     AF.wsConnectStart = Date.now();
-    AF.ws = new WebSocket('ws://localhost:3001');
+    const recorderProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    AF.ws = new WebSocket(`${recorderProtocol}//${location.host}/recorder`);
     AF.ws.onopen = () => {
       AF.wsConnected = true;
       updateBackendStatus(true);
@@ -2375,7 +2376,7 @@ async function analyzeScreenshotExpected(idx) {
 
     // Try Ollama relay
     try {
-      const resp = await fetch('http://localhost:11435/api/generate', {
+      const resp = await fetch('/relay/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

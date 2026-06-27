@@ -57,3 +57,11 @@ Service worker & cache
 - A service worker (`/sw.js`) now precaches core static assets for faster loads and offline use.
 - Use the "Clear Cache" button on the Settings page to remove cached files if you want a hard reload.
 - The service worker removes older cache versions automatically on activation.
+
+Render deployment
+-----------------
+- The repository-level `render.yaml` configures the `nirikshanai` Node web service.
+- `npm start` launches the cloud-compatible server on `process.env.PORT` and binds to `0.0.0.0`.
+- The public server exposes `/health`, serves the frontend, and routes `/api`, `/relay`, and `/recorder` to the internal services.
+- Use `npm run start:local` to launch the original local multi-process script.
+- Configure provider credentials such as `GROQ_API_KEY` in Render environment variables; never commit `.env`.

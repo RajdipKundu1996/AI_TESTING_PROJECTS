@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!key) { showStatus('No key provided', true); return; }
     testBtn.disabled = true; testBtn.textContent = 'Testing...'; showStatus('Testing key...');
     try {
-      const relays = ['http://127.0.0.1:11435/mistral_test', 'http://localhost:11435/mistral_test'];
+      const relays = ['/relay/mistral_test'];
       let res, text, data;
       for (const url of relays) {
         try {

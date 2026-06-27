@@ -94,7 +94,7 @@ if (passwordInput) passwordInput.addEventListener('input', hideError);
 });
 
 // ===== AUTH API =====
-var AUTH_API = 'http://127.0.0.1:3005';
+var AUTH_API = '';
 
 // ===== SHARED LOGIN FINALIZER =====
 function finishPasswordLogin(u, sessionId) {

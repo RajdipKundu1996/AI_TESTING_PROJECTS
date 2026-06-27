@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -60,7 +60,7 @@
       const status = document.getElementById('deployStatus');
       status.innerHTML = '<span style="color:#10b981;">🟢 Connecting to GitHub...</span>';
       try {
-        const result = await fetch('http://127.0.0.1:11435/push', {
+        const result = await fetch('/relay/push', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ repo: 'github', branch: 'main' })
@@ -79,7 +79,7 @@
       const status = document.getElementById('deployStatus');
       status.innerHTML = '<span style="color:#3b82f6;">🟠 Connecting to Azure...</span>';
       try {
-        const result = await fetch('http://127.0.0.1:11435/push', {
+        const result = await fetch('/relay/push', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ repo: 'azure', branch: 'develop' })

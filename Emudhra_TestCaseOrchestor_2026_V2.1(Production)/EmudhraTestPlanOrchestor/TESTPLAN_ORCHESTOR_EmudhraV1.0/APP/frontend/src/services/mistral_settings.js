@@ -62,10 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     testBtn.textContent = 'Testing...';
     try {
       // Call the relay endpoint which will in turn call Mistral.
-      const relays = [
-        'http://127.0.0.1:11435/mistral_test',
-        'http://localhost:11435/mistral_test'
-      ];
+      const relays = ['/relay/mistral_test'];
       let res, text, data;
       for (const url of relays) {
         try {

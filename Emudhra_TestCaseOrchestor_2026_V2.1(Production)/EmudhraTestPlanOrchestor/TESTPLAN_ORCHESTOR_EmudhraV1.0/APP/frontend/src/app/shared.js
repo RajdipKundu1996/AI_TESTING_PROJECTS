@@ -8,7 +8,7 @@
 
 // ===== SESSION HEARTBEAT =====
 (function() {
-  var AUTH_SERVER = 'http://127.0.0.1:3005';
+  var AUTH_SERVER = '';
   var LOGOUT_MSGS = {
     force_logout:        'You have been logged out by an administrator. Please contact your workspace admin if this was unexpected.',
     session_expired:     'Your session has expired. Please sign in again.',
@@ -464,7 +464,7 @@ const AppState = {
     this.addLog('User logged out', 'auth');
     var sid = sessionStorage.getItem('qa_gen_session_id');
     if (sid) {
-      try { fetch('http://127.0.0.1:3005/api/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: sid }) }).catch(function(){}); } catch(_){}
+      try { fetch('/api/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: sid }) }).catch(function(){}); } catch(_){}
     }
     sessionStorage.removeItem('qa_gen_user');
     sessionStorage.removeItem('qa_gen_session_id');

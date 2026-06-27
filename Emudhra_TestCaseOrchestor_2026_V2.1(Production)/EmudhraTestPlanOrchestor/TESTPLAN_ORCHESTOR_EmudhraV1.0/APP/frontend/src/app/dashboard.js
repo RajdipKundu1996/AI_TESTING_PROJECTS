@@ -489,7 +489,7 @@ document.getElementById('syncModelBtn')?.addEventListener('click', async () => {
           };
           if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
           
-          const res = await fetch('http://127.0.0.1:11435', { headers });
+          const res = await fetch('/relay', { headers });
           if (!res.ok) throw new Error('HF API request failed');
           const models = await res.json();
           

@@ -423,7 +423,7 @@ Rules:
     },
 
     async callSarvam(messagesOrPrompt, config, onChunk) {
-        const relayUrl = 'http://127.0.0.1:11435';
+        const relayUrl = '/relay';
         const baseUrl = (config.baseUrl || 'https://api.sarvam.ai').replace(/\/$/, '');
         const targetUrl = `${baseUrl}/v1/chat/completions`;
         // Accept either a pre-built messages array or a plain string (legacy)
@@ -510,7 +510,7 @@ Rules:
 
     async callOpenAICompatible(messagesOrPrompt, config, onChunk, engineName) {
         const targetUrl = `${config.baseUrl}/chat/completions`;
-        const relayUrl = 'http://127.0.0.1:11435';
+        const relayUrl = '/relay';
         const useRelay = engineName === 'MISTRAL' || engineName === 'GROQ';
         const requestUrl = useRelay ? relayUrl : targetUrl;
         // Accept either a pre-built messages array or a plain string (legacy)
@@ -693,7 +693,7 @@ Rules:
     async callHuggingFace(prompt, config, onChunk) {
         const modelId = config.version || 'meta-llama/Llama-3.3-70B-Instruct';
         const targetUrl = `https://router.huggingface.co/v1/chat/completions`;
-        const relayUrl = 'http://127.0.0.1:11435';
+        const relayUrl = '/relay';
 
         try {
             const body = {
@@ -779,7 +779,7 @@ Rules:
     async callAnthropic(prompt, config, onChunk) {
         const modelId = config.version && config.version !== 'default' ? config.version : 'claude-3-5-sonnet-20241022';
         // Use relay to bypass CORS; relay forwards to Anthropic
-        const relayUrl = 'http://127.0.0.1:11435';
+        const relayUrl = '/relay';
         
         // Respect baseUrl if user provided a custom one in settings, otherwise use official
         const targetUrl = this.normalizeAnthropicUrl(config.baseUrl);
@@ -852,7 +852,7 @@ Rules:
 
     async checkAnthropic(config) {
         try {
-            const relayUrl = 'http://127.0.0.1:11435';
+            const relayUrl = '/relay';
             // Minimal token request to verify key
             const res = await fetch(relayUrl, {
                 method: 'POST',
@@ -883,7 +883,7 @@ Rules:
             const targetUrl = 'https://api.groq.com/openai/v1/models';
             const headers = { 'X-Target-Url': targetUrl };
             if (config.apiKey) headers.Authorization = `Bearer ${config.apiKey}`;
-            const res = await fetch('http://127.0.0.1:11435', {
+            const res = await fetch('/relay', {
                 headers
             });
             if (res.ok) return { status: 'active', message: 'Groq Cloud Ready' };
@@ -897,7 +897,7 @@ Rules:
 
     async checkSarvam(config) {
         try {
-            const relayUrl = 'http://127.0.0.1:11435';
+            const relayUrl = '/relay';
             const baseUrl = (config.baseUrl || 'https://api.sarvam.ai').replace(/\/$/, '');
             const targetUrl = `${baseUrl}/v1/chat/completions`;
             const apiKey = config.apiKey || '';
@@ -1123,7 +1123,7 @@ Output ONLY valid JSON. No explanations outside JSON.
                 headers['x-mistral-key'] = config.apiKey;
             }
 
-            const res = await fetch('http://127.0.0.1:11435/mistral_test', { headers });
+            const res = await fetch('/relay/mistral_test', { headers });
             if (res.ok) return { status: 'active', message: 'Mistral Ready' };
             if (res.status === 400) return { status: 'inactive', message: 'Missing Mistral API Key' };
             if (res.status === 401) return { status: 'inactive', message: 'Invalid Mistral API Key' };
@@ -1227,7 +1227,7 @@ Output ONLY valid JSON. No explanations outside JSON.
     async checkHuggingFace(config) {
         try {
             // Using whoami via router/relay to verify token
-            const res = await fetch('http://127.0.0.1:11435', {
+            const res = await fetch('/relay', {
                 headers: { 
                     'Authorization': `Bearer ${config.apiKey}`,
                     'X-Target-Url': 'https://huggingface.co/api/whoami-v2'

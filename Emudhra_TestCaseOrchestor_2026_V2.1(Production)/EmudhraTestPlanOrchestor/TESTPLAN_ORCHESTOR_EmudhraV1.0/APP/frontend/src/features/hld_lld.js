@@ -215,7 +215,7 @@ const MermaidRenderer = {
    ───────────────────────────────────────────────────────────────────────────── */
 const KnowledgeStore = {
   LS_KEY: 'hld_project_knowledge',
-  API: 'http://127.0.0.1:3002',
+  API: '',
 
   save(name, rawText, analysis) {
     const entry = { name, rawText: rawText.slice(0, 50000), analysis, savedAt: new Date().toISOString() };

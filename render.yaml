@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nirikshanai
+    runtime: node
+    branch: main
+    rootDir: Emudhra_TestCaseOrchestor_2026_V2.1(Production)/EmudhraTestPlanOrchestor/TESTPLAN_ORCHESTOR_EmudhraV1.0/APP
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.20.2

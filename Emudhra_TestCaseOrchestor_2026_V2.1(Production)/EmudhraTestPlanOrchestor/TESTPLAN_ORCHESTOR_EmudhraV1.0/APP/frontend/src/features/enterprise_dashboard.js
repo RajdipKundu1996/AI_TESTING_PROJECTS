@@ -3,7 +3,7 @@
   'use strict';
 
   const STORAGE_KEY = 'qa_gen_enterprise_last_input';
-  const AI_RELAY    = 'http://127.0.0.1:11435';
+  const AI_RELAY    = '/relay';
   const AI_MODEL    = 'sarvam-30b';
 
   let currentIntelligence = null;

@@ -7,6 +7,7 @@ node_modules/
 # Local dev overrides
 .env.local
 .runlogs/
+.render-test-logs/
 .knowledge_store/
 data/.knowledge_store/
 temp/
