@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal &amp; Documentation — QA-Gen AI | eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f6fb;
+      color: #1e293b;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1.5px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-pill {
+      background: linear-gradient(135deg, #e65c10, #f9a43a);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .nav-title { font-size: 0.9rem; font-weight: 600; color: #1e293b; }
+    .nav-title span { color: #e65c10; }
+    .nav-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      color: #475569;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+    .nav-back-btn:hover { background: #f8fafc; border-color: #e65c10; color: #e65c10; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(120deg, #0a1628 0%, #112240 60%, #1a3a5c 100%);
+      padding: 56px 40px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 340px; height: 340px;
+      background: radial-gradient(circle, rgba(230,92,16,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(230,92,16,0.14);
+      border: 1px solid rgba(230,92,16,0.35);
+      color: #f9a43a;
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #f0f4f8;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 span { color: #e65c10; }
+    .hero-sub { font-size: 0.92rem; color: #94a3b8; max-width: 560px; margin: 0 auto 24px; }
+    .hero-meta { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; }
+    .hero-meta-item { font-size: 0.78rem; color: #64748b; display: flex; align-items: center; gap: 6px; }
+    .hero-meta-dot { width: 6px; height: 6px; border-radius: 50%; background: #e65c10; display: inline-block; }
+
+    /* ── LAYOUT ── */
+    .docs-layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR TOC ── */
+    .toc-sidebar {
+      position: sticky;
+      top: 76px;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .toc-head {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #94a3b8;
+      padding: 0 18px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 8px;
+    }
+    .toc-link {
+      display: block;
+      padding: 7px 18px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #475569;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .toc-link:hover { color: #e65c10; background: rgba(230,92,16,0.05); border-left-color: #e65c10; }
+    .toc-link.active { color: #e65c10; border-left-color: #e65c10; background: rgba(230,92,16,0.06); font-weight: 600; }
+
+    /* ── CONTENT ── */
+    .docs-content { display: flex; flex-direction: column; gap: 28px; }
+
+    .doc-section {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 32px 36px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+      scroll-margin-top: 80px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1.5px solid #f1f5f9;
+    }
+    .section-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #fff3ec, #fde8d5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(230,92,16,0.15);
+    }
+    .section-title { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; color: #1e293b; }
+    .section-num { font-size: 0.72rem; font-weight: 700; color: #e65c10; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
+
+    .doc-section p { font-size: 0.875rem; color: #475569; margin-bottom: 12px; }
+    .doc-section p:last-child { margin-bottom: 0; }
+    .doc-section ul, .doc-section ol { padding-left: 20px; margin-bottom: 12px; }
+    .doc-section li { font-size: 0.875rem; color: #475569; margin-bottom: 6px; }
+    .doc-section strong { color: #1e293b; font-weight: 600; }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #fff8f3, #fef3e8);
+      border: 1.5px solid rgba(230,92,16,0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.84rem;
+      color: #7c3f12;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .highlight-box .hi-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .info-box {
+      background: #f0f9ff;
+      border: 1.5px solid #bae6fd;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.84rem;
+      color: #0c4a6e;
+    }
+    .warn-box {
+      background: #fffbeb;
+      border: 1.5px solid #fcd34d;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.84rem;
+      color: #78350f;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    .mini-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .mini-card-title { font-size: 0.78rem; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+    .mini-card p { font-size: 0.78rem; color: #64748b; margin: 0; }
+
+    /* ── COPYRIGHT FOOTER STRIP ── */
+    .copyright-strip {
+      background: linear-gradient(135deg, #0a1628, #112240);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .cr-left { display: flex; flex-direction: column; gap: 4px; }
+    .cr-logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; color: #f0f4f8; }
+    .cr-logo span { color: #e65c10; }
+    .cr-line { font-size: 0.75rem; color: #64748b; }
+    .cr-right { text-align: right; }
+    .cr-right p { font-size: 0.75rem; color: #64748b; }
+    .cr-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #34d399;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .docs-layout { grid-template-columns: 1fr; }
+      .toc-sidebar { position: static; display: flex; flex-wrap: wrap; padding: 12px; gap: 4px; }
+      .toc-head { display: none; }
+      .toc-link { border-left: none; border-bottom: 2px solid transparent; padding: 6px 12px; }
+      .hero { padding: 36px 20px 32px; }
+      .hero h1 { font-size: 1.5rem; }
+      .doc-section { padding: 24px 20px; }
+      .two-col { grid-template-columns: 1fr; }
+      .top-nav { padding: 0 20px; }
+      .copyright-strip { padding: 24px 20px; flex-direction: column; text-align: center; }
+      .cr-right { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <a class="nav-brand" href="/index.html">
+      <span class="nav-logo-pill">QA-Gen AI</span>
+      <span class="nav-title">eMudhra <span>TestPlan Orchestrator</span></span>
+    </a>
+    <a class="nav-back-btn" href="/index.html">
+      ← Back to Login
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">&#128273; LEGAL &amp; DOCUMENTATION</div>
+    <h1>Terms, Copyright &amp; <span>Legal Notice</span></h1>
+    <p class="hero-sub">
+      Official terms of use, intellectual property rights, and compliance information
+      for QA-Gen AI — a product of eMudhra Limited.
+    </p>
+    <div class="hero-meta">
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span> Effective: January 1, 2025</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span> Version: 1.0.0</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span> Governed by Indian Law</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span> ISO 27001 Aligned</span>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="docs-layout">
+
+    <!-- SIDEBAR TOC -->
+    <aside class="toc-sidebar" id="tocSidebar">
+      <div class="toc-head">ON THIS PAGE</div>
+      <a class="toc-link active" href="#copyright">Copyright Notice</a>
+      <a class="toc-link" href="#license">License &amp; Usage</a>
+      <a class="toc-link" href="#ip">Intellectual Property</a>
+      <a class="toc-link" href="#privacy">Data &amp; Privacy</a>
+      <a class="toc-link" href="#disclaimer">Disclaimers</a>
+      <a class="toc-link" href="#liability">Limitation of Liability</a>
+      <a class="toc-link" href="#acceptable-use">Acceptable Use</a>
+      <a class="toc-link" href="#ai-output">AI-Generated Content</a>
+      <a class="toc-link" href="#compliance">Compliance &amp; Security</a>
+      <a class="toc-link" href="#contact">Contact &amp; Notices</a>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="docs-content">
+
+      <!-- 1. COPYRIGHT -->
+      <section class="doc-section" id="copyright">
+        <div class="section-header">
+          <div class="section-icon">©</div>
+          <div>
+            <span class="section-num">SECTION 01</span>
+            <div class="section-title">Copyright Notice</div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <span class="hi-icon">©</span>
+          <span>
+            <strong>Copyright © 2024–2025 eMudhra Limited. All Rights Reserved.</strong><br>
+            QA-Gen AI, TestPlan Orchestrator, and all associated software, documentation, user interfaces,
+            trade names, logos, and content are the exclusive intellectual property of eMudhra Limited,
+            a company incorporated under the laws of India.
+          </span>
+        </div>
+
+        <p>
+          This software product, its underlying architecture, source code, algorithms, design elements,
+          and documentation — collectively referred to as <strong>"QA-Gen AI"</strong> or
+          <strong>"TestPlan Orchestrator"</strong> — are protected under:
+        </p>
+        <ul>
+          <li>The <strong>Copyright Act, 1957</strong> (India) and subsequent amendments</li>
+          <li>The <strong>Information Technology Act, 2000</strong> and the IT (Amendment) Act, 2008</li>
+          <li>The <strong>Trade Marks Act, 1999</strong> (India) for all registered marks</li>
+          <li>International copyright treaties including the Berne Convention and TRIPS Agreement</li>
+          <li>Applicable data protection and privacy regulations including DPDP Act, 2023</li>
+        </ul>
+
+        <p>
+          The eMudhra name, logo, "Trust Delivered" tagline, and "QA-Gen AI" mark are registered trademarks
+          or service marks of eMudhra Limited. Unauthorised use of these marks is strictly prohibited and
+          may result in civil and/or criminal liability.
+        </p>
+
+        <div class="two-col">
+          <div class="mini-card">
+            <div class="mini-card-title">&#127970; Product Owner</div>
+            <p>eMudhra Limited<br>Bengaluru, Karnataka, India<br>CIN: U72200KA2008PLC045262</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128197; Copyright Term</div>
+            <p>© 2024–2025. Protection extends for the life of the work plus 60 years under Indian law.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. LICENSE -->
+      <section class="doc-section" id="license">
+        <div class="section-header">
+          <div class="section-icon">&#128220;</div>
+          <div>
+            <span class="section-num">SECTION 02</span>
+            <div class="section-title">License &amp; Permitted Use</div>
+          </div>
+        </div>
+
+        <p>
+          Access to QA-Gen AI is granted solely under a <strong>limited, non-exclusive, non-transferable,
+          revocable enterprise licence</strong> issued to authorised eMudhra delivery teams and approved
+          client organisations. This licence is strictly governed by the terms of the applicable
+          Master Service Agreement (MSA) or Enterprise Licence Agreement (ELA) executed with eMudhra Limited.
+        </p>
+
+        <p><strong>You are permitted to:</strong></p>
+        <ul>
+          <li>Access and use the platform for legitimate internal QA and testing activities</li>
+          <li>Generate test plans, test cases, and automation scripts for your authorised projects</li>
+          <li>Export AI-generated artefacts for use within your organisation's SDLC workflows</li>
+          <li>Store outputs in your organisation's authorised repositories and ITSM tools</li>
+        </ul>
+
+        <p><strong>You are expressly prohibited from:</strong></p>
+        <ul>
+          <li>Copying, reproducing, or distributing the software or its source code in whole or in part</li>
+          <li>Reverse-engineering, decompiling, disassembling, or attempting to derive source code</li>
+          <li>Sublicensing, renting, leasing, or transferring access to any third party</li>
+          <li>Removing or altering any copyright, trademark, or proprietary rights notices</li>
+          <li>Using the platform to develop competing products or services</li>
+          <li>Accessing internal APIs, endpoints, or data stores beyond normal application use</li>
+        </ul>
+
+        <div class="warn-box">
+          ⚠️ <strong>Violation Notice:</strong> Any breach of these licence terms may result in immediate
+          termination of access, recovery of damages, and/or legal proceedings under applicable Indian and
+          international law.
+        </div>
+      </section>
+
+      <!-- 3. IP -->
+      <section class="doc-section" id="ip">
+        <div class="section-header">
+          <div class="section-icon">&#128161;</div>
+          <div>
+            <span class="section-num">SECTION 03</span>
+            <div class="section-title">Intellectual Property Rights</div>
+          </div>
+        </div>
+
+        <p>
+          All intellectual property rights in QA-Gen AI — including but not limited to patents,
+          copyrights, trade secrets, database rights, design rights, and trademarks — vest solely
+          and exclusively in <strong>eMudhra Limited</strong>. No rights are transferred to the user
+          by virtue of accessing or using this platform.
+        </p>
+
+        <p>
+          The following components are specifically protected as proprietary intellectual property:
+        </p>
+        <ul>
+          <li><strong>RICEPOT Framework</strong> — eMudhra's proprietary requirement-depth analysis methodology</li>
+          <li><strong>BLAST Coverage Engine</strong> — Boundary, Logic, Acceptance, Security &amp; Threshold test strategy algorithm</li>
+          <li><strong>AI Prompt Orchestration Layer</strong> — Proprietary prompt engineering and chaining architecture</li>
+          <li><strong>TestPlan Orchestrator UI/UX</strong> — Visual design, interaction patterns, and component library</li>
+          <li><strong>QA Knowledge Graph</strong> — Curated domain ontology for software quality assurance</li>
+          <li><strong>AutoFlow Recorder Engine</strong> — Browser interaction capture and Playwright script generation system</li>
+          <li><strong>Veda AI QA Companion</strong> — Conversational QA assistant model, persona, and dialogue design</li>
+        </ul>
+
+        <p>
+          Any AI-generated outputs produced by this platform (test cases, test plans, automation scripts)
+          that incorporate eMudhra's proprietary methodologies remain subject to eMudhra's IP rights.
+          Users receive a limited right to use such outputs for internal purposes only.
+        </p>
+      </section>
+
+      <!-- 4. PRIVACY -->
+      <section class="doc-section" id="privacy">
+        <div class="section-header">
+          <div class="section-icon">&#128274;</div>
+          <div>
+            <span class="section-num">SECTION 04</span>
+            <div class="section-title">Data &amp; Privacy Policy</div>
+          </div>
+        </div>
+
+        <p>
+          eMudhra Limited is committed to protecting the privacy of all users of QA-Gen AI in accordance
+          with the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong> and applicable
+          data protection regulations.
+        </p>
+
+        <div class="two-col">
+          <div class="mini-card">
+            <div class="mini-card-title">&#128202; Data We Collect</div>
+            <p>Work email address, session activity, AI interaction logs (anonymised), and usage telemetry for product improvement.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128275; Data We Do Not Collect</div>
+            <p>We do not collect passwords in plain text, payment information, or any personal data beyond organisational work credentials.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128260; Data Processing</div>
+            <p>All AI inference runs locally or on your organisation's configured LLM endpoint. No requirement data is transmitted to eMudhra servers without consent.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128101; Data Retention</div>
+            <p>Session data is retained for 90 days. Users may request deletion of their data by contacting privacy@emudhra.com.</p>
+          </div>
+        </div>
+
+        <p>
+          By using QA-Gen AI, users acknowledge and consent to the data practices described herein.
+          Users have the right to access, correct, and request deletion of their personal data.
+        </p>
+      </section>
+
+      <!-- 5. DISCLAIMER -->
+      <section class="doc-section" id="disclaimer">
+        <div class="section-header">
+          <div class="section-icon">&#9888;&#65039;</div>
+          <div>
+            <span class="section-num">SECTION 05</span>
+            <div class="section-title">Disclaimers</div>
+          </div>
+        </div>
+
+        <p>
+          QA-Gen AI is provided <strong>"as is"</strong> and <strong>"as available"</strong> for professional
+          use within the eMudhra delivery ecosystem. While eMudhra invests significantly in the quality
+          and accuracy of AI-generated outputs, the following disclaimers apply:
+        </p>
+
+        <ul>
+          <li>AI-generated test cases, scripts, and plans are <strong>recommendations only</strong> and must be reviewed by qualified QA professionals before use in production environments.</li>
+          <li>eMudhra does not warrant that the platform will be error-free, uninterrupted, or free from security vulnerabilities at all times.</li>
+          <li>Test coverage and defect detection rates are indicative and depend on the quality and completeness of input requirements.</li>
+          <li>The platform's AI models are trained on general software engineering knowledge and may not account for domain-specific or organisation-specific nuances without appropriate configuration.</li>
+          <li>eMudhra is not responsible for any business decisions made solely on the basis of AI-generated outputs from this platform.</li>
+        </ul>
+
+        <div class="info-box">
+          ℹ️ <strong>Professional Responsibility:</strong> All AI-generated content should be validated
+          by a certified QA engineer or SDET before deployment. eMudhra recommends that test artefacts
+          pass peer review before integration into CI/CD pipelines.
+        </div>
+      </section>
+
+      <!-- 6. LIABILITY -->
+      <section class="doc-section" id="liability">
+        <div class="section-header">
+          <div class="section-icon">&#9878;&#65039;</div>
+          <div>
+            <span class="section-num">SECTION 06</span>
+            <div class="section-title">Limitation of Liability</div>
+          </div>
+        </div>
+
+        <p>
+          To the maximum extent permitted by applicable law, eMudhra Limited, its directors, employees,
+          partners, agents, suppliers, and licensors shall not be liable for:
+        </p>
+        <ul>
+          <li>Any indirect, incidental, special, consequential, or punitive damages</li>
+          <li>Loss of profits, data, business opportunities, or goodwill</li>
+          <li>Damages arising from reliance on AI-generated outputs without independent professional review</li>
+          <li>System downtime, data loss, or security incidents outside eMudhra's reasonable control</li>
+          <li>Third-party integrations, LLM provider outages, or API failures</li>
+        </ul>
+
+        <p>
+          In all cases, eMudhra's total aggregate liability to any user or organisation shall not exceed
+          the licence fees paid by that organisation to eMudhra in the preceding 12-month period.
+          These limitations apply regardless of the legal theory (contract, tort, statutory, or otherwise).
+        </p>
+
+        <p>
+          Nothing in these terms shall limit liability for fraud, wilful misconduct, or any liability
+          that cannot be excluded under applicable Indian law.
+        </p>
+      </section>
+
+      <!-- 7. ACCEPTABLE USE -->
+      <section class="doc-section" id="acceptable-use">
+        <div class="section-header">
+          <div class="section-icon">&#9989;</div>
+          <div>
+            <span class="section-num">SECTION 07</span>
+            <div class="section-title">Acceptable Use Policy</div>
+          </div>
+        </div>
+
+        <p>
+          Users of QA-Gen AI must adhere to the following acceptable use standards at all times.
+          Violations may result in suspension of access and escalation to the relevant enterprise
+          administrator or legal authority.
+        </p>
+
+        <p><strong>Users must not use QA-Gen AI to:</strong></p>
+        <ul>
+          <li>Test, scan, or probe systems for which they do not have explicit authorisation</li>
+          <li>Generate malicious code, exploits, or security attack scripts</li>
+          <li>Circumvent authentication, authorisation, or audit controls within any system</li>
+          <li>Process or input personal data of third parties without lawful basis</li>
+          <li>Conduct activities that violate applicable law, including data protection, export control, or anti-corruption regulations</li>
+          <li>Attempt to extract, reconstruct, or replicate the underlying AI model weights or training data</li>
+          <li>Share credentials or grant access to unauthorised individuals or organisations</li>
+        </ul>
+
+        <p>
+          eMudhra reserves the right to monitor usage patterns for compliance and security purposes
+          in accordance with its privacy policy.
+        </p>
+      </section>
+
+      <!-- 8. AI OUTPUT -->
+      <section class="doc-section" id="ai-output">
+        <div class="section-header">
+          <div class="section-icon">&#129302;</div>
+          <div>
+            <span class="section-num">SECTION 08</span>
+            <div class="section-title">AI-Generated Content Policy</div>
+          </div>
+        </div>
+
+        <p>
+          QA-Gen AI uses large language models (LLMs) and proprietary AI orchestration to generate
+          test artefacts. The following policy governs the ownership and use of such outputs:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Ownership of Outputs:</strong> AI-generated test cases, plans, and scripts produced
+            using user-provided requirements belong to the user's organisation, subject to eMudhra's
+            underlying IP rights in the methodologies used.
+          </li>
+          <li>
+            <strong>Accuracy:</strong> eMudhra strives for high-quality outputs but does not guarantee
+            100% accuracy, completeness, or fitness for any specific purpose. Human review is mandatory.
+          </li>
+          <li>
+            <strong>No Confidentiality Guarantee via AI:</strong> Users should not input highly sensitive
+            trade secrets into the AI prompt interface unless the platform is deployed in a fully
+            air-gapped or private-cloud configuration.
+          </li>
+          <li>
+            <strong>Model Providers:</strong> Where third-party LLM providers (e.g. Mistral, Ollama, OpenAI)
+            are configured by the user's organisation, their respective terms of service apply to
+            model inference. eMudhra is not responsible for third-party model behaviour.
+          </li>
+        </ul>
+
+        <div class="highlight-box">
+          <span class="hi-icon">&#128161;</span>
+          <span>
+            <strong>Best Practice:</strong> Always have a senior QA engineer or SDET review
+            AI-generated test artefacts before committing them to your test repository or using them
+            as the basis for release decisions.
+          </span>
+        </div>
+      </section>
+
+      <!-- 9. COMPLIANCE -->
+      <section class="doc-section" id="compliance">
+        <div class="section-header">
+          <div class="section-icon">&#127942;</div>
+          <div>
+            <span class="section-num">SECTION 09</span>
+            <div class="section-title">Compliance &amp; Security</div>
+          </div>
+        </div>
+
+        <p>
+          eMudhra Limited maintains robust security and compliance practices across its product portfolio.
+          QA-Gen AI is developed and maintained in alignment with the following standards:
+        </p>
+
+        <div class="two-col">
+          <div class="mini-card">
+            <div class="mini-card-title">&#128274; ISO/IEC 27001</div>
+            <p>Information Security Management System aligned development and operations practices.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128203; OWASP ASVS</div>
+            <p>Application Security Verification Standard Level 2 compliance for web application security.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#127747; DPDP Act 2023</div>
+            <p>Digital Personal Data Protection Act, 2023 (India) — data processing and consent compliance.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128200; ISTQB Aligned</div>
+            <p>Test methodologies, terminology, and artefact standards aligned with ISTQB Foundation and Advanced syllabi.</p>
+          </div>
+        </div>
+
+        <p>
+          eMudhra conducts periodic security assessments of QA-Gen AI, including penetration testing
+          and code reviews. Users who discover potential security vulnerabilities are requested to
+          report them responsibly to <strong>security@emudhra.com</strong> and not to disclose
+          vulnerabilities publicly before a fix is available.
+        </p>
+      </section>
+
+      <!-- 10. CONTACT -->
+      <section class="doc-section" id="contact">
+        <div class="section-header">
+          <div class="section-icon">&#128231;</div>
+          <div>
+            <span class="section-num">SECTION 10</span>
+            <div class="section-title">Contact &amp; Legal Notices</div>
+          </div>
+        </div>
+
+        <p>
+          For legal enquiries, copyright claims, data privacy requests, or to report acceptable-use
+          violations, please contact eMudhra Limited through the appropriate channels below:
+        </p>
+
+        <div class="two-col">
+          <div class="mini-card">
+            <div class="mini-card-title">&#128231; Legal &amp; Compliance</div>
+            <p>legal@emudhra.com<br>For copyright, IP, and licence matters</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128274; Privacy Officer</div>
+            <p>privacy@emudhra.com<br>For data access, correction &amp; deletion requests</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#128737;&#65039; Security Team</div>
+            <p>security@emudhra.com<br>For responsible vulnerability disclosure</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">&#127968; Registered Address</div>
+            <p>eMudhra Limited<br>Bengaluru, Karnataka — 560 038<br>India</p>
+          </div>
+        </div>
+
+        <p>
+          These terms are governed by the laws of <strong>India</strong>. Any disputes arising out of
+          or in connection with these terms shall be subject to the exclusive jurisdiction of the courts
+          of <strong>Bengaluru, Karnataka, India</strong>.
+        </p>
+
+        <div class="info-box">
+          ℹ️ eMudhra Limited reserves the right to amend these terms at any time. Changes will be
+          communicated via the platform or official channels. Continued use of QA-Gen AI after such
+          amendments constitutes acceptance of the updated terms.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- COPYRIGHT FOOTER -->
+  <footer class="copyright-strip">
+    <div class="cr-left">
+      <div class="cr-logo">eMudhra <span>QA-Gen AI</span></div>
+      <div class="cr-line">© 2024–2025 eMudhra Limited. All Rights Reserved.</div>
+      <div class="cr-line">CIN: U72200KA2008PLC045262 | Registered in India</div>
+    </div>
+    <div class="cr-right">
+      <p>Version 1.0.0 | Effective January 1, 2025</p>
+      <p>TestPlan Orchestrator Cloud — Enterprise QA Platform</p>
+      <div class="cr-badge">&#9989; Validated Product</div>
+    </div>
+  </footer>
+
+  <script>
+    // Highlight active TOC link on scroll
+    const sections = document.querySelectorAll('.doc-section');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>

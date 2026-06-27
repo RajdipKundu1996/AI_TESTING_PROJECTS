@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+configs/.env
+node_modules/
+.DS_Store
+# Local dev overrides
+.env.local
+.runlogs/
+.knowledge_store/
+data/.knowledge_store/
+temp/
+UserCredentials.xlsx
+SecurityEvents.json
+test-results/.last-run.json

@@ -1,0 +1,949 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - QA-Gen AI | eMudhra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/shared.css?v=20" />
+  <link rel="stylesheet" href="/src/styles/pages.css?v=11" />
+  <link rel="stylesheet" href="/src/styles/emi.css" />
+  <style>
+    /* -- View button -- */
+    .admin-row-btn.view { background:rgba(99,102,241,0.1); color:#6366f1; border:1px solid rgba(99,102,241,0.3); }
+    .admin-row-btn.view:hover { background:#6366f1; color:#fff; }
+
+    /* -- Sessions badge -- */
+    .sessions-badge { display:inline-block; min-width:22px; padding:1px 6px; border-radius:20px; text-align:center; font-size:0.73rem; font-weight:700; background:#f1f5f9; color:#94a3b8; }
+    .sessions-badge.has-sessions { background:rgba(16,185,129,0.12); color:#059669; }
+
+    /* -- Session row right col -- */
+    .session-right-col { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+    .session-force-logout { font-size:0.68rem; padding:3px 7px; white-space:nowrap; }
+
+    /* -- Token Dashboard -- */
+    .token-dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .token-trend-panel { grid-column:1 / -1; }
+    .token-stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:4px; }
+    .token-stat-card { border-radius:12px; padding:16px 18px; background:#f8fafc; border:1px solid #e2e8f0; border-top:3px solid var(--tok-color); display:flex; flex-direction:column; gap:2px; }
+    .token-stat-card span { font-size:0.72rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; }
+    .token-stat-card strong { font-size:1.5rem; font-weight:800; color:var(--tok-color); line-height:1; }
+    .token-stat-card small { font-size:0.7rem; color:#94a3b8; }
+    .consumer-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #f1f5f9; }
+    .consumer-row:last-child { border:none; }
+    .consumer-rank { width:22px; height:22px; border-radius:50%; background:#f1f5f9; color:#64748b; font-size:0.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .consumer-info { flex:1; min-width:0; }
+    .consumer-name { font-size:0.83rem; font-weight:600; color:#1e293b; margin-bottom:4px; }
+    .consumer-bar-wrap { background:#f1f5f9; border-radius:4px; height:6px; overflow:hidden; }
+    .consumer-bar { height:100%; background:linear-gradient(90deg,#2563eb,#6366f1); border-radius:4px; transition:width 0.6s ease; }
+    .consumer-tokens { font-size:0.8rem; font-weight:700; color:#6366f1; white-space:nowrap; }
+    .trend-bars { display:flex; gap:8px; align-items:flex-end; height:140px; padding:0 4px; }
+    .trend-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; }
+    .trend-bar-wrap { flex:1; width:100%; display:flex; align-items:flex-end; }
+    .trend-bar { width:100%; background:linear-gradient(180deg,#6366f1,#2563eb); border-radius:4px 4px 0 0; min-height:4px; transition:height 0.5s ease; }
+    .trend-label { font-size:0.68rem; color:#64748b; font-weight:600; }
+    .trend-val { font-size:0.65rem; color:#94a3b8; }
+
+    @media (max-width:900px) {
+      .token-dash-grid { grid-template-columns:1fr; }
+      .token-trend-panel { grid-column:auto; }
+      .token-stat-row { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body class="theme-light admin-page page-fade">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span data-tokens>0</span> tokens</div>
+      <button class="admin-help-top" type="button" data-admin-tab-target="help">Help</button>
+      <div class="profile-trigger" id="profileTrigger"><div class="avatar" data-user-initials>AD</div><div class="profile-info"><div class="p-name" data-user-name>Admin</div><div class="p-role" data-user-role>Administrator</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <button class="dropdown-item" data-action="about">About</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section"><div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD &rarr; LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section"><div class="sidebar-label">Admin Portal</div>
+      <a href="admin.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto"><button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button></div>
+  </aside>
+
+  <main class="main-content admin-main">
+    <section class="admin-hero">
+      <div>
+        <div class="admin-eyebrow">Enterprise Administration</div>
+        <h1>Admin Command Center</h1>
+        <p>Manage users, monitor active sessions, review immutable security events, and reach eMudhra support from one clear workspace.</p>
+      </div>
+      <div class="admin-hero-orbit" aria-hidden="true">
+        <span></span><span></span><span></span>
+        <strong data-user-initials>SK</strong>
+      </div>
+    </section>
+
+    <section class="admin-kpi-grid" id="adminKpiGrid"></section>
+
+    <nav class="admin-tabs" aria-label="Admin sections">
+      <button class="active" type="button" data-admin-tab="users"><span>UM</span>User Management</button>
+      <button type="button" data-admin-tab="tokens"><span>TD</span>Token Dashboard</button>
+      <button type="button" data-admin-tab="security"><span>SL</span>Security Logs</button>
+      <button type="button" data-admin-tab="help"><span>HP</span>Help & Contact</button>
+      <button type="button" data-admin-tab="about"><span>AB</span>About Us</button>
+    </nav>
+
+    <section class="admin-section active" id="adminUsers">
+      <div class="admin-workspace-grid">
+        <article class="admin-panel user-management-panel">
+          <div class="admin-panel-header">
+            <div>
+              <h2>User Management</h2>
+              <p>Search, inspect, and govern internal QA-Gen AI users.</p>
+            </div>
+            <button class="admin-primary-action" type="button" id="inviteUserBtn">Invite User</button>
+          </div>
+          <div class="admin-toolbar">
+            <label class="admin-search-field"><span>Search</span><input id="adminUserSearch" type="search" placeholder="Name, role, location, email..." /></label>
+            <select id="adminRoleFilter" aria-label="Filter users by role">
+              <option value="all">All roles</option>
+              <option value="Administrator">Administrator</option>
+              <option value="QA Lead">QA Lead</option>
+              <option value="QA Engineer">QA Engineer</option>
+              <option value="Viewer">Viewer</option>
+            </select>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-data-table">
+              <thead><tr><th>User</th><th>Emp ID</th><th>Organization</th><th>Role</th><th>Status</th><th>Phone</th><th>Location</th><th>Registered</th><th>Sessions</th><th>Tokens</th><th>Last Seen</th><th>Action</th></tr></thead>
+              <tbody id="adminUsersBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <aside class="admin-panel session-panel">
+          <div class="admin-panel-header compact">
+            <div>
+              <h2>Concurrent Sessions</h2>
+              <p id="concurrentCount">0 online</p>
+            </div>
+          </div>
+          <div class="session-list" id="userLocationList"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="admin-section" id="adminSecurity">
+      <div class="security-layout">
+        <article class="admin-panel security-summary-panel">
+          <div class="admin-panel-header">
+            <div>
+              <h2>Security Overview</h2>
+              <p>High-signal event monitoring for access, tokens, integrations, and admin actions.</p>
+            </div>
+            <span class="immutable-badge">Immutable Audit Trail</span>
+          </div>
+          <div class="security-signal-grid" id="securitySignals"></div>
+        </article>
+        <article class="admin-panel">
+          <div class="admin-panel-header">
+            <div>
+              <h2>Security Logs</h2>
+              <p>Logs cannot be cleared. Use filters to inspect activity by severity or user.</p>
+            </div>
+          </div>
+          <div class="admin-toolbar">
+            <label class="admin-search-field"><span>Search</span><input id="securityLogSearch" type="search" placeholder="Activity, user, type, IP..." /></label>
+            <select id="securitySeverityFilter" aria-label="Filter logs by severity">
+              <option value="all">All severity</option>
+              <option value="Critical">Critical</option>
+              <option value="Warning">Warning</option>
+              <option value="Info">Info</option>
+            </select>
+          </div>
+          <div class="admin-table-wrap logs-container">
+            <table class="admin-data-table security-table">
+              <thead><tr><th>Date</th><th>Time</th><th>Activity</th><th>Type</th><th>Severity</th><th>User</th><th>IP / Device</th></tr></thead>
+              <tbody id="securityLogsBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="admin-section" id="adminTokens">
+      <div class="token-dash-grid">
+        <article class="admin-panel token-summary-panel">
+          <div class="admin-panel-header">
+            <div><h2>Token Utilization</h2><p>Consumption across all registered users in this workspace.</p></div>
+          </div>
+          <div class="token-stat-row" id="tokenStatRow"></div>
+        </article>
+        <article class="admin-panel token-consumers-panel">
+          <div class="admin-panel-header compact">
+            <div><h2>Top Consumers</h2><p>Ranked by lifetime usage</p></div>
+          </div>
+          <div class="token-consumers-list" id="tokenConsumersList"></div>
+        </article>
+        <article class="admin-panel token-trend-panel">
+          <div class="admin-panel-header compact">
+            <div><h2>Daily Trend</h2><p>Last 7 days</p></div>
+          </div>
+          <div class="token-trend-chart" id="tokenTrendChart"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="admin-section" id="adminHelp">
+      <div class="help-grid">
+        <article class="admin-panel help-lead-card">
+          <div class="admin-eyebrow">Need Assistance?</div>
+          <h2>Contact eMudhra Support</h2>
+          <p>Reach the support team for product assistance, account issues, enterprise onboarding, and QA-Gen AI administration support.</p>
+          <div class="help-actions">
+            <a href="mailto:support@emudhra.com">Email Support</a>
+            <a href="tel:04274030900">Call Support</a>
+            <a href="https://emudhra.com/en/contact-us" target="_blank" rel="noopener">Contact Page</a>
+          </div>
+        </article>
+        <article class="admin-panel contact-card">
+          <span>Email</span>
+          <strong>support@emudhra.com</strong>
+          <p>Use email for account support, product help, and enterprise service requests.</p>
+        </article>
+        <article class="admin-panel contact-card">
+          <span>Phone</span>
+          <strong>0427 4030900</strong>
+          <p>Published support contact number on eMudhra's official contact page.</p>
+        </article>
+        <article class="admin-panel contact-card">
+          <span>Website</span>
+          <strong>www.emudhra.com</strong>
+          <p><a href="https://www.emudhra.com" target="_blank" rel="noopener">Visit official website</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="admin-section" id="adminAbout">
+      <div class="about-admin-grid">
+        <article class="admin-panel about-product-card">
+          <div class="admin-eyebrow">QA-Gen AI</div>
+          <h2>Enterprise Test Intelligence Platform</h2>
+          <p>QA-Gen AI helps teams convert PRDs, API specifications, user stories, and acceptance criteria into enterprise QA deliverables with traceability, security coverage, and export-ready reports.</p>
+          <div class="about-pill-row">
+            <span>PRD Analysis</span><span>Test Case Generation</span><span>Security Coverage</span><span>Repository Governance</span>
+          </div>
+        </article>
+        <article class="admin-panel about-company-card">
+          <h2>About eMudhra</h2>
+          <p>eMudhra delivers digital identity, trust services, PKI, digital signatures, e-authentication, and enterprise cybersecurity solutions globally.</p>
+          <a class="admin-primary-action link-action" href="https://www.emudhra.com" target="_blank" rel="noopener">Visit eMudhra</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer"><div class="footer-brand-row"><div class="footer-emudhra-logo"><img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra" class="footer-logo-img" /></div></div><div class="footer-text">(c) 2026 eMudhra. All rights reserved.</div><div class="footer-star">*</div></footer>
+</div>
+
+<!-- View User Modal (read-only) -->
+<div class="modal-overlay" id="viewUserModal" style="display:none">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">User Profile</div>
+      <button class="modal-close" onclick="closeModal('viewUserModal')" type="button">&times;</button>
+    </div>
+    <div class="modal-body" id="viewUserBody" style="padding:24px"></div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal" style="display:none">
+  <div class="modal settings-modal">
+    <div class="modal-header settings-modal-header">
+      <div><div class="modal-title">Settings</div></div>
+      <button class="modal-close" data-close-modal type="button">�</button>
+    </div>
+    <div class="modal-body settings-modal-body">
+      <div class="settings-grid">
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="themeSelect">Theme</label>
+          <select class="form-input-dark" id="themeSelect" data-setting="theme">
+            <option value="light">Light</option>
+            <option value="emudhra">eMudhra Soft</option>
+            <option value="dark">Dark</option>
+            <option value="midnight">Midnight</option>
+            <option value="ocean">Ocean Deep</option>
+            <option value="forest">Forest Dark</option>
+            <option value="carbon">Carbon Black</option>
+            <option value="royal">Royal Purple</option>
+            <option value="dawn">Dawn Warm</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="fontSizeSelect">Font Size</label>
+          <select class="form-input-dark" id="fontSizeSelect" data-setting="fontSize">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- About Modal -->
+<div class="modal-overlay" id="aboutModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">About QA-Gen AI</div>
+      <button type="button" class="modal-close" data-close-modal>�</button>
+    </div>
+    <div class="modal-body">
+      <p class="about-modal-lead"><strong>QA-Gen AI v2.0</strong> � Enterprise Test Intelligence Platform by eMudhra.</p>
+      <p class="about-modal-body"><a href="https://www.emudhra.com" target="_blank" rel="noopener noreferrer">www.emudhra.com</a> � eMudhra delivers digital identity, trust services, PKI, digital signatures, e-authentication, and enterprise cybersecurity solutions globally.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="https://emudhra.com/en/contact-us" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Contact eMudhra</a>
+      <button type="button" class="btn btn-outline" data-close-modal>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite User Modal -->
+<div class="modal-overlay" id="inviteUserModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Invite New User</div>
+      <button type="button" class="modal-close" onclick="closeModal('inviteUserModal')">�</button>
+    </div>
+    <form onsubmit="event.preventDefault(); saveInviteUser();">
+    <div class="modal-body">
+      <div class="admin-profile-form">
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="inviteName">Full Name <span class="req-star">*</span></label>
+          <input type="text" id="inviteName" class="form-input-dark" placeholder="e.g. Riya Sharma" required />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="inviteEmail">Email Address <span class="req-star">*</span></label>
+          <input type="email" id="inviteEmail" class="form-input-dark" placeholder="user@emudhra.com" required />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="inviteRole">Role</label>
+          <select id="inviteRole" class="form-input-dark">
+            <option value="QA Engineer">QA Engineer</option>
+            <option value="QA Lead">QA Lead</option>
+            <option value="Viewer">Viewer</option>
+            <option value="Administrator">Administrator</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="inviteLocation">Location</label>
+          <input type="text" id="inviteLocation" class="form-input-dark" placeholder="e.g. Bangalore, India" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal('inviteUserModal')">Cancel</button>
+      <button type="submit" class="btn btn-primary">Send Invite</button>
+    </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editUserModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Edit User</div>
+      <button type="button" class="modal-close" onclick="closeModal('editUserModal')">�</button>
+    </div>
+    <div class="modal-body">
+      <div class="admin-profile-form">
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editUserName">Full Name <span class="req-star">*</span></label>
+          <input type="text" id="editUserName" class="form-input-dark" placeholder="Full name" />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editUserEmail">Email Address <span class="req-star">*</span></label>
+          <input type="email" id="editUserEmail" class="form-input-dark" placeholder="user@emudhra.com" />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editUserRole">Role</label>
+          <select id="editUserRole" class="form-input-dark">
+            <option value="Administrator">Administrator</option>
+            <option value="QA Lead">QA Lead</option>
+            <option value="QA Engineer">QA Engineer</option>
+            <option value="Viewer">Viewer</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editUserLocation">Location</label>
+          <input type="text" id="editUserLocation" class="form-input-dark" placeholder="City, Country" />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editUserStatus">Status</label>
+          <select id="editUserStatus" class="form-input-dark">
+            <option value="Active">Active</option>
+            <option value="Idle">Idle</option>
+            <option value="Suspended">Suspended</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal('editUserModal')">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="saveEditUser()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Edit Profile</div>
+      <button type="button" class="modal-close" data-close-modal>�</button>
+    </div>
+    <div class="modal-body">
+      <div class="ep-photo-wrap">
+        <div class="ep-photo-ring" id="epPhotoRing">
+          <div class="ep-photo-inner">
+            <div class="avatar lg" id="epAvatarInitials">AD</div>
+            <img class="ep-photo-img" id="epPhotoImg" alt="Profile photo" style="display:none" />
+          </div>
+          <div class="ep-photo-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Change Photo</span>
+          </div>
+          <input type="file" id="epPhotoInput" accept=".jpg,.jpeg,.png,.jfif" style="display:none" />
+        </div>
+        <div class="ep-spec-box">
+          <div class="ep-spec-title">Photo Requirements</div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Accepted formats</span>
+            <span class="ep-spec-val">JPG &middot; JPEG &middot; PNG &middot; JFIF</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Minimum file size</span>
+            <span class="ep-spec-val">100 KB</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Maximum file size</span>
+            <span class="ep-spec-val">5 MB</span>
+          </div>
+          <div id="epPhotoError" class="ep-photo-error" style="display:none;margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="admin-profile-form">
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editName">Display Name</label>
+          <input type="text" id="editName" class="form-input-dark" placeholder="Your name" />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editEmail">Email Address</label>
+          <input type="email" id="editEmail" class="form-input-dark" placeholder="you@emudhra.com" />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark" for="editRole">Role</label>
+          <input type="text" id="editRole" class="form-input-dark" placeholder="Administrator" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+      <button type="button" class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal (required by shared.js showConfirm) -->
+<div class="modal-overlay" id="confirmModal" style="display:none">
+  <div class="modal modal-sm">
+    <div class="modal-header"><div class="modal-title">Confirm</div><button type="button" class="modal-close" data-close-modal>x</button></div>
+    <div class="modal-body"><p id="confirmMessage" class="modal-body-text"></p></div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" data-close-modal id="confirmCancel">No</button>
+      <button type="button" class="btn btn-danger" id="confirmOk">Yes</button>
+    </div>
+  </div>
+</div>
+
+<script src="/src/app/shared.js?v=20"></script>
+<script>
+  const AUTH_API = 'http://127.0.0.1:3005';
+  let adminUsers = [];
+
+  function getInitials(name) {
+    return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '??';
+  }
+
+  function fmtDateShort(val) {
+    if (!val) return '—';
+    var s = String(val).trim();
+    if (/^\d{2}\/\d{2}\/\d{4}/.test(s)) return s.split(' ')[0];
+    try { var d = new Date(s); if (!isNaN(d.getTime())) return d.toLocaleDateString('en-GB'); } catch(_) {}
+    return s.split('T')[0] || s;
+  }
+
+  let concurrentSessions = [];
+  let kpiData = { registeredUsers: 0, activeSessions: 0, securityEvents: 0, tokensConsumed: 0 };
+  let securityEventsCache = [];
+
+  async function loadUsersFromServer() {
+    try {
+      const resp = await fetch(AUTH_API + '/api/admin/users');
+      const data = await resp.json();
+      if (data.success && Array.isArray(data.users)) {
+        adminUsers = data.users.map(u => {
+          const sessionSt = u.accountStatus === 'Suspended' ? 'Suspended' : (u.sessionStatus || 'Offline');
+          const ua = u.userAgent || '';
+          const device = ua.includes('Chrome') ? 'Chrome / Windows' : ua.includes('Firefox') ? 'Firefox / Windows' : ua ? 'Browser' : '—';
+          const lastSeenVal = u.lastSeen === 'Forced out' ? 'Forced out' : (u.lastSeen ? fmtDateShort(u.lastSeen) : '—');
+          return {
+            name:           u.fullName     || '—',
+            initials:       getInitials(u.fullName),
+            email:          u.email        || '',
+            employeeId:     u.employeeId   || '—',
+            org:            u.organization || '—',
+            phone:          u.mobile       || '—',
+            role:           u.accountType  || 'User',
+            status:         sessionSt,
+            accountStatus:  u.accountStatus || 'Active',
+            registeredDate: fmtDateShort(u.registeredAt),
+            lastSeen:       lastSeenVal,
+            tokens:         0,
+            device:         device,
+            ip:             '—',
+            location:       u.location || '—',
+            activeSessions: u.sessionCount || 0
+          };
+        });
+      } else {
+        showToast('No user data returned from server.', 'warning');
+      }
+    } catch (e) {
+      console.error('[Admin] Failed to load users:', e);
+      showToast('Could not reach auth server on port 3005. Ensure it is running.', 'error');
+    }
+  }
+
+  async function loadConcurrentSessions() {
+    try {
+      const resp = await fetch(AUTH_API + '/api/admin/sessions/concurrent');
+      const data = await resp.json();
+      if (data.success) concurrentSessions = data.sessions || [];
+    } catch (e) { console.error('[Admin] Sessions fetch failed:', e); }
+  }
+
+  async function loadKpiFromServer() {
+    try {
+      const resp = await fetch(AUTH_API + '/api/stats/kpi');
+      const data = await resp.json();
+      if (data.success) kpiData = data;
+    } catch (e) { /* silent */ }
+  }
+
+  async function loadSecurityEventsFromServer() {
+    try {
+      const resp = await fetch(AUTH_API + '/api/logs/security?limit=100');
+      const data = await resp.json();
+      if (data.success) securityEventsCache = data.events || [];
+    } catch (e) { /* silent */ }
+  }
+
+  function evtSeverity(type) {
+    if (/FORCE_LOGOUT|SESSION_TAKEOVER|SUSPEND/i.test(type)) return 'Critical';
+    if (/LOGOUT|HEARTBEAT_FAIL/i.test(type)) return 'Warning';
+    return 'Info';
+  }
+  function evtLabel(type) {
+    const MAP = { LOGIN: 'User Login', LOGOUT: 'User Logout', FORCE_LOGOUT: 'Force Logout', SESSION_TAKEOVER: 'Session Takeover', SUSPEND_USER: 'Account Suspended', HEARTBEAT_FAIL: 'Heartbeat Failed', LOCATION_DETECTED: 'Location Detected', INVITE_USER: 'User Invited' };
+    return MAP[type] || type;
+  }
+  function fmtEvtDate(ts) {
+    if (!ts) return '—';
+    try { const d = new Date(ts); return d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString(); } catch { return ts; }
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function activateAdminTab(tabName) {
+    document.querySelectorAll('[data-admin-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.adminTab === tabName));
+    document.querySelectorAll('.admin-section').forEach(section => section.classList.remove('active'));
+    document.getElementById(`admin${tabName.charAt(0).toUpperCase()}${tabName.slice(1)}`)?.classList.add('active');
+    if (tabName === 'security') renderSecurityLogs();
+    if (tabName === 'tokens') renderTokenDashboard();
+  }
+
+  function openViewUserModal(email) {
+    const user = adminUsers.find(u => u.email === email);
+    if (!user) return;
+    const statusColor = { Active: '#10b981', Idle: '#f59e0b', Suspended: '#ef4444' }[user.status] || '#64748b';
+    document.getElementById('viewUserBody').innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;font-weight:700;flex-shrink:0">${escapeHtml(user.initials)}</div>
+        <div>
+          <div style="font-size:1.1rem;font-weight:700;color:#1e293b">${escapeHtml(user.name)}</div>
+          <div style="font-size:0.82rem;color:#64748b">${escapeHtml(user.email)}</div>
+          <span style="display:inline-block;margin-top:4px;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;background:${statusColor}22;color:${statusColor}">${escapeHtml(user.status)}</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${[
+          ['Employee ID', user.employeeId || '�'],
+          ['Organization', user.org || '�'],
+          ['Role', user.role],
+          ['Phone', user.phone || '�'],
+          ['Location', user.location],
+          ['Registered', user.registeredDate || '�'],
+          ['Active Sessions', user.activeSessions ?? 0],
+          ['Tokens Used', user.tokens.toLocaleString()],
+          ['Last Seen', user.lastSeen],
+          ['IP Address', user.ip || '�'],
+          ['Device', user.device || '�'],
+        ].map(([label, val]) => `
+          <div style="background:#f8fafc;border-radius:8px;padding:10px 12px">
+            <div style="font-size:0.69rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">${label}</div>
+            <div style="font-size:0.84rem;font-weight:600;color:#1e293b">${escapeHtml(String(val))}</div>
+          </div>`).join('')}
+      </div>`;
+    document.getElementById('viewUserModal').style.display = 'flex';
+  }
+
+  function renderTokenDashboard() {
+    const total = adminUsers.reduce((s, u) => s + (u.tokens || 0), 0);
+    const stats = [
+      { label: 'Today', value: Math.round(total * 0.057), color: '#2563eb' },
+      { label: 'This Week', value: Math.round(total * 0.39), color: '#7c3aed' },
+      { label: 'This Month', value: Math.round(total * 0.87), color: '#0891b2' },
+      { label: 'Lifetime', value: total, color: '#059669' }
+    ];
+    document.getElementById('tokenStatRow').innerHTML = stats.map(s => `
+      <div class="token-stat-card" style="--tok-color:${s.color}">
+        <span>${escapeHtml(s.label)}</span>
+        <strong>${s.value.toLocaleString()}</strong>
+        <small>tokens</small>
+      </div>`).join('');
+
+    const sorted = [...adminUsers].sort((a, b) => (b.tokens || 0) - (a.tokens || 0));
+    const maxTok = sorted[0]?.tokens || 1;
+    document.getElementById('tokenConsumersList').innerHTML = sorted.map((u, i) => `
+      <div class="consumer-row">
+        <div class="consumer-rank">${i + 1}</div>
+        <div class="consumer-info">
+          <div class="consumer-name">${escapeHtml(u.name)}</div>
+          <div class="consumer-bar-wrap">
+            <div class="consumer-bar" style="width:${Math.round((u.tokens / maxTok) * 100)}%"></div>
+          </div>
+        </div>
+        <div class="consumer-tokens">${(u.tokens || 0).toLocaleString()}</div>
+      </div>`).join('');
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const dayTokens = [1840, 3120, 2680, 4210, 3990, 1540, 760];
+    const maxDay = Math.max(...dayTokens);
+    document.getElementById('tokenTrendChart').innerHTML = `
+      <div class="trend-bars">
+        ${days.map((d, i) => `
+          <div class="trend-col">
+            <div class="trend-bar-wrap">
+              <div class="trend-bar" style="height:${Math.round((dayTokens[i] / maxDay) * 100)}%" title="${dayTokens[i].toLocaleString()} tokens"></div>
+            </div>
+            <div class="trend-label">${d}</div>
+            <div class="trend-val">${dayTokens[i] >= 1000 ? (dayTokens[i]/1000).toFixed(1) + 'k' : dayTokens[i]}</div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  function renderKpis() {
+    const cards = [
+      ['Registered Users', kpiData.registeredUsers || adminUsers.length, 'Total workspace identities', '#2563eb'],
+      ['Active Sessions', kpiData.activeSessions || 0, 'Currently online users', '#10b981'],
+      ['Security Events', kpiData.securityEvents || 0, 'Immutable audit records', '#f59e0b'],
+      ['Tokens Consumed', (kpiData.tokensConsumed || 0).toLocaleString(), 'Usage across all users', '#8b5cf6']
+    ];
+    document.getElementById('adminKpiGrid').innerHTML = cards.map(card => `
+      <article class="admin-kpi-card" style="--kpi-color:${card[3]}">
+        <span>${escapeHtml(card[0])}</span>
+        <strong>${escapeHtml(String(card[1]))}</strong>
+        <small>${escapeHtml(card[2])}</small>
+      </article>
+    `).join('');
+  }
+
+  function renderUsers() {
+    const query = (document.getElementById('adminUserSearch')?.value || '').toLowerCase().trim();
+    const role = document.getElementById('adminRoleFilter')?.value || 'all';
+    const rows = adminUsers.filter(user => {
+      const matchRole = role === 'all' || user.role === role;
+      const matchSearch = !query || [user.name, user.email, user.role, user.location, user.status].join(' ').toLowerCase().includes(query);
+      return matchRole && matchSearch;
+    });
+    document.getElementById('adminUsersBody').innerHTML = rows.length ? rows.map(user => `
+      <tr>
+        <td><div class="admin-user-cell"><span>${escapeHtml(user.initials)}</span><div><strong>${escapeHtml(user.name)}</strong><small>${escapeHtml(user.email)}</small></div></div></td>
+        <td><code style="font-size:0.75rem;color:#6366f1">${escapeHtml(user.employeeId || '�')}</code></td>
+        <td>${escapeHtml(user.org || '�')}</td>
+        <td>${escapeHtml(user.role)}</td>
+        <td><span class="admin-status ${user.status.toLowerCase()}">${escapeHtml(user.status)}</span></td>
+        <td><small>${escapeHtml(user.phone || '�')}</small></td>
+        <td>${escapeHtml(user.location)}</td>
+        <td><small>${escapeHtml(user.registeredDate || '�')}</small></td>
+        <td><span class="sessions-badge ${(user.activeSessions || 0) > 0 ? 'has-sessions' : ''}">${user.activeSessions || 0}</span></td>
+        <td>${user.tokens.toLocaleString()}</td>
+        <td>${escapeHtml(user.lastSeen)}</td>
+        <td class="admin-action-cell">
+          <button class="admin-row-btn view" type="button" onclick="openViewUserModal('${escapeHtml(user.email)}')" title="View user"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="admin-row-btn edit" type="button" onclick="openEditUserModal('${escapeHtml(user.email)}')" title="Edit user"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="admin-row-btn ${user.accountStatus === 'Suspended' ? 'review' : 'terminate'}" type="button" onclick="terminateUser('${escapeHtml(user.email)}')">${user.accountStatus === 'Suspended' ? 'Restore' : 'Suspend'}</button>
+          <button class="admin-row-btn del" type="button" onclick="deleteUser('${escapeHtml(user.email)}')" title="Delete user"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="12"><div class="admin-empty">No users match the selected filters.</div></td></tr>';
+    document.querySelectorAll('[data-terminate]').forEach(btn => btn.addEventListener('click', () => {
+      showToast(`Session action queued for ${btn.dataset.terminate}`, 'warning');
+    }));
+    renderSessions();
+  }
+
+  function renderSessions() {
+    const online = concurrentSessions.filter(s => s.status !== 'Offline');
+    const activeCt = online.filter(s => s.status === 'Active').length;
+    document.getElementById('concurrentCount').textContent = `${activeCt} online`;
+    document.getElementById('userLocationList').innerHTML = online.length ? online.map(s => `
+      <div class="user-loc-row">
+        <div class="user-loc-flag">${escapeHtml(getInitials(s.fullName))}</div>
+        <div class="user-loc-info">
+          <div class="user-loc-name">${escapeHtml(s.fullName)}</div>
+          <div class="user-loc-place">${escapeHtml(s.accountType || '')}${s.location && s.location !== '—' ? ' &nbsp;·&nbsp; ' + escapeHtml(s.location) : ''}</div>
+          <div class="user-loc-place" style="opacity:0.6;font-size:0.75rem">${escapeHtml(s.email)}</div>
+        </div>
+        <div class="session-right-col">
+          <div class="user-loc-status ${s.status.toLowerCase()}">${escapeHtml(s.status)}</div>
+          <button class="admin-row-btn terminate session-force-logout" type="button" onclick="forceLogoutUser('${escapeHtml(s.email)}')" title="Force Logout">Force Logout</button>
+        </div>
+      </div>`).join('') : '<div style="padding:16px;color:#94a3b8;font-size:0.82rem;text-align:center">No active sessions</div>';
+  }
+
+  async function forceLogoutUser(email) {
+    const user = adminUsers.find(u => u.email === email) || { name: email };
+    try {
+      const currentUser = (typeof AppState !== 'undefined' && AppState.user) ? AppState.user : {};
+      const resp = await fetch(AUTH_API + '/api/auth/force-logout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, adminEmail: currentUser.email || 'admin' })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        await Promise.all([loadUsersFromServer(), loadConcurrentSessions(), loadKpiFromServer()]);
+        renderUsers(); renderSessions(); renderKpis();
+        showToast(`${user.name}'s session forcefully terminated.`, 'warning');
+      } else {
+        showToast('Force logout failed: ' + (data.error || ''), 'error');
+      }
+    } catch (e) { showToast('Error connecting to auth server.', 'error'); }
+  }
+
+  function renderSecuritySignals() {
+    const critical = securityEventsCache.filter(e => evtSeverity(e.event_type) === 'Critical').length;
+    const warning  = securityEventsCache.filter(e => evtSeverity(e.event_type) === 'Warning').length;
+    const info     = securityEventsCache.filter(e => evtSeverity(e.event_type) === 'Info').length;
+    const signals  = [['Critical', critical, '#ef4444'], ['Warning', warning, '#f59e0b'], ['Info', info, '#10b981'], ['Protected Users', adminUsers.length, '#2563eb']];
+    document.getElementById('securitySignals').innerHTML = signals.map(s => `
+      <div class="security-signal" style="--signal-color:${s[2]}"><span>${s[0]}</span><strong>${s[1]}</strong></div>`).join('');
+  }
+
+  async function renderSecurityLogs() {
+    await loadSecurityEventsFromServer();
+    const query    = (document.getElementById('securityLogSearch')?.value || '').toLowerCase().trim();
+    const severity = document.getElementById('securitySeverityFilter')?.value || 'all';
+    const filtered = securityEventsCache.filter(ev => {
+      const sev = evtSeverity(ev.event_type);
+      if (severity !== 'all' && sev.toLowerCase() !== severity.toLowerCase()) return false;
+      if (query) {
+        const blob = [ev.event_type, ev.actor_user_id, ev.target_user_id, ev.ip_address, ev.timestamp, ev.session_id].join(' ').toLowerCase();
+        if (!blob.includes(query)) return false;
+      }
+      return true;
+    });
+    const fmtTs = ts => { try { const d = new Date(ts); return d.toLocaleDateString('en-GB') + '<br><small style="opacity:.7">' + d.toLocaleTimeString() + '</small>'; } catch { return ts||'—'; } };
+    document.getElementById('securityLogsBody').innerHTML = filtered.length ? filtered.map(ev => {
+      const sev = evtSeverity(ev.event_type);
+      return `<tr>
+        <td>${fmtTs(ev.timestamp)}</td>
+        <td>${escapeHtml(fmtEvtDate(ev.timestamp).split(' ')[1]||'')}</td>
+        <td>${escapeHtml(evtLabel(ev.event_type))}</td>
+        <td><span class="log-type">${escapeHtml(ev.event_type||'')}</span></td>
+        <td><span class="severity-badge ${sev.toLowerCase()}">${sev}</span></td>
+        <td>${escapeHtml(ev.actor_user_id||ev.target_user_id||'system')}</td>
+        <td><strong>${escapeHtml(ev.ip_address||'—')}</strong><small>${escapeHtml(ev.target_user_id||'')}</small></td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="7"><div class="admin-empty">No security events recorded yet. Events appear here after login, logout, and admin actions.</div></td></tr>';
+    renderSecuritySignals();
+  }
+
+  function openInviteUserModal() {
+    const overlay = document.getElementById('inviteUserModal');
+    if (!overlay) return;
+    overlay.querySelector('form').reset();
+    overlay.style.display = 'flex';
+  }
+
+  function closeModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  }
+
+  function openEditUserModal(email) {
+    const user = adminUsers.find(u => u.email === email);
+    if (!user) return;
+    const overlay = document.getElementById('editUserModal');
+    if (!overlay) return;
+    overlay.querySelector('#editUserName').value = user.name;
+    overlay.querySelector('#editUserEmail').value = user.email;
+    overlay.querySelector('#editUserRole').value = user.role;
+    overlay.querySelector('#editUserLocation').value = user.location;
+    overlay.querySelector('#editUserStatus').value = user.status;
+    overlay.dataset.editEmail = email;
+    overlay.style.display = 'flex';
+  }
+
+  function saveEditUser() {
+    const overlay = document.getElementById('editUserModal');
+    if (!overlay) return;
+    const origEmail = overlay.dataset.editEmail;
+    const idx = adminUsers.findIndex(u => u.email === origEmail);
+    if (idx === -1) return;
+    const name = overlay.querySelector('#editUserName').value.trim();
+    const email = overlay.querySelector('#editUserEmail').value.trim();
+    const role = overlay.querySelector('#editUserRole').value;
+    const location = overlay.querySelector('#editUserLocation').value.trim();
+    const status = overlay.querySelector('#editUserStatus').value;
+    if (!name || !email) { showToast('Name and email are required.', 'error'); return; }
+    adminUsers[idx] = Object.assign({}, adminUsers[idx], { name, email, role, location, status, initials: getInitials(name) });
+    closeModal('editUserModal');
+    renderUsers();
+    renderKpis();
+    showToast(`User "${name}" updated (session only).`, 'success');
+  }
+
+  function saveInviteUser() {
+    showToast('To add a new user, please use the Register page.', 'warning');
+    closeModal('inviteUserModal');
+  }
+
+  async function terminateUser(email) {
+    const user = adminUsers.find(u => u.email === email);
+    if (!user) return;
+    const newStatus = user.status === 'Suspended' ? 'Active' : 'Suspended';
+    try {
+      const resp = await fetch(AUTH_API + '/api/admin/user-status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, status: newStatus })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        await loadUsersFromServer();
+        renderUsers();
+        renderKpis();
+        showToast(newStatus === 'Active' ? `${user.name}'s account restored.` : `${user.name}'s account suspended.`, newStatus === 'Active' ? 'success' : 'warning');
+      } else {
+        showToast('Failed to update status: ' + (data.message || data.error || ''), 'error');
+      }
+    } catch (e) {
+      showToast('Error connecting to auth server.', 'error');
+    }
+  }
+
+  async function deleteUser(email) {
+    const user = adminUsers.find(u => u.email === email);
+    if (!user) return;
+    if (!confirm(`Delete user "${user.name}"? This cannot be undone.`)) return;
+    try {
+      const resp = await fetch(AUTH_API + '/api/admin/user', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        await loadUsersFromServer();
+        renderUsers();
+        renderKpis();
+        showToast(`User "${user.name}" permanently removed.`, 'success');
+      } else {
+        showToast('Failed to delete user: ' + (data.message || data.error || ''), 'error');
+      }
+    } catch (e) {
+      showToast('Error connecting to auth server.', 'error');
+    }
+  }
+
+  document.querySelectorAll('[data-admin-tab]').forEach(tab => tab.addEventListener('click', () => activateAdminTab(tab.dataset.adminTab)));
+  document.querySelectorAll('[data-admin-tab-target]').forEach(btn => btn.addEventListener('click', () => activateAdminTab(btn.dataset.adminTabTarget)));
+  document.getElementById('adminUserSearch')?.addEventListener('input', renderUsers);
+  document.getElementById('adminRoleFilter')?.addEventListener('change', renderUsers);
+  document.getElementById('securityLogSearch')?.addEventListener('input', renderSecurityLogs);
+  document.getElementById('securitySeverityFilter')?.addEventListener('change', renderSecurityLogs);
+  document.getElementById('inviteUserBtn')?.addEventListener('click', openInviteUserModal);
+
+  async function refreshAll() {
+    await Promise.all([loadUsersFromServer(), loadConcurrentSessions(), loadKpiFromServer()]);
+    renderUsers();
+    renderSessions();
+    renderKpis();
+  }
+
+  // 15-second live poll
+  setInterval(refreshAll, 15000);
+
+  (async function init() {
+    await Promise.all([loadUsersFromServer(), loadConcurrentSessions(), loadKpiFromServer()]);
+    renderKpis();
+    renderUsers();
+    renderSessions();
+    renderSecurityLogs();
+    if (window.location.hash === '#security') activateAdminTab('security');
+    if (window.location.hash === '#help') activateAdminTab('help');
+    if (window.location.hash === '#about') activateAdminTab('about');
+  })();
+</script>
+<script src="/src/components/ui/emi.js"></script>
+</body>
+</html>
+
+

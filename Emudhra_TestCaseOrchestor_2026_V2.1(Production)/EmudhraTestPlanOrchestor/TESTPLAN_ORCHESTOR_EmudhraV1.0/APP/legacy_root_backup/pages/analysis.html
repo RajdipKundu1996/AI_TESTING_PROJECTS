@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Analysis - QA-Gen AI | eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Outfit:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css?v=20" />
+  <link rel="stylesheet" href="../css/pages.css?v=10" />
+  <link rel="stylesheet" href="../css/emi.css" />
+</head>
+<body class="theme-light em-light-app page-fade analysis-page">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="../assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge" title="Token Usage">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>100,000</span> tokens
+      </div>
+      <div class="sub-badge sub-green" id="subBadge" title="Subscription Status">
+        <span data-sub-days>365 days</span>
+      </div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>AD</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name>Admin</div>
+          <div class="p-role" data-user-role>Administrator</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+            <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+          </div>
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <button class="dropdown-item" data-action="about">About Us</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD → LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content analysis-main">
+    <section class="analysis-hero">
+      <div>
+        <div class="analysis-eyebrow">Enterprise QA Intelligence</div>
+        <h1>Project Analysis Management</h1>
+        <p>Select a project, track PRD coverage, inspect module health, and audit every QA activity from one premium workspace.</p>
+      </div>
+      <button type="button" class="add-project-btn" id="openProjectModalBtn">
+        <span class="add-project-icon">+</span>
+        <span>Add Project</span>
+      </button>
+    </section>
+
+    <section class="project-selector-panel">
+      <div class="selector-header">
+        <div>
+          <h2>Project Workspace</h2>
+          <p>Choose a project before reviewing analysis metrics.</p>
+        </div>
+        <div class="project-search-wrap">
+          <button id="openProjectFilterBtn" class="project-filter-trigger" type="button">
+            <span>Filter</span>
+            <strong id="projectFilterSummary">All projects</strong>
+          </button>
+        </div>
+      </div>
+      <div class="project-carousel" id="projectCarousel"></div>
+      <div class="empty-project-state" id="emptyProjectState" style="display:none">
+        <div class="empty-illustration">QA</div>
+        <h3>Create your first project</h3>
+        <p>Add a project to unlock analytics, requirement traceability, AI quality insights, and activity tracking.</p>
+        <button type="button" class="add-project-btn compact" id="emptyAddProjectBtn"><span class="add-project-icon">+</span><span>Create Project</span></button>
+      </div>
+    </section>
+
+    <section class="active-project-strip" id="activeProjectStrip" style="display:none">
+      <button class="repo-back-btn project-back-btn" id="projectBackBtn" type="button">Back to Projects</button>
+      <div class="active-project-mark" id="activeProjectIcon">AI</div>
+      <div>
+        <div class="active-project-label">Project Repository</div>
+        <h2 id="activeProjectName">No project selected</h2>
+        <p id="activeProjectMeta">Open project repository to manage test case sheets.</p>
+      </div>
+      <div class="active-project-status" id="activeProjectStatus">Ready</div>
+    </section>
+
+    <section class="premium-panel repository-panel" id="repositoryPanel" style="display:none">
+      <div class="panel-title-row">
+        <div>
+          <h2>Test Case Repository</h2>
+          <p id="repositoryProjectMeta">Upload, replace, and manage test case sheets inside this project.</p>
+        </div>
+        <div class="repository-actions">
+          <label class="repo-upload-btn" for="repoUploadInput">
+            <span>+</span>
+            Upload Sheet
+          </label>
+          <input id="repoUploadInput" type="file" accept=".xlsx,.xls,.csv" hidden />
+          <input id="repoUpdateInput" type="file" accept=".xlsx,.xls,.csv" hidden />
+        </div>
+      </div>
+      <div class="repository-toolbar">
+        <div class="repo-filter">
+          <span>Filter</span>
+          <input id="repoSearch" type="search" placeholder="Search sheet name, creator, modifier..." />
+        </div>
+        <select id="repoSort" aria-label="Sort repository sheets">
+          <option value="modifiedDesc">Modified date - newest</option>
+          <option value="modifiedAsc">Modified date - oldest</option>
+          <option value="createdDesc">Created date - newest</option>
+          <option value="createdAsc">Created date - oldest</option>
+          <option value="nameAsc">Sheet name - A to Z</option>
+        </select>
+      </div>
+      <div class="repository-table-wrap">
+        <table class="repository-table">
+          <thead>
+            <tr>
+              <th>Test Case Sheet Name</th>
+              <th>Created Date</th>
+              <th>Created By</th>
+              <th>Modified Date</th>
+              <th>Modified By</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="repositoryTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="premium-panel repository-detail-panel" id="repositoryDetailPanel" style="display:none">
+      <div class="panel-title-row">
+        <div>
+          <button class="repo-back-btn" id="repoBackBtn" type="button">Back to Repository</button>
+          <h2 id="repoDetailTitle">Test Case Sheet</h2>
+          <p id="repoDetailMeta">Preview uploaded test cases in table format.</p>
+        </div>
+        <div class="repository-actions">
+          <button class="repo-action-btn view" id="repoDetailDownloadBtn" type="button">Download</button>
+        </div>
+      </div>
+      <div class="sheet-thumbnail-grid" id="sheetThumbnailGrid"></div>
+      <div class="sheet-table-wrap" id="sheetTableWrap"></div>
+    </section>
+
+    <section class="analytics-grid" id="analyticsGrid"></section>
+
+    <section class="premium-panel enterprise-project-intel-panel" id="enterpriseProjectIntelPanel">
+      <div class="panel-title-row">
+        <div>
+          <h2>Requirement Intelligence Engine</h2>
+          <p>Requirement quality, ambiguity, API mode, risk, impact, and defect prediction derived from the latest QA output or active project.</p>
+        </div>
+        <a class="repo-action-btn view" href="enterprise.html">Open Enterprise QE</a>
+      </div>
+      <div class="enterprise-project-intel-grid" id="enterpriseProjectIntelGrid"></div>
+    </section>
+
+    <section class="analysis-two-col qa-intelligence-grid">
+      <div class="premium-panel traceability-panel">
+        <div class="panel-title-row">
+          <div>
+            <h2>Requirement Traceability Matrix</h2>
+            <p>PRD requirements mapped to generated and uploaded repository test cases.</p>
+          </div>
+          <span class="panel-chip">RTM</span>
+        </div>
+        <div class="traceability-metrics" id="traceabilityMetrics"></div>
+        <div class="traceability-toolbar">
+          <div class="repo-filter trace-search">
+            <span>Search</span>
+            <input id="traceabilitySearch" type="search" placeholder="Requirement ID, summary, status..." />
+          </div>
+          <div class="trace-filter-tabs" id="traceabilityFilters" aria-label="Requirement coverage filters">
+            <button type="button" class="active" data-trace-filter="all">All Requirements</button>
+            <button type="button" data-trace-filter="Covered">Covered</button>
+            <button type="button" data-trace-filter="Partially Covered">Partially Covered</button>
+            <button type="button" data-trace-filter="Not Covered">Missing Coverage</button>
+          </div>
+        </div>
+        <div class="traceability-table-wrap">
+          <table class="traceability-table">
+            <thead>
+              <tr>
+                <th>Requirement ID</th>
+                <th>Requirement</th>
+                <th>Test Cases</th>
+                <th>Status</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="traceabilityBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="premium-panel quality-insights-panel">
+        <div class="panel-title-row">
+          <div>
+            <h2>AI Quality & Coverage Insights</h2>
+            <p>Gap detection, risk signals, ambiguity checks, and improvement recommendations.</p>
+          </div>
+          <span class="panel-chip cyan">AI Review</span>
+        </div>
+        <div class="quality-insights-wrap" id="qualityInsightsPanel"></div>
+      </div>
+    </section>
+
+    <section class="premium-panel activity-panel">
+      <div class="panel-title-row">
+        <div>
+          <h2>Recent Activities</h2>
+          <p>Professional audit timeline grouped by time and activity type.</p>
+        </div>
+        <div class="activity-filters">
+          <select id="activityProjectFilter" aria-label="Filter by project"></select>
+          <select id="activityTypeFilter" aria-label="Filter by activity type">
+            <option value="all">All activity</option>
+            <option value="Added">Added</option>
+            <option value="Updated">Updated</option>
+            <option value="Uploaded">Uploaded</option>
+            <option value="Coverage Modified">Coverage Modified</option>
+            <option value="Team Changed">Team Changed</option>
+            <option value="Deleted">Deleted</option>
+            <option value="Viewed">Viewed</option>
+          </select>
+        </div>
+      </div>
+      <div class="activity-timeline" id="activityTimeline"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-brand-row"><div class="footer-emudhra-logo"><svg viewBox="0 0 50 50" width="24" height="24"><circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2"/><text x="25" y="31" text-anchor="middle" fill="white" font-size="14" font-weight="bold">e</text></svg>eMudhra</div></div>
+    <div class="footer-text">(c) 2026 eMudhra. All rights reserved.</div>
+    <div class="footer-star">*</div>
+  </footer>
+</div>
+
+<div class="project-modal-overlay" id="projectModal" style="display:none">
+  <div class="project-modal">
+    <div class="project-modal-header">
+      <div>
+        <div class="analysis-eyebrow">New Workspace</div>
+        <h2>Add Project</h2>
+      </div>
+      <button type="button" class="modal-close modern" id="closeProjectModalBtn">x</button>
+    </div>
+    <form id="projectForm" class="project-form">
+      <label class="floating-field"><input id="projectName" name="projectName" required placeholder=" " /><span>Project Name</span></label>
+      <label class="floating-field"><input id="coreProduct" name="coreProduct" required placeholder=" " /><span>Core Product</span></label>
+      <label class="floating-field">
+        <select id="projectType" name="projectType" required>
+          <option value="Web App">Web App</option>
+          <option value="Mobile App">Mobile App</option>
+          <option value="AI Product">AI Product</option>
+          <option value="API System">API System</option>
+          <option value="Cloud Platform">Cloud Platform</option>
+          <option value="Enterprise System">Enterprise System</option>
+        </select>
+        <span>Project Type</span>
+      </label>
+      <label class="floating-field"><input id="projectManager" name="projectManager" required placeholder=" " /><span>Project Manager Name</span></label>
+      <label class="floating-field"><input id="developers" name="developers" required placeholder=" " /><span>Developers Name</span></label>
+      <label class="floating-field"><input id="testEngineers" name="testEngineers" required placeholder=" " /><span>Test Engineers Name</span></label>
+      <div class="project-form-actions">
+        <button type="button" class="ghost-btn" id="cancelProjectBtn">Cancel</button>
+        <button type="submit" class="add-project-btn"><span class="add-project-icon">+</span><span id="projectSubmitLabel">Create Project</span></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="project-modal-overlay" id="projectFilterModal" style="display:none">
+  <div class="project-modal project-filter-modal">
+    <div class="project-modal-header">
+      <div>
+        <div class="analysis-eyebrow">Project Search</div>
+        <h2>Filter Projects</h2>
+        <p>Search projects by identity, ownership, team, type, and date range.</p>
+      </div>
+      <button class="modal-close modern" id="closeProjectFilterBtn" type="button">x</button>
+    </div>
+    <form id="projectFilterForm" class="project-filter-form">
+      <label class="floating-field"><input id="filterProjectName" name="projectName" placeholder=" " /><span>Project Name</span></label>
+      <label class="floating-field"><input id="filterCoreProduct" name="coreProduct" placeholder=" " /><span>Core Product Name</span></label>
+      <label class="floating-field">
+        <select id="filterProjectType" name="projectType">
+          <option value="">All project types</option>
+          <option value="Web App">Web App</option>
+          <option value="Mobile App">Mobile App</option>
+          <option value="AI Product">AI Product</option>
+          <option value="API System">API System</option>
+          <option value="Cloud Platform">Cloud Platform</option>
+          <option value="Enterprise System">Enterprise System</option>
+        </select>
+        <span>Project Type</span>
+      </label>
+      <label class="floating-field"><input id="filterProjectManager" name="projectManager" placeholder=" " /><span>Project Manager Name</span></label>
+      <label class="floating-field"><input id="filterDevelopers" name="developers" placeholder=" " /><span>Developers Name</span></label>
+      <label class="floating-field"><input id="filterTestEngineers" name="testEngineers" placeholder=" " /><span>Test Engineers Name</span></label>
+      <div class="filter-date-group">
+        <div class="filter-date-title">Created Date Range</div>
+        <label class="floating-field date-field-shell" data-date-shell="filterCreatedFrom">
+          <input id="filterCreatedFromDisplay" class="date-display-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" />
+          <input id="filterCreatedFrom" class="native-date-input" name="createdFrom" type="date" tabindex="-1" />
+          <button class="date-picker-btn" type="button" data-date-target="filterCreatedFrom" aria-label="Open created from calendar">Date</button>
+          <span>From</span>
+        </label>
+        <label class="floating-field date-field-shell" data-date-shell="filterCreatedTo">
+          <input id="filterCreatedToDisplay" class="date-display-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" />
+          <input id="filterCreatedTo" class="native-date-input" name="createdTo" type="date" tabindex="-1" />
+          <button class="date-picker-btn" type="button" data-date-target="filterCreatedTo" aria-label="Open created to calendar">Date</button>
+          <span>To</span>
+        </label>
+      </div>
+      <div class="filter-date-group">
+        <div class="filter-date-title">Modified Date Range</div>
+        <label class="floating-field date-field-shell" data-date-shell="filterModifiedFrom">
+          <input id="filterModifiedFromDisplay" class="date-display-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" />
+          <input id="filterModifiedFrom" class="native-date-input" name="modifiedFrom" type="date" tabindex="-1" />
+          <button class="date-picker-btn" type="button" data-date-target="filterModifiedFrom" aria-label="Open modified from calendar">Date</button>
+          <span>From</span>
+        </label>
+        <label class="floating-field date-field-shell" data-date-shell="filterModifiedTo">
+          <input id="filterModifiedToDisplay" class="date-display-input" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" />
+          <input id="filterModifiedTo" class="native-date-input" name="modifiedTo" type="date" tabindex="-1" />
+          <button class="date-picker-btn" type="button" data-date-target="filterModifiedTo" aria-label="Open modified to calendar">Date</button>
+          <span>To</span>
+        </label>
+      </div>
+      <div class="project-form-actions">
+        <button type="button" class="ghost-btn" id="resetProjectFilterBtn">Reset</button>
+        <button type="button" class="ghost-btn" id="cancelProjectFilterBtn">Cancel</button>
+        <button type="submit" class="add-project-btn apply-filter-btn"><span>Apply Filter</span></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="project-modal-overlay" id="repoAuthModal" style="display:none">
+  <div class="project-modal repo-auth-modal">
+    <div class="project-modal-header">
+      <div>
+        <div class="analysis-eyebrow">Repository Authorization</div>
+        <h2 id="repoAuthTitle">Confirm Access</h2>
+        <p id="repoAuthMessage">Enter login ID and password to continue.</p>
+      </div>
+      <button class="modal-close modern" id="closeRepoAuthBtn" type="button">x</button>
+    </div>
+    <form id="repoAuthForm" class="project-form auth-form">
+      <label class="floating-field"><input id="repoAuthLogin" name="repoAuthLogin" required placeholder=" " autocomplete="username" /><span>Login ID / Email</span></label>
+      <label class="floating-field"><input id="repoAuthPassword" name="repoAuthPassword" required placeholder=" " type="password" autocomplete="current-password" /><span>Password</span></label>
+      <div class="repo-auth-error" id="repoAuthError" style="display:none">Invalid login ID or password.</div>
+      <div class="project-form-actions">
+        <button type="button" class="ghost-btn" id="cancelRepoAuthBtn">Cancel</button>
+        <button type="submit" class="add-project-btn"><span class="add-project-icon">OK</span><span>Authorize</span></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Settings</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect" data-setting="theme"><option value="light">Light</option><option value="emudhra">eMudhra Soft</option><option value="dark">Dark</option><option value="midnight">Midnight</option><option value="ocean">Ocean Deep</option><option value="forest">Forest Dark</option><option value="carbon">Carbon Black</option><option value="royal">Royal Purple</option><option value="dawn">Dawn Warm</option><option value="system">System</option></select></div></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button type="button" class="btn btn-primary" onclick="saveSettings()">Save</button></div></div>
+</div>
+<div class="modal-overlay" id="aboutModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">About</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><p class="modal-body-text"><a href="https://www.emudhra.com" target="_blank" rel="noopener noreferrer">www.emudhra.com</a> - eMudhra delivers digital identity and enterprise cybersecurity solutions globally.</p></div><div class="modal-footer"><a href="https://www.emudhra.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Visit eMudhra.com</a><button type="button" class="btn btn-outline" data-close-modal>Close</button></div></div>
+</div>
+<div class="modal-overlay" id="confirmModal" style="display:none">
+  <div class="modal modal-sm"><div class="modal-header"><div class="modal-title">Confirm</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button type="button" class="btn btn-danger" id="confirmOk">Yes</button></div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="../js/shared.js?v=20"></script>
+<script src="../js/enterprise_qa_engine.js?v=1"></script>
+<script src="../js/analysis.js?v=9"></script>
+<script src="../js/emi.js"></script>
+</body>
+</html>
+
+
+
+

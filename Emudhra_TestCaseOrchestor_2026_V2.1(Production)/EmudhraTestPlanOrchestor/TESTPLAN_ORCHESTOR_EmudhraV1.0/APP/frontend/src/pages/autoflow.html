@@ -1,0 +1,650 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoFlow Tester &mdash; QA-Gen AI | eMudhra</title>
+  <meta name="description" content="AutoFlow Tester � Record, Generate, Replay, and Validate automation flows with AI-powered script generation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/shared.css?v=20" />
+  <link rel="stylesheet" href="/src/styles/autoflow.css" />
+  <link rel="stylesheet" href="/src/styles/emi.css" />
+</head>
+<body class="theme-light em-light-app page-fade">
+<div class="app-layout">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge" title="Token Usage">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>100,000</span> tokens
+      </div>
+      <div class="sub-badge sub-green" id="subBadge" title="Subscription Status">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+        <span data-sub-days>365 days</span>
+      </div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>QA</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name>QA Engineer</div>
+          <div class="p-role" data-user-role>Tester</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:10px">
+            <div class="avatar" data-user-initials style="width:36px;height:36px;font-size:0.8rem;flex-shrink:0"></div>
+            <div>
+              <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+              <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+              <div style="font-size:0.65rem;color:var(--accent-blue);font-weight:600;margin-top:1px" data-user-role></div>
+            </div>
+          </div>
+          <button class="dropdown-item" data-action="edit-profile">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </button>
+          <button class="dropdown-item" data-action="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.41 1.41M4.93 4.93a10 10 0 0 0-1.41 1.41M4.93 19.07a10 10 0 0 1-1.41-1.41M19.07 19.07a10 10 0 0 0 1.41-1.41"/></svg>
+            Settings
+          </button>
+          <button class="dropdown-item" data-action="about">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            About QA-Gen AI
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a href="home.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Test Management
+      </a>
+      <a href="autoflow.html" class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        AutoFlow Tester
+      </a>
+      <a href="analysis.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Project Analysis
+      </a>
+      <a href="reports.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports
+      </a>
+      <a href="enterprise.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>
+        Enterprise QE
+      </a>
+      <a href="hld_lld.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        HLD &rarr; LLD Maker
+      </a>
+      <a href="testing_buddy.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>
+        Testing Buddy AI
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Admin Panel
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- Hero -->
+    <div class="af-hero">
+      <div class="af-hero-orbs" aria-hidden="true">
+        <span class="af-orb af-orb-1"></span>
+        <span class="af-orb af-orb-2"></span>
+        <span class="af-orb af-orb-3"></span>
+      </div>
+      <div class="af-hero-badge af-hero-badge--pulse"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="white" stroke="none"/></svg></div>
+      <div class="af-hero-content">
+        <div class="af-hero-title af-hero-title--anim">AutoFlow Tester</div>
+        <div class="af-hero-sub af-hero-sub--anim">Record &rsaquo; Generate &rsaquo; Replay &rsaquo; Validate</div>
+        <div class="af-hero-badges af-hero-badges--anim">
+          <span class="af-pill indigo">Playwright</span>
+          <span class="af-pill teal">Selenium</span>
+          <span class="af-pill amber">Cypress</span>
+          <span class="af-pill green">Robot Framework</span>
+          <span class="af-pill rose">AI Analysis</span>
+        </div>
+      </div>
+      <div class="af-hero-flow-info">
+        <div class="af-hero-flow-label">Current Flow</div>
+        <div id="heroFlowName" class="af-hero-flow-name">Untitled Flow</div>
+        <div id="heroStepCount" class="af-hero-flow-steps">0 steps recorded</div>
+      </div>
+    </div>
+
+    <!-- Row 1: Config + Status -->
+    <div class="af-layout">
+
+      <!-- Flow Configuration -->
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon blue"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+          <div>
+            <div class="af-card-title">Flow Configuration</div>
+            <div class="af-card-sub">Define your test flow and target application</div>
+          </div>
+        </div>
+
+        <div class="af-form-row">
+          <div class="af-form-group">
+            <label>Flow Name *</label>
+            <input class="af-input" id="flowName" type="text" placeholder="e.g. Login Flow" autocomplete="off" />
+          </div>
+          <div class="af-form-group">
+            <label>Application URL *</label>
+            <input class="af-input" id="appUrl" type="url" placeholder="https://your-app.com" autocomplete="off" />
+          </div>
+          <div class="af-form-group">
+            <label>Browser</label>
+            <select class="af-select" id="browserSelect">
+              <option value="Chrome">Chrome</option>
+              <option value="Edge">Edge</option>
+              <option value="Firefox">Firefox</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="af-btn-row">
+          <button class="af-btn primary" id="startRecordingBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8" fill="currentColor" stroke="none"/></svg>
+            Start Recording
+          </button>
+          <button class="af-btn danger" id="stopRecordingBtn" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" fill="currentColor" stroke="none"/></svg>
+            Stop Recording
+          </button>
+          <button class="af-btn outline" id="addStepBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Step
+          </button>
+          <button class="af-btn af-btn-ai-steps" id="generateAIStepsBtn" title="Use AI to auto-generate test steps based on the URL and flow name">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Generate AI Steps
+          </button>
+          <button class="af-btn outline" id="clearFlowBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Recording Status -->
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon teal"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <div>
+            <div class="af-card-title">Recording Status</div>
+            <div class="af-card-sub">Live capture statistics</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+            <div id="backendStatusBadge" class="af-backend-badge disconnected">? Manual Mode</div>
+            <button type="button" id="reconnectWsBtn" onclick="forceReconnectWS()" title="Reconnect to Playwright backend" class="af-reconnect-btn">? Reconnect</button>
+          </div>
+        </div>
+
+        <div class="af-status-bar">
+          <div class="af-status-dot idle" id="statusDot"></div>
+          <div class="af-status-text" id="statusText">Status: Idle</div>
+          <div class="af-status-meta" id="recordingDuration">00:00:00</div>
+        </div>
+
+        <!-- Replay in-progress banner -->
+        <div id="replayBanner" class="af-replay-banner">
+          <span class="af-replay-spinner"></span>
+          <span id="replayBannerText">Flow is Performing...</span>
+          <span id="replayBannerStep" class="af-replay-step-info"></span>
+        </div>
+
+        <div class="af-stats-grid">
+          <div class="af-stat-box">
+            <div class="af-stat-val" id="elementsCount">0</div>
+            <div class="af-stat-label">Elements Captured</div>
+          </div>
+          <div class="af-stat-box">
+            <div class="af-stat-val" id="actionsCount">0</div>
+            <div class="af-stat-label">Actions Recorded</div>
+          </div>
+          <div class="af-stat-box">
+            <div class="af-stat-val" id="pagesCount">0</div>
+            <div class="af-stat-label">Pages Visited</div>
+          </div>
+          <div class="af-stat-box">
+            <div class="af-stat-val" id="stepsCount">0</div>
+            <div class="af-stat-label">Total Steps</div>
+          </div>
+        </div>
+
+        <!-- Screen Preview (shown only while recording) -->
+        <div class="af-screen-preview-wrap" id="screenPreviewWrap" style="display:none">
+          <div class="af-screen-preview-label">
+            <span class="af-rec-dot"></span> Live Screen Capture
+          </div>
+          <video class="af-screen-video" id="screenPreviewVideo" autoplay muted playsinline></video>
+        </div>
+
+        <div class="af-btn-row">
+          <button class="af-btn success" id="generateScriptBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Generate Script
+          </button>
+          <button class="af-btn amber" id="replayTestBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>
+            Replay Test
+          </button>
+          <button class="af-btn outline" id="saveFlowBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Flow
+          </button>
+          <button class="af-btn outline" id="downloadRecordingBtn" style="display:none;border-color:#ef4444;color:#fca5a5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
+            Download Recording
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Timeline + Visualizer -->
+    <div class="af-layout">
+
+      <!-- Recorded Flow Timeline -->
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon purple"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1.5" fill="white" stroke="none"/><circle cx="3" cy="12" r="1.5" fill="white" stroke="none"/><circle cx="3" cy="18" r="1.5" fill="white" stroke="none"/></svg></div>
+          <div>
+            <div class="af-card-title">Recorded Flow Timeline</div>
+            <div class="af-card-sub">Chronological step-by-step capture</div>
+          </div>
+        </div>
+
+        <div class="af-timeline" id="flowTimeline">
+          <div class="af-timeline-empty" id="timelineEmpty">
+            <div style="margin-bottom:8px;display:flex;justify-content:center"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <div style="font-weight:700;margin-bottom:4px">No Recording Yet</div>
+            <div style="font-size:0.68rem">Click <strong>Start Recording</strong> or <strong>Add Step</strong> to begin building your flow</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow Visualizer -->
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon green"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+          <div>
+            <div class="af-card-title">Flow Visualizer</div>
+            <div class="af-card-sub">Visual workflow representation</div>
+          </div>
+        </div>
+        <div class="af-visualizer" id="flowVisualizer">
+          <div class="af-vis-empty">Flow chart will appear as you add steps</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Script Generation -->
+    <div class="af-layout full">
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon blue">?</div>
+          <div>
+            <div class="af-card-title">Generated Automation Script</div>
+            <div class="af-card-sub">Multi-framework script output � copy, download, or AI-enhance</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <button class="af-btn sm outline" id="aiEnhanceBtn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              AI Enhance
+            </button>
+            <button class="af-btn sm outline" id="downloadScriptBtn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </button>
+          </div>
+        </div>
+
+        <div class="af-framework-tabs" id="frameworkTabs">
+          <button class="af-framework-tab active" data-framework="playwright">Playwright</button>
+          <button class="af-framework-tab" data-framework="selenium-java">Selenium Java</button>
+          <button class="af-framework-tab" data-framework="selenium-python">Selenium Python</button>
+          <button class="af-framework-tab" data-framework="cypress">Cypress</button>
+          <button class="af-framework-tab" data-framework="robot">Robot Framework</button>
+          <button class="af-framework-tab" data-framework="testng">TestNG</button>
+          <button class="af-framework-tab" data-framework="javascript">JavaScript</button>
+          <button class="af-framework-tab" data-framework="typescript">TypeScript</button>
+        </div>
+
+        <div class="af-code-block" style="margin-top:12px">
+          <div class="af-code-header">
+            <span id="scriptLangLabel">Playwright � JavaScript</span>
+            <button class="af-code-copy" id="copyScriptBtn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+          <pre class="af-code-pre" id="scriptOutput">// Click "Generate Script" after recording steps to see automation code here.
+//
+// Supported frameworks:
+//   � Playwright  � Selenium Java  � Selenium Python
+//   � Cypress     � Robot Framework � TestNG
+//   � JavaScript  � TypeScript
+//
+// Tip: Use "AI Enhance" to add smart waits, assertions, and self-healing locators.</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: Generated Test Cases -->
+    <div class="af-layout full">
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon green"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div>
+          <div>
+            <div class="af-card-title">Generated Test Cases</div>
+            <div class="af-card-sub">Auto-generated from replay � one test case per step with locator, expected vs actual, and screenshot</div>
+          </div>
+          <div class="af-card-actions">
+            <span id="tcCountBadge" style="font-size:0.7rem;font-weight:700;color:var(--text-muted)">0 test cases</span>
+            <button class="af-btn sm af-btn-generate-tc" id="generateTCBtn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Generate Test Cases
+            </button>
+            <button type="button" class="af-btn sm af-btn-analyze-ss" id="analyzeAllSSBtn" title="AI-analyze all step screenshots to auto-fill Expected Results">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Analyze Screenshots
+            </button>
+            <button class="af-btn sm outline" id="clearTestCasesBtn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              Clear
+            </button>
+            <button class="af-btn sm outline" id="exportCsvBtn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              CSV
+            </button>
+            <button class="af-btn sm success" id="exportTestCasesBtn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Excel
+            </button>
+            <button class="af-btn sm" id="saveToReportBtn" style="background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border:none">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M9 9h6v6H9z"/></svg>
+              Save to Report
+            </button>
+          </div>
+        </div>
+        <div id="reportSavedStrip" style="display:none" class="af-report-strip">
+          ? Run saved to reports.
+          <a href="reports.html">View in Reports ?</a>
+        </div>
+        <div id="testCasesPanel">
+          <div class="af-empty-state">
+            <div class="ae-icon"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+            <div class="ae-title">No Test Cases Yet</div>
+            <div class="ae-hint">Click <strong>Generate Test Cases</strong> after recording your flow, or run <strong>Replay Test</strong> to auto-generate with actual results and screenshots.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 5: Execution Dashboard + Failure Analysis -->
+    <div class="af-layout">
+
+      <!-- Execution Dashboard -->
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon amber"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+          <div>
+            <div class="af-card-title">Execution Dashboard</div>
+            <div class="af-card-sub">Live replay status and step results</div>
+          </div>
+          <div class="af-exec-badge idle" id="executionBadge" style="margin-left:auto">? Idle</div>
+        </div>
+
+        <div class="af-exec-stats">
+          <div class="af-exec-stat total">
+            <div class="af-exec-stat-val" id="execTotal">�</div>
+            <div class="af-exec-stat-label">Total</div>
+          </div>
+          <div class="af-exec-stat passed">
+            <div class="af-exec-stat-val" id="execPassed">�</div>
+            <div class="af-exec-stat-label">Passed</div>
+          </div>
+          <div class="af-exec-stat failed">
+            <div class="af-exec-stat-val" id="execFailed">�</div>
+            <div class="af-exec-stat-label">Failed</div>
+          </div>
+          <div class="af-exec-stat skipped">
+            <div class="af-exec-stat-val" id="execSkipped">�</div>
+            <div class="af-exec-stat-label">Skipped</div>
+          </div>
+          <div class="af-exec-stat rate">
+            <div class="af-exec-stat-val" id="execRate">�</div>
+            <div class="af-exec-stat-label">Success Rate</div>
+          </div>
+        </div>
+
+        <div class="af-progress-bar">
+          <div class="af-progress-fill" id="execProgressFill"></div>
+        </div>
+
+        <div class="af-exec-steps" id="execStepsList">
+          <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.74rem">
+            Replay execution steps will appear here. Set TC statuses above to update dashboard.
+          </div>
+        </div>
+      </div>
+
+      <!-- Failure Analysis + AI RCA -->
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon rose"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+          <div>
+            <div class="af-card-title">Failure Analysis &amp; AI Root Cause</div>
+            <div class="af-card-sub">AI-powered failure diagnosis and fix recommendations</div>
+          </div>
+        </div>
+
+        <div id="failureAnalysisPanel">
+          <div class="af-rca-idle">
+            <div class="af-rca-idle-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><circle cx="11" cy="9" r="1" fill="currentColor" stroke="none"/><line x1="11" y1="12" x2="11" y2="15"/></svg></div>
+            <div class="af-rca-idle-title">No Execution Run Yet</div>
+            <div class="af-rca-idle-hint">Run a <strong>Replay Test</strong> or set test case statuses to <strong>Failed</strong> to trigger AI root cause analysis</div>
+          </div>
+        </div>
+
+        <!-- Expected Results Config -->
+        <div class="af-section-label">Expected Results Configuration</div>
+        <div class="af-form-row two-col" style="margin-bottom:8px">
+          <div class="af-form-group">
+            <label>Expected URL (after last step)</label>
+            <input class="af-input" id="expectedUrl" placeholder="https://app.com/dashboard" />
+          </div>
+          <div class="af-form-group">
+            <label>Expected Element (CSS selector)</label>
+            <input class="af-input" id="expectedElement" placeholder="#dashboard-main" />
+          </div>
+        </div>
+        <div class="af-form-row two-col">
+          <div class="af-form-group">
+            <label>Expected Page Title</label>
+            <input class="af-input" id="expectedTitle" placeholder="Dashboard" />
+          </div>
+          <div class="af-form-group">
+            <label>Expected Toast / Alert</label>
+            <input class="af-input" id="expectedToast" placeholder="Login successful" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 6: Run History -->
+    <div class="af-layout full">
+      <div class="af-card">
+        <div class="af-card-header">
+          <div class="af-card-icon teal"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div>
+            <div class="af-card-title">Execution History</div>
+            <div class="af-card-sub">All past AutoFlow test runs with pass/fail breakdown</div>
+          </div>
+          <div class="af-card-actions">
+            <span id="runHistoryCount" style="font-size:0.7rem;font-weight:700;color:var(--text-muted)">0 runs</span>
+            <button class="af-filter-chip active" data-filter="all">All</button>
+            <button class="af-filter-chip" data-filter="pass">Pass</button>
+            <button class="af-filter-chip" data-filter="fail">Fail</button>
+            <button class="af-filter-chip" data-filter="draft">Draft</button>
+            <button class="af-btn sm outline" id="clearRunHistoryBtn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              Clear All
+            </button>
+          </div>
+        </div>
+        <div id="runHistoryPanel">
+          <div class="af-empty-state">
+            <div class="ae-icon"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M2 12a10 10 0 0 1 10-10" stroke-dasharray="3 2"/></svg></div>
+            <div class="ae-title">No Run History Yet</div>
+            <div class="ae-hint">Runs are automatically saved after each Replay. Results include pass/fail counts, screenshots, and test cases.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /main-content -->
+</div><!-- /app-layout -->
+
+<!-- -- ADD / EDIT STEP MODAL -- -->
+<div class="af-modal-overlay hidden" id="stepModalOverlay">
+  <div class="af-modal">
+    <div class="af-modal-header">
+      <div class="af-modal-title" id="stepModalTitle">Add Step</div>
+      <button class="af-modal-close" id="closeStepModal">?</button>
+    </div>
+    <div class="af-modal-body">
+      <input type="hidden" id="editingStepId" value="" />
+      <div class="af-form-row two-col" style="margin-bottom:12px">
+        <div class="af-form-group">
+          <label for="stepAction">Action Type *</label>
+          <select class="af-select" id="stepAction" aria-label="Action Type" title="Select the action type for this step">
+            <option value="navigate">Navigate (Go to URL)</option>
+            <option value="click">Click</option>
+            <option value="type">Type / Input</option>
+            <option value="assert">Assert (Verify element)</option>
+            <option value="hover">Hover</option>
+            <option value="scroll">Scroll</option>
+            <option value="wait">Wait</option>
+            <option value="submit">Submit Form</option>
+            <option value="select">Select Dropdown</option>
+            <option value="doubleclick">Double Click</option>
+            <option value="keypress">Key Press</option>
+          </select>
+        </div>
+        <div class="af-form-group">
+          <label id="targetLabel">Target (URL / Selector)</label>
+          <input class="af-input" id="stepTarget" placeholder="e.g. #loginBtn or /login" />
+        </div>
+      </div>
+      <div class="af-form-row two-col" style="margin-bottom:12px">
+        <div class="af-form-group">
+          <label id="valueLabel">Value / Text</label>
+          <input class="af-input" id="stepValue" placeholder="e.g. admin@test.com" />
+        </div>
+        <div class="af-form-group af-expected-group">
+          <div class="af-expected-label-row">
+            <label>Expected Result</label>
+            <div class="af-expected-actions">
+              <button type="button" class="af-exp-helper-btn" id="genExpFromAIBtn" title="Auto-generate from action, target and value">&#9889; AI Generate</button>
+              <button type="button" class="af-exp-helper-btn secondary" id="useActualResultBtn" title="Copy actual result from last replay">&#128203; From Actual</button>
+            </div>
+          </div>
+          <textarea class="af-input af-expected-textarea" id="stepExpected" placeholder="e.g. Dashboard loads and main navigation is visible" rows="2"></textarea>
+          <span class="af-exp-auto-badge">&#9889; AI-generated &mdash; edit to customise</span>
+        </div>
+      </div>
+      <div class="af-form-row af-form-row--last">
+        <div class="af-form-group af-form-group--full">
+          <label>Description / Notes (optional)</label>
+          <input class="af-input" id="stepDescription" placeholder="e.g. User enters valid credentials and clicks login" />
+        </div>
+      </div>
+    </div>
+    <div class="af-modal-footer">
+      <button type="button" class="af-btn outline" id="cancelStepModal">Cancel</button>
+      <button type="button" class="af-btn outline" id="saveAddAnotherBtn">Save &amp; Add Another</button>
+      <button type="button" class="af-btn primary" id="saveStepBtn">Add Step</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- -- REPLAY CONFIRM MODAL -- -->
+<div class="modal-overlay" id="replayConfirmModal" style="display:none">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">Launch Browser Test</div>
+      <button type="button" class="modal-close" id="replayConfirmClose">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:24px 20px 16px">
+      <div style="display:flex;justify-content:center;margin-bottom:12px"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#7c3aed" stroke="none"/></svg></div>
+      <p style="font-size:0.92rem;font-weight:600;color:var(--text-primary);margin-bottom:8px">
+        Testing will be performed in a separate browser window.
+      </p>
+      <p class="modal-body-text" style="margin:0">
+        AutoFlow will launch a maximized browser, navigate to your target URL, and execute all recorded steps automatically.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" id="replayConfirmNo">Cancel</button>
+      <button type="button" class="btn btn-primary" id="replayConfirmYes">? Yes, Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- -- TOAST -- -->
+<div class="af-toast" id="afToast"></div>
+
+<script src="../node_modules/xlsx/dist/xlsx.full.min.js"></script>
+<script src="/src/app/shared.js?v=20"></script>
+<script src="/src/services/ai_engine.js"></script>
+<script src="/src/features/autoflow.js"></script>
+<script src="/src/components/ui/emi.js"></script>
+</body>
+</html>
+
+

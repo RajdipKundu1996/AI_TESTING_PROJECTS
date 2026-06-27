@@ -1,0 +1,947 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testing Buddy AI - QA-Gen AI | eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/shared.css?v=20" />
+  <link rel="stylesheet" href="/src/styles/pages.css?v=17" />
+  <link rel="stylesheet" href="/src/styles/emi.css" />
+  <style>
+    .buddy-layout { display:grid; grid-template-columns:300px 1fr; gap:0; height:calc(100vh - var(--topbar-h,64px)); overflow:hidden; }
+    .buddy-config { display:flex; flex-direction:column; gap:0; border-right:1px solid var(--border-subtle); overflow-y:auto; background:var(--navy-800,var(--surface-card)); }
+    .buddy-config-section { padding:16px; border-bottom:1px solid var(--border-subtle); }
+    .buddy-config-title { font-size:0.68rem; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--accent-blue); margin-bottom:12px; }
+    .buddy-avatar-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .buddy-avatar-opt { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; border:2px solid transparent; border-radius:10px; padding:8px 4px; transition:all 0.18s; }
+    .buddy-avatar-opt.selected { border-color:var(--accent-blue); background:rgba(59,130,246,0.1); }
+    .buddy-avatar-opt:hover { border-color:rgba(59,130,246,0.4); }
+    .buddy-avatar-svg { width:48px; height:48px; }
+    .buddy-avatar-label { font-size:0.65rem; font-weight:700; color:var(--text-secondary); }
+    .buddy-field { margin-bottom:10px; }
+    .buddy-field label { display:block; font-size:0.72rem; font-weight:700; color:var(--text-secondary); margin-bottom:7px; }
+    .buddy-input { width:100%; background:var(--navy-900,rgba(10,22,40,0.8)); border:1.5px solid var(--border-subtle); border-radius:7px; color:var(--text-primary); font-size:0.8rem; font-family:inherit; padding:9px 10px; box-sizing:border-box; }
+    .buddy-input:focus { outline:none; border-color:var(--accent-blue); }
+    .buddy-select { width:100%; background:var(--navy-900,rgba(10,22,40,0.8)); border:1.5px solid var(--border-subtle); border-radius:7px; color:var(--text-primary); font-size:0.8rem; padding:7px 10px; box-sizing:border-box; }
+    .buddy-select:focus { outline:none; border-color:var(--accent-blue); }
+    .buddy-apply-btn { width:100%; padding:9px; background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; border:none; border-radius:8px; font-size:0.8rem; font-weight:800; cursor:pointer; margin-top:4px; transition:opacity 0.2s; }
+    .buddy-apply-btn:hover { opacity:0.88; }
+    .buddy-memory-list { max-height:120px; overflow-y:auto; font-size:0.72rem; color:var(--text-muted); }
+    .buddy-memory-item { padding:4px 6px; border-radius:5px; margin-bottom:3px; background:rgba(59,130,246,0.07); line-height:1.4; }
+    .buddy-memory-clear { font-size:0.7rem; color:var(--danger-red,#ef4444); cursor:pointer; border:none; background:none; padding:2px 0; }
+    .buddy-chat { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+    .buddy-chat-header { display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border-subtle); background:var(--surface-card,var(--navy-800)); flex-shrink:0; }
+    .buddy-chat-avatar-display { width:44px; height:44px; border-radius:50%; border:2px solid var(--accent-blue); overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--navy-900); flex-shrink:0; }
+    .buddy-chat-avatar-display svg { width:36px; height:36px; }
+    .buddy-chat-name { font-weight:800; color:var(--text-primary); font-size:0.9rem; }
+    .buddy-chat-role { font-size:0.72rem; color:var(--text-muted); margin-top:1px; }
+    .buddy-mood-badge { margin-left:auto; padding:3px 10px; border-radius:10px; font-size:0.7rem; font-weight:700; background:rgba(59,130,246,0.15); color:var(--accent-blue); }
+    .buddy-lang-pill { display:flex; align-items:center; gap:5px; background:#fff3e0; border:1.5px solid #f59e0b; border-radius:20px; padding:3px 10px 3px 8px; cursor:pointer; }
+    /* Personalize button */
+    .buddy-personalize-btn { display:inline-flex; align-items:center; gap:5px; padding:5px 13px; background:linear-gradient(135deg,#7C3AED 0%,#6366F1 100%); color:#fff; border-radius:10px; text-decoration:none; font-size:0.7rem; font-weight:800; box-shadow:0 2px 8px rgba(99,102,241,0.4); border:1.5px solid rgba(167,139,250,0.55); letter-spacing:0.2px; transition:all 0.15s; flex-shrink:0; }
+    .buddy-personalize-btn:hover { opacity:0.9; transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.5); }
+    /* Custom language dropdown */
+    .buddy-lang-custom { position:relative; flex-shrink:0; }
+    .buddy-lang-trigger { display:flex; align-items:center; gap:6px; background:#fff3e0; border:1.5px solid #f59e0b; border-radius:20px; padding:4px 10px 4px 8px; cursor:pointer; font-size:0.78rem; font-weight:700; color:#92400e; transition:all 0.15s; user-select:none; white-space:nowrap; }
+    .buddy-lang-trigger:hover { background:#ffe0b2; border-color:#f57c00; }
+    .buddy-lang-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; display:inline-block; }
+    .buddy-lang-chevron { transition:transform 0.2s; }
+    .buddy-lang-custom.open .buddy-lang-chevron { transform:rotate(180deg); }
+    .buddy-lang-dropdown { position:absolute; top:calc(100% + 7px); right:0; min-width:175px; background:#0f1c2e !important; border:1.5px solid rgba(99,102,241,0.35); border-radius:12px; box-shadow:0 10px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(99,102,241,0.2); z-index:99999; overflow:hidden; display:none; isolation:isolate; }
+    .buddy-lang-custom.open .buddy-lang-dropdown { display:block; animation:langFadeIn 0.15s ease; }
+    @keyframes langFadeIn { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+    .buddy-lang-opt { display:flex; align-items:center; gap:9px; padding:9px 14px; font-size:0.78rem; font-weight:600; color:#cbd5e1; cursor:pointer; transition:background 0.1s; background:#0f1c2e; }
+    .buddy-lang-opt:hover { background:#1e3a5f; color:#f1f5f9; }
+    .buddy-lang-opt.active { background:#1e3a5f; color:#a5b4fc; font-weight:700; border-left:3px solid #6366f1; }
+    .buddy-lang-native { font-size:0.68rem; opacity:0.6; margin-left:2px; }
+    .buddy-engine-hint { font-size:0.68rem; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+    .bs-knowledge-info { padding:8px 0; color:var(--text-muted); font-size:0.8rem; }
+    .bs-knowledge-actions { margin-top:12px; }
+    .bs-btn-reload { padding:6px 14px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:7px; color:var(--accent-blue); font-size:0.78rem; cursor:pointer; }
+    .bs-btn-clear-k { padding:6px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:7px; color:#ef4444; font-size:0.78rem; cursor:pointer; margin-left:6px; }
+    .buddy-lang-pill span { font-size:0.78rem; font-weight:700; color:#92400e; white-space:nowrap; }
+    .buddy-lang-select { -webkit-appearance:none; appearance:none; border:none; background:transparent; font-size:0.78rem; font-weight:800; color:#92400e; cursor:pointer; outline:none; padding:0; max-width:130px; }
+    .buddy-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
+    .buddy-msg { display:flex; gap:10px; align-items:flex-start; max-width:90%; }
+    .buddy-msg.user { flex-direction:row-reverse; align-self:flex-end; }
+    .buddy-msg-avatar { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; }
+    .buddy-msg.bot .buddy-msg-avatar { background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; }
+    .buddy-msg.user .buddy-msg-avatar { background:var(--accent-blue); color:#fff; }
+    .buddy-msg-bubble { padding:10px 14px; border-radius:12px; font-size:0.82rem; line-height:1.65; max-width:600px; }
+    .buddy-msg.bot .buddy-msg-bubble { background:#f1f5f9; border:1px solid #e2e8f0; color:#1e293b; border-top-left-radius:3px; }
+    .buddy-msg.user .buddy-msg-bubble { background:linear-gradient(135deg,#2563eb,#4f46e5); color:#fff; border-top-right-radius:3px; }
+    .buddy-msg-bubble p { margin:0 0 6px; } .buddy-msg-bubble p:last-child { margin-bottom:0; }
+    .buddy-msg-bubble strong { font-weight:800; }
+    .buddy-msg-bubble ul,.buddy-msg-bubble ol { padding-left:1.3em; margin:4px 0; }
+    .buddy-msg-bubble li { margin:2px 0; }
+    .buddy-msg-bubble code { background:rgba(0,0,0,0.15); padding:1px 5px; border-radius:3px; font-family:monospace; font-size:0.78em; }
+    .buddy-msg-bubble pre { background:rgba(0,0,0,0.18); border-radius:6px; padding:8px; overflow-x:auto; font-family:monospace; font-size:0.76em; margin:4px 0; }
+    .buddy-msg-time { font-size:0.62rem; color:var(--text-muted); margin-top:3px; }
+    .buddy-msg.user .buddy-msg-time { text-align:right; }
+    .buddy-reaction { font-size:1.3rem; margin-bottom:3px; }
+    .buddy-typing { display:flex; align-items:center; gap:5px; padding:10px 14px; border-radius:12px; background:#f1f5f9; border:1px solid #e2e8f0; border-top-left-radius:3px; }
+    .buddy-typing-dot { width:7px; height:7px; border-radius:50%; background:var(--accent-blue); animation:typingBounce 1.2s ease-in-out infinite; }
+    .buddy-typing-dot:nth-child(2) { animation-delay:0.2s; }
+    .buddy-typing-dot:nth-child(3) { animation-delay:0.4s; }
+    @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)} }
+    .buddy-input-row { display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--border-subtle); background:var(--surface-card,var(--navy-800)); flex-shrink:0; align-items:flex-end; }
+    .buddy-chat-input { flex:1; background:var(--navy-900,rgba(10,22,40,0.8)); border:1.5px solid var(--border-subtle); border-radius:10px; color:var(--text-primary); font-size:0.83rem; font-family:inherit; padding:10px 14px; resize:none; min-height:44px; max-height:120px; box-sizing:border-box; line-height:1.5; }
+    .buddy-chat-input:focus { outline:none; border-color:var(--accent-blue); }
+    .buddy-send-btn { width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,#2563eb,#7c3aed); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.18s,transform 0.1s; flex-shrink:0; }
+    .buddy-send-btn:hover:not(:disabled) { opacity:0.88; transform:translateY(-1px); }
+    .buddy-send-btn:disabled { opacity:0.45; cursor:not-allowed; }
+    .buddy-quick-actions { display:flex; gap:6px; flex-wrap:wrap; padding:8px 16px 0; }
+    .buddy-quick-btn { padding:5px 12px; border:1px solid var(--border-subtle); border-radius:14px; background:transparent; color:var(--text-secondary); font-size:0.72rem; cursor:pointer; transition:all 0.15s; }
+    .buddy-quick-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); background:rgba(59,130,246,0.07); }
+    .buddy-chat-input::-webkit-scrollbar { width:4px; }
+    .buddy-chat-input::-webkit-scrollbar-thumb { background:rgba(59,130,246,0.25); border-radius:4px; }
+    .buddy-msg-bubble h1,.buddy-msg-bubble h2,.buddy-msg-bubble h3 { color:inherit; font-weight:800; margin:0.5em 0 0.25em; }
+    .buddy-msg-bubble h1 { font-size:1em; } .buddy-msg-bubble h2 { font-size:0.9em; } .buddy-msg-bubble h3 { font-size:0.85em; }
+    .buddy-msg-bubble table { border-collapse:collapse; width:100%; font-size:0.78em; margin:4px 0; }
+    .buddy-msg-bubble th { background:rgba(0,0,0,0.2); padding:5px 8px; text-align:left; font-weight:800; }
+    .buddy-msg-bubble td { padding:4px 8px; border-bottom:1px solid rgba(255,255,255,0.1); }
+    .buddy-stream-cursor { display:inline-block; width:2px; height:13px; background:currentColor; margin-left:1px; animation:blink 1s step-end infinite; vertical-align:middle; opacity:0.7; }
+    @keyframes blink { 50%{opacity:0} }
+    /* Window controls & settings gear */
+    .buddy-header-actions { display:flex; align-items:center; gap:5px; margin-left:auto; }
+    .buddy-win-btn { width:28px; height:28px; border:1px solid var(--border-subtle); border-radius:6px; background:transparent; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.7rem; transition:all 0.15s; flex-shrink:0; }
+    .buddy-win-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); background:rgba(59,130,246,0.1); }
+    .buddy-win-btn.active { border-color:var(--accent-blue); color:var(--accent-blue); background:rgba(59,130,246,0.15); }
+    .buddy-settings-gear { width:30px; height:30px; border:1.5px solid var(--border-subtle); border-radius:8px; background:transparent; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem; transition:all 0.2s; flex-shrink:0; }
+    .buddy-settings-gear:hover { border-color:var(--accent-blue); color:var(--accent-blue); background:rgba(59,130,246,0.1); transform:rotate(45deg); }
+    /* Docking modes */
+    .buddy-layout.docked-left { grid-template-columns:300px 380px 1fr; }
+    .buddy-layout.docked-left .buddy-chat { border-right:1px solid var(--border-subtle); }
+    .buddy-layout.docked-right { grid-template-columns:300px 1fr 380px; direction:rtl; }
+    .buddy-layout.docked-right > * { direction:ltr; }
+    .buddy-layout.minimized .buddy-chat { height:56px; overflow:hidden; }
+    .buddy-layout.fullscreen { position:fixed; inset:0; z-index:9999; grid-template-columns:300px 1fr; background:var(--surface-card); }
+    /* Buddy settings modal */
+    .buddy-modal { max-width:520px; width:94vw; }
+    .buddy-modal-tabs { display:flex; gap:0; border-bottom:1px solid var(--border-subtle); margin-bottom:16px; }
+    .buddy-modal-tab { padding:8px 16px; font-size:0.75rem; font-weight:700; cursor:pointer; border-bottom:2px solid transparent; color:var(--text-muted); background:none; border-top:none; border-left:none; border-right:none; transition:all 0.15s; }
+    .buddy-modal-tab.active { color:var(--accent-blue); border-bottom-color:var(--accent-blue); }
+    .buddy-modal-tab-panel { display:none; } .buddy-modal-tab-panel.active { display:block; }
+    .buddy-modal-avatar-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+    .buddy-modal-avatar-opt { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; border:2px solid transparent; border-radius:10px; padding:8px 4px; transition:all 0.18s; }
+    .buddy-modal-avatar-opt.selected { border-color:var(--accent-blue); background:rgba(59,130,246,0.1); }
+    .buddy-modal-avatar-opt:hover { border-color:rgba(59,130,246,0.4); }
+    .buddy-modal-avatar-opt svg { width:48px; height:48px; }
+    .buddy-modal-avatar-opt .buddy-avatar-label { font-size:0.65rem; font-weight:700; color:var(--text-secondary); }
+    /* Knowledge badge */
+    .buddy-knowledge-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:10px; font-size:0.7rem; font-weight:700; background:rgba(16,185,129,0.15); color:#10b981; margin-left:8px; }
+    .buddy-knowledge-badge.none { background:rgba(100,116,139,0.15); color:var(--text-muted); }
+    .buddy-welcome { text-align:center; padding:40px 20px; color:var(--text-muted); }
+    .buddy-welcome-avatar { font-size:3.5rem; margin-bottom:12px; display:block; animation:float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .buddy-welcome h2 { font-size:1.2rem; font-weight:800; color:var(--text-primary); margin:0 0 6px; }
+    .buddy-welcome p { font-size:0.82rem; line-height:1.6; max-width:400px; margin:0 auto 16px; }
+    .buddy-welcome-chips { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+    .buddy-welcome-chip { padding:5px 12px; border:1px solid var(--border-subtle); border-radius:12px; font-size:0.74rem; cursor:pointer; color:var(--text-secondary); transition:all 0.15s; }
+    .buddy-welcome-chip:hover { border-color:var(--accent-blue); color:var(--accent-blue); background:rgba(59,130,246,0.07); }
+    @media(max-width:860px){ .buddy-layout{grid-template-columns:1fr} .buddy-config{display:none} }
+    /* QA Bot welcome display */
+    .buddy-welcome-avatar svg { filter:drop-shadow(0 6px 18px rgba(59,130,246,0.22)); }
+    .buddy-welcome-avatar.qabot-active { font-size:0; line-height:0; margin-bottom:0; }
+    .buddy-welcome-avatar.qabot-active svg { display:inline-block; }
+  </style>
+</head>
+<body class="theme-light em-light-app page-fade testing-buddy-page">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge" title="Token Usage">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>100,000</span> tokens
+      </div>
+      <div class="sub-badge sub-green" id="subBadge" title="Subscription Status"><span data-sub-days>365 days</span></div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>QA</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name>User</div>
+          <div class="p-role" data-user-role>QA Engineer</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+            <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+          </div>
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <button class="dropdown-item" data-action="about">About Us</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD → LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content" style="padding:0;overflow:hidden">
+    <div class="buddy-layout">
+
+      <!-- CONFIG PANEL -->
+      <div class="buddy-config">
+        <div class="buddy-config-section">
+          <div class="buddy-config-title">Choose Avatar</div>
+          <div class="buddy-avatar-grid">
+            <div class="buddy-avatar-opt" data-avatar="qabot" onclick="BuddyApp.setAvatar('qabot',this)">
+              <svg class="buddy-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Antenna -->
+                <line x1="50" y1="7" x2="50" y2="19" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="50" cy="5" r="5.5" fill="#3b82f6"/>
+                <circle cx="50" cy="5" r="2.5" fill="#bfdbfe"/>
+                <!-- Helmet dome -->
+                <path d="M16 50 Q16 18 50 18 Q84 18 84 50 Q84 72 68 78 Q50 83 32 78 Q16 72 16 50Z" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+                <!-- Side rings -->
+                <circle cx="17" cy="52" r="7" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+                <circle cx="17" cy="52" r="3.5" fill="#3b82f6" opacity="0.2"/>
+                <circle cx="83" cy="52" r="7" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+                <circle cx="83" cy="52" r="3.5" fill="#3b82f6" opacity="0.2"/>
+                <!-- Black visor -->
+                <rect x="26" y="24" width="48" height="30" rx="10" fill="#0f172a"/>
+                <!-- Blue eyes on visor -->
+                <circle cx="39" cy="36" r="7" fill="#1d4ed8"/>
+                <circle cx="61" cy="36" r="7" fill="#1d4ed8"/>
+                <circle cx="39" cy="36" r="4.5" fill="#3b82f6"/>
+                <circle cx="61" cy="36" r="4.5" fill="#3b82f6"/>
+                <circle cx="41" cy="34" r="1.8" fill="#bfdbfe"/>
+                <circle cx="63" cy="34" r="1.8" fill="#bfdbfe"/>
+                <!-- Visor smile -->
+                <path d="M39 47 Q50 53 61 47" stroke="#60a5fa" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <!-- Chibi face -->
+                <ellipse cx="50" cy="70" rx="22" ry="18" fill="#fcd9b5"/>
+                <!-- Dark hair -->
+                <path d="M28 62 Q32 56 42 58 Q50 56 58 58 Q68 56 72 62" fill="#2c1a0e"/>
+                <path d="M28 63 Q26 68 29 75" fill="#2c1a0e" opacity="0.8"/>
+                <path d="M72 63 Q74 68 71 75" fill="#2c1a0e" opacity="0.8"/>
+                <!-- Anime eyes -->
+                <ellipse cx="40" cy="69" rx="6" ry="7" fill="#1a1005"/>
+                <ellipse cx="60" cy="69" rx="6" ry="7" fill="#1a1005"/>
+                <circle cx="40" cy="69" r="4" fill="#8B5030"/>
+                <circle cx="60" cy="69" r="4" fill="#8B5030"/>
+                <circle cx="42" cy="66.5" r="2" fill="white"/>
+                <circle cx="62" cy="66.5" r="2" fill="white"/>
+                <!-- Nose -->
+                <path d="M48.5 75 Q50 77 51.5 75" stroke="#c08060" stroke-width="1.3" fill="none"/>
+                <!-- Smile -->
+                <path d="M43 79 Q50 84.5 57 79" stroke="#a05030" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <!-- Blush -->
+                <ellipse cx="30" cy="73" rx="7" ry="4" fill="#ffb3a7" opacity="0.5"/>
+                <ellipse cx="70" cy="73" rx="7" ry="4" fill="#ffb3a7" opacity="0.5"/>
+                <!-- Hoodie collar -->
+                <path d="M18 84 Q30 95 50 97 Q70 95 82 84 Q78 100 50 100 Q22 100 18 84Z" fill="white"/>
+              </svg>
+              <div class="buddy-avatar-label">QA Bot</div>
+            </div>
+            <div class="buddy-avatar-opt" data-avatar="robot" onclick="BuddyApp.setAvatar('robot',this)">
+              <svg class="buddy-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="25" y="35" width="50" height="40" rx="8" fill="#2563eb"/>
+                <rect x="35" y="45" width="12" height="10" rx="3" fill="#93c5fd"/>
+                <rect x="53" y="45" width="12" height="10" rx="3" fill="#93c5fd"/>
+                <rect x="38" y="62" width="24" height="5" rx="2.5" fill="#93c5fd" opacity="0.7"/>
+                <rect x="43" y="25" width="14" height="12" rx="3" fill="#1d4ed8"/>
+                <rect x="48" y="18" width="4" height="8" rx="2" fill="#60a5fa"/>
+                <rect x="75" y="50" width="10" height="18" rx="4" fill="#1d4ed8"/>
+                <rect x="15" y="50" width="10" height="18" rx="4" fill="#1d4ed8"/>
+                <rect x="35" y="75" width="12" height="14" rx="4" fill="#1d4ed8"/>
+                <rect x="53" y="75" width="12" height="14" rx="4" fill="#1d4ed8"/>
+                <circle cx="50" cy="38" r="3" fill="#60a5fa"/>
+              </svg>
+              <div class="buddy-avatar-label">Robot</div>
+            </div>
+            <div class="buddy-avatar-opt" data-avatar="panda" onclick="BuddyApp.setAvatar('panda',this)">
+              <svg class="buddy-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="55" r="28" fill="#f1f5f9"/>
+                <circle cx="28" cy="32" r="14" fill="#1e293b"/>
+                <circle cx="72" cy="32" r="14" fill="#1e293b"/>
+                <circle cx="50" cy="55" r="26" fill="#f8fafc"/>
+                <ellipse cx="38" cy="50" rx="8" ry="9" fill="#1e293b"/>
+                <ellipse cx="62" cy="50" rx="8" ry="9" fill="#1e293b"/>
+                <circle cx="38" cy="50" r="4" fill="#3b82f6"/>
+                <circle cx="62" cy="50" r="4" fill="#3b82f6"/>
+                <circle cx="39.5" cy="48.5" r="1.5" fill="#fff"/>
+                <circle cx="63.5" cy="48.5" r="1.5" fill="#fff"/>
+                <ellipse cx="50" cy="62" rx="9" ry="6" fill="#fecaca"/>
+                <path d="M44 65 Q50 70 56 65" stroke="#1e293b" stroke-width="1.5" fill="none"/>
+              </svg>
+              <div class="buddy-avatar-label">Panda</div>
+            </div>
+            <div class="buddy-avatar-opt" data-avatar="cat" onclick="BuddyApp.setAvatar('cat',this)">
+              <svg class="buddy-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="58" r="26" fill="#f97316"/>
+                <polygon points="25,40 32,20 42,42" fill="#f97316"/>
+                <polygon points="75,40 68,20 58,42" fill="#f97316"/>
+                <polygon points="27,38 32,23 40,40" fill="#fde68a"/>
+                <polygon points="73,38 68,23 60,40" fill="#fde68a"/>
+                <ellipse cx="40" cy="56" rx="7" ry="8" fill="#7c2d12"/>
+                <ellipse cx="60" cy="56" rx="7" ry="8" fill="#7c2d12"/>
+                <circle cx="40" cy="56" r="4" fill="#15803d" opacity="0.9"/>
+                <circle cx="60" cy="56" r="4" fill="#15803d" opacity="0.9"/>
+                <circle cx="41" cy="55" r="1.5" fill="#fff"/>
+                <circle cx="61" cy="55" r="1.5" fill="#fff"/>
+                <ellipse cx="50" cy="66" rx="6" ry="4" fill="#fecaca"/>
+                <path d="M50 66 L50 70" stroke="#9a3412" stroke-width="1.5"/>
+                <path d="M44 69 Q50 73 56 69" stroke="#9a3412" stroke-width="1.5" fill="none"/>
+                <line x1="30" y1="65" x2="14" y2="62" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="30" y1="68" x2="13" y2="68" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="70" y1="65" x2="86" y2="62" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="70" y1="68" x2="87" y2="68" stroke="#f97316" stroke-width="1.5"/>
+              </svg>
+              <div class="buddy-avatar-label">Cat</div>
+            </div>
+            <div class="buddy-avatar-opt" data-avatar="fox" onclick="BuddyApp.setAvatar('fox',this)">
+              <svg class="buddy-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="58" r="25" fill="#ea580c"/>
+                <polygon points="22,45 28,18 44,44" fill="#ea580c"/>
+                <polygon points="78,45 72,18 56,44" fill="#ea580c"/>
+                <polygon points="24,43 28,22 42,43" fill="#fbbf24"/>
+                <polygon points="76,43 72,22 58,43" fill="#fbbf24"/>
+                <ellipse cx="50" cy="62" rx="16" ry="12" fill="#fef3c7"/>
+                <ellipse cx="40" cy="55" rx="6" ry="7" fill="#7c2d12"/>
+                <ellipse cx="60" cy="55" rx="6" ry="7" fill="#7c2d12"/>
+                <circle cx="40" cy="55" r="3.5" fill="#84cc16"/>
+                <circle cx="60" cy="55" r="3.5" fill="#84cc16"/>
+                <circle cx="41" cy="54" r="1.5" fill="#fff"/>
+                <circle cx="61" cy="54" r="1.5" fill="#fff"/>
+                <ellipse cx="50" cy="67" rx="5" ry="3.5" fill="#fecaca"/>
+                <path d="M44 70 Q50 75 56 70" stroke="#7c2d12" stroke-width="1.5" fill="none"/>
+              </svg>
+              <div class="buddy-avatar-label">Fox</div>
+            </div>
+            <div class="buddy-avatar-opt" data-avatar="owl" onclick="BuddyApp.setAvatar('owl',this)">
+              <svg class="buddy-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="60" rx="24" ry="28" fill="#6b21a8"/>
+                <ellipse cx="38" cy="46" rx="12" ry="14" fill="#7c3aed"/>
+                <ellipse cx="62" cy="46" rx="12" ry="14" fill="#7c3aed"/>
+                <circle cx="38" cy="48" r="10" fill="#fff"/>
+                <circle cx="62" cy="48" r="10" fill="#fff"/>
+                <circle cx="38" cy="48" r="6" fill="#1e1b4b"/>
+                <circle cx="62" cy="48" r="6" fill="#1e1b4b"/>
+                <circle cx="36" cy="46" r="2" fill="#fff"/>
+                <circle cx="60" cy="46" r="2" fill="#fff"/>
+                <polygon points="47,58 50,53 53,58" fill="#f59e0b"/>
+                <polygon points="24,30 30,14 38,32" fill="#6b21a8"/>
+                <polygon points="76,30 70,14 62,32" fill="#6b21a8"/>
+                <polygon points="26,28 30,18 36,30" fill="#a78bfa"/>
+                <polygon points="74,28 70,18 64,30" fill="#a78bfa"/>
+              </svg>
+              <div class="buddy-avatar-label">Owl</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="buddy-config-section">
+          <div class="buddy-config-title">Buddy Identity</div>
+          <div class="buddy-field">
+            <label>Name</label>
+            <input type="text" class="buddy-input" id="buddyName" value="Testy" maxlength="20" />
+          </div>
+          <div class="buddy-field">
+            <label>Gender</label>
+            <select class="buddy-select" id="buddyGender">
+              <option value="neutral">Neutral</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </div>
+          <div class="buddy-field">
+            <label>Personality</label>
+            <select class="buddy-select" id="buddyPersonality">
+              <option value="friendly">Friendly</option>
+              <option value="professional">Professional</option>
+              <option value="mentor">Mentor</option>
+              <option value="funny">Funny</option>
+              <option value="cute">Cute</option>
+              <option value="expert">Expert QA Architect</option>
+            </select>
+          </div>
+          <div class="buddy-field">
+            <label>Communication Style</label>
+            <select class="buddy-select" id="buddyCommStyle">
+              <option value="balanced">Balanced</option>
+              <option value="concise">Concise (bullet points)</option>
+              <option value="detailed">Detailed (full explanations)</option>
+              <option value="socratic">Socratic (ask questions)</option>
+            </select>
+          </div>
+          <div class="buddy-field">
+            <label>Voice Tone</label>
+            <select class="buddy-select" id="buddyVoiceTone">
+              <option value="warm">Warm & Encouraging</option>
+              <option value="neutral">Neutral</option>
+              <option value="formal">Formal</option>
+              <option value="energetic">Energetic & Upbeat</option>
+              <option value="calm">Calm & Measured</option>
+            </select>
+          </div>
+          <div class="buddy-field">
+            <label>🌐 Response Language</label>
+            <select class="buddy-select" id="buddyLang">
+              <option value="en">English</option>
+              <option value="hi">Hindi — हिन्दी</option>
+              <option value="bn">Bengali — বাংলা</option>
+              <option value="mr">Marathi — मराठी</option>
+              <option value="te">Telugu — తెలుగు</option>
+              <option value="ta">Tamil — தமிழ்</option>
+              <option value="gu">Gujarati — ગુજરાતી</option>
+              <option value="ur">Urdu — اردو</option>
+              <option value="kn">Kannada — ಕನ್ನಡ</option>
+              <option value="od">Odia — ଓଡ଼ିଆ</option>
+              <option value="ml">Malayalam — മലയാളം</option>
+            </select>
+          </div>
+          <button class="buddy-apply-btn" onclick="BuddyApp.applyConfig()">Apply & Save Settings</button>
+        </div>
+
+        <div class="buddy-config-section">
+          <div class="buddy-config-title">Context Memory</div>
+          <div class="buddy-memory-list" id="buddyMemoryList">
+            <div style="font-size:0.74rem;color:var(--text-muted);font-style:italic">No context loaded yet. Upload a PRD in HLD → LLD Maker to give your buddy project knowledge.</div>
+          </div>
+          <button class="buddy-memory-clear" id="buddyClearMemory" onclick="BuddyApp.clearMemory()">Clear Memory</button>
+        </div>
+
+        <div class="buddy-config-section">
+          <div class="buddy-config-title">AI Engine</div>
+          <div class="buddy-field">
+            <label>Engine for this Buddy</label>
+            <select class="buddy-select" id="buddyEngineSelect">
+              <option value="">Auto (App Default)</option>
+            </select>
+          </div>
+          <div class="buddy-engine-hint">⚠ Engines marked ⚠ need an API key — configure in Dashboard → Settings</div>
+        </div>
+      </div>
+
+      <!-- CHAT AREA -->
+      <div class="buddy-chat">
+        <div class="buddy-chat-header">
+          <div class="buddy-chat-avatar-display" id="buddyChatAvatarDisplay">
+            <!-- Veda SVG — customizable via avatar_settings.html -->
+            <svg id="vedaChatSvg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 style="--skin-color:#FDDCC4;--hair-color:#2c1a0e;--lip-color:#C0607A">
+              <!-- Outfit: Corporate (default) -->
+              <g id="outfitCorporate">
+                <path d="M8 82 Q7 94 14 97 L50 99 L86 97 Q93 94 92 82 L84 75 Q72 70 50 68 Q28 70 16 75 Z" fill="#7B1C3E"/>
+                <path d="M34 68 Q42 73 50 74 Q58 73 66 68 L50 78 Z" fill="#5A0F28"/>
+                <path d="M34 68 Q41 73 49 74 L45 84 L8 82 L16 75 Z" fill="#680F2E"/>
+                <path d="M66 68 Q59 73 51 74 L55 84 L92 82 L84 75 Z" fill="#680F2E"/>
+                <path d="M34 68 Q42 73 50 74 Q58 73 66 68" fill="none" stroke="#fff" stroke-width="1.5"/>
+              </g>
+              <g id="outfitAI" style="display:none">
+                <path d="M8 82 Q7 94 14 97 L50 99 L86 97 Q93 94 92 82 L84 75 Q72 70 50 68 Q28 70 16 75 Z" fill="#E8F4FF" stroke="#2563EB" stroke-width="0.8"/>
+                <rect x="8" y="75" width="14" height="6" rx="3" fill="#2563EB"/>
+                <rect x="78" y="75" width="14" height="6" rx="3" fill="#2563EB"/>
+                <path d="M34 68 Q42 73 50 74 Q58 73 66 68" fill="none" stroke="#2563EB" stroke-width="1.5"/>
+              </g>
+              <g id="outfitQA" style="display:none">
+                <path d="M8 82 Q7 94 14 97 L50 99 L86 97 Q93 94 92 82 L84 75 Q72 70 50 68 Q28 70 16 75 Z" fill="#1E3A5F"/>
+                <path d="M43 68 L45 78 Q50 80 55 78 L57 68" fill="#F0F7FF"/>
+                <path d="M34 68 Q41 73 43 68 L36 84 L8 82 L16 75 Z" fill="#162D4A"/>
+                <path d="M66 68 Q59 73 57 68 L64 84 L92 82 L84 75 Z" fill="#162D4A"/>
+              </g>
+              <g id="outfitConsultant" style="display:none">
+                <path d="M8 82 Q7 94 14 97 L50 99 L86 97 Q93 94 92 82 L84 75 Q72 70 50 68 Q28 70 16 75 Z" fill="#1F2937"/>
+                <path d="M45 68 L46 97 Q49 99 50 99 Q51 99 54 97 L55 68" fill="#F9FAFB"/>
+                <path d="M48 68 L50 70 L52 68 L52 88 Q50 91 48 88 Z" fill="#B91C1C"/>
+                <path d="M34 68 Q41 72 45 68 L38 84 L8 82 L16 75 Z" fill="#111827"/>
+                <path d="M66 68 Q59 72 55 68 L62 84 L92 82 L84 75 Z" fill="#111827"/>
+              </g>
+              <g id="outfitStartup" style="display:none">
+                <path d="M7 84 Q6 96 14 99 L50 100 L86 99 Q94 96 93 84 L84 76 Q72 69 50 67 Q28 69 16 76 Z" fill="#6366F1"/>
+                <path d="M50 67 L50 99" stroke="#4F46E5" stroke-width="1" stroke-dasharray="3,2.5"/>
+                <path d="M38 88 Q50 86 62 88 L62 95 Q50 97 38 95 Z" fill="#4F46E5"/>
+                <line x1="45" y1="67" x2="44" y2="77" stroke="#818CF8" stroke-width="1.2"/>
+                <line x1="55" y1="67" x2="56" y2="77" stroke="#818CF8" stroke-width="1.2"/>
+              </g>
+              <g id="outfitTraditional" style="display:none">
+                <path d="M8 82 Q7 94 14 97 L50 99 L86 97 Q93 94 92 82 L84 75 Q72 70 50 68 Q28 70 16 75 Z" fill="#E8630A"/>
+                <path d="M37 68 Q43 73 50 75 Q57 73 63 68 L50 80 Z" fill="#C4510A"/>
+                <path d="M8 93 Q30 97 50 98 Q70 97 92 93" fill="none" stroke="#FCD34D" stroke-width="2"/>
+              </g>
+              <g id="outfitFestival" style="display:none">
+                <path d="M8 82 Q7 94 14 97 L50 99 L86 97 Q93 94 92 82 L84 75 Q72 70 50 68 Q28 70 16 75 Z" fill="#C026D3"/>
+                <path d="M8 91 Q30 96 50 97 Q70 96 92 91" fill="none" stroke="#F59E0B" stroke-width="3"/>
+                <circle cx="30" cy="78" r="3.5" fill="#F59E0B" opacity="0.8"/>
+                <circle cx="50" cy="76" r="3.5" fill="#F59E0B" opacity="0.8"/>
+                <circle cx="70" cy="78" r="3.5" fill="#F59E0B" opacity="0.8"/>
+              </g>
+
+              <!-- Neck -->
+              <rect x="43" y="58" width="14" height="13" rx="4" fill="var(--skin-color,#FDDCC4)"/>
+
+              <!-- Hair back -->
+              <g id="hairBackShort"><path d="M22 40 Q22 16 50 13 Q78 16 78 40 L78 52 Q68 60 50 62 Q32 60 22 52 Z" fill="var(--hair-color,#2c1a0e)" opacity="0.9"/></g>
+              <g id="hairBackLong" style="display:none"><path d="M22 40 Q18 14 50 10 Q82 14 78 40 L82 64 Q78 82 72 90 Q62 96 50 96 Q38 96 28 90 Q22 82 18 64 Z" fill="var(--hair-color,#2c1a0e)"/></g>
+              <g id="hairBackWavy" style="display:none"><path d="M22 40 Q18 14 50 10 Q82 14 78 40 L82 60 Q76 74 72 82 Q62 90 50 92 Q38 90 28 82 Q24 74 18 60 Z" fill="var(--hair-color,#2c1a0e)"/><path d="M18 60 Q14 68 18 76" stroke="var(--hair-color,#2c1a0e)" stroke-width="5.5" fill="none" stroke-linecap="round"/><path d="M82 60 Q86 68 82 76" stroke="var(--hair-color,#2c1a0e)" stroke-width="5.5" fill="none" stroke-linecap="round"/></g>
+              <g id="hairBackUpdo" style="display:none"><path d="M22 40 Q20 14 50 12 Q80 14 78 40 L78 50 Q68 58 50 60 Q32 58 22 50 Z" fill="var(--hair-color,#2c1a0e)"/><ellipse cx="50" cy="11" rx="12" ry="9" fill="var(--hair-color,#2c1a0e)"/></g>
+              <g id="hairBackModern" style="display:none"><path d="M22 40 Q20 14 50 12 Q80 14 78 40 L78 52 Q68 60 50 62 Q32 60 22 52 Z" fill="var(--hair-color,#2c1a0e)"/><path d="M78 36 Q86 30 88 38 Q89 48 82 54" fill="var(--hair-color,#2c1a0e)" opacity="0.9"/></g>
+
+              <!-- Face -->
+              <ellipse cx="50" cy="42" rx="26" ry="28" fill="var(--skin-color,#FDDCC4)"/>
+
+              <!-- Eyebrows -->
+              <path d="M31 29 Q37 25 42 27" stroke="var(--hair-color,#2c1a0e)" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M58 27 Q63 25 69 29" stroke="var(--hair-color,#2c1a0e)" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+              <!-- Eyes -->
+              <ellipse cx="39" cy="39" rx="7" ry="7.5" fill="#18100A"/>
+              <ellipse cx="39" cy="39.5" rx="5" ry="5.8" fill="#7B2D5F"/>
+              <ellipse cx="39" cy="40" rx="3" ry="3.5" fill="#140822"/>
+              <circle cx="41.5" cy="36.5" r="2" fill="white" opacity="0.95"/>
+              <ellipse cx="61" cy="39" rx="7" ry="7.5" fill="#18100A"/>
+              <ellipse cx="61" cy="39.5" rx="5" ry="5.8" fill="#7B2D5F"/>
+              <ellipse cx="61" cy="40" rx="3" ry="3.5" fill="#140822"/>
+              <circle cx="63.5" cy="36.5" r="2" fill="white" opacity="0.95"/>
+              <!-- Lashes -->
+              <path d="M32 34 Q34 31 37 32" stroke="#18100A" stroke-width="1" fill="none"/>
+              <path d="M46 34 Q44 31 41 32" stroke="#18100A" stroke-width="1" fill="none"/>
+              <path d="M54 34 Q56 31 59 32" stroke="#18100A" stroke-width="1" fill="none"/>
+              <path d="M68 34 Q66 31 63 32" stroke="#18100A" stroke-width="1" fill="none"/>
+
+              <!-- Nose -->
+              <path d="M47 50 Q50 53 53 50" stroke="#C08060" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+              <!-- Mouth (happy) -->
+              <path d="M42 56 Q50 62 58 56" stroke="var(--lip-color,#C0607A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M45 58 Q50 61 55 58" fill="rgba(192,96,122,0.12)" stroke="var(--lip-color,#C0607A)" stroke-width="1.2"/>
+
+              <!-- Blush -->
+              <ellipse cx="27" cy="47" rx="7" ry="4" fill="#FFB3A7" opacity="0.38"/>
+              <ellipse cx="73" cy="47" rx="7" ry="4" fill="#FFB3A7" opacity="0.38"/>
+
+              <!-- Hair Front -->
+              <g id="hairFrontShort"><path d="M24 40 Q25 18 50 14 Q75 18 76 40 Q72 24 66 26 Q58 22 50 24 Q42 22 34 26 Q28 24 24 40Z" fill="var(--hair-color,#2c1a0e)"/><path d="M24 40 Q22 46 23 53 Q26 44 27 40" fill="var(--hair-color,#2c1a0e)"/><path d="M76 40 Q78 46 77 53 Q74 44 73 40" fill="var(--hair-color,#2c1a0e)"/></g>
+              <g id="hairFrontLong" style="display:none"><path d="M24 40 Q24 18 50 13 Q76 18 76 40 Q72 22 66 24 Q58 20 50 22 Q42 20 34 24 Q28 22 24 40Z" fill="var(--hair-color,#2c1a0e)"/><path d="M24 40 Q22 50 23 60 Q26 48 27 40" fill="var(--hair-color,#2c1a0e)"/><path d="M76 40 Q78 50 77 60 Q74 48 73 40" fill="var(--hair-color,#2c1a0e)"/></g>
+              <g id="hairFrontWavy" style="display:none"><path d="M25 40 Q26 18 50 14 Q74 18 75 40 Q71 24 64 26 Q58 20 50 22 Q42 20 36 26 Q29 24 25 40Z" fill="var(--hair-color,#2c1a0e)"/><path d="M25 40 Q22 50 24 60 Q27 48 28 40" fill="var(--hair-color,#2c1a0e)"/><path d="M75 40 Q78 50 76 60 Q73 48 72 40" fill="var(--hair-color,#2c1a0e)"/></g>
+              <g id="hairFrontUpdo" style="display:none"><path d="M24 42 Q24 22 50 16 Q76 22 76 42 Q72 28 66 30 Q58 24 50 26 Q42 24 34 30 Q28 28 24 42Z" fill="var(--hair-color,#2c1a0e)"/><line x1="58" y1="17" x2="62" y2="9" stroke="#DAA520" stroke-width="1.5"/><circle cx="62" cy="8" r="3" fill="#DAA520"/></g>
+              <g id="hairFrontModern" style="display:none"><path d="M25 40 Q25 18 50 13 Q75 18 75 40 Q72 24 65 24 Q58 20 50 22 Q42 20 35 24 Q28 24 25 40Z" fill="var(--hair-color,#2c1a0e)"/><path d="M75 38 Q80 32 82 40 Q82 50 78 55" fill="var(--hair-color,#2c1a0e)" opacity="0.9"/><path d="M25 40 Q22 47 24 55 Q27 46 28 40" fill="var(--hair-color,#2c1a0e)"/></g>
+
+              <!-- Headset -->
+              <g id="accessoryHeadset" style="display:none">
+                <path d="M24 42 Q22 30 24 22 Q30 10 50 8 Q70 10 76 22 Q78 30 76 42" fill="none" stroke="#374151" stroke-width="3" stroke-linecap="round"/>
+                <rect x="18" y="38" width="10" height="13" rx="4" fill="#374151"/>
+                <circle cx="23" cy="44.5" r="3" fill="#3B82F6"/>
+                <rect x="72" y="38" width="10" height="13" rx="4" fill="#374151"/>
+                <circle cx="77" cy="44.5" r="3" fill="#3B82F6"/>
+                <path d="M18 46 Q10 52 9 58" stroke="#374151" stroke-width="1.8" fill="none"/>
+                <circle cx="9" cy="59" r="2.2" fill="#374151"/>
+              </g>
+
+              <!-- Earrings -->
+              <g id="accessoryEarrings">
+                <circle cx="24" cy="52" r="2.5" fill="#DAA520"/>
+                <circle cx="24" cy="52" r="1.2" fill="#FCD34D"/>
+                <circle cx="76" cy="52" r="2.5" fill="#DAA520"/>
+                <circle cx="76" cy="52" r="1.2" fill="#FCD34D"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <div class="buddy-chat-name" id="buddyChatName">Testy</div>
+            <div class="buddy-chat-role">Your QA Intelligence Companion</div>
+          </div>
+          <!-- Personalize: now on left side with proper boundary -->
+          <a href="avatar_settings.html" class="buddy-personalize-btn" title="Personalize Avatar">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            Personalize
+          </a>
+          <div class="buddy-mood-badge" id="buddyMoodBadge">Ready to help</div>
+          <!-- Custom language dropdown with colored bullets -->
+          <div class="buddy-lang-custom" id="buddyLangCustom">
+            <div class="buddy-lang-trigger" onclick="BuddyLangPicker.toggle()">
+              <span>🌐</span>
+              <span class="buddy-lang-dot" id="buddyLangDot" style="background:#3b82f6"></span>
+              <span id="buddyLangLabel">English</span>
+              <svg class="buddy-lang-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#92400e" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="buddy-lang-dropdown" id="buddyLangDropdown">
+              <div class="buddy-lang-opt active" data-val="en" data-label="English" data-color="#3b82f6" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#3b82f6"></span> English</div>
+              <div class="buddy-lang-opt" data-val="hi" data-label="Hindi" data-color="#f97316" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#f97316"></span> Hindi <span class="buddy-lang-native">हिन्दी</span></div>
+              <div class="buddy-lang-opt" data-val="bn" data-label="Bengali" data-color="#10b981" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#10b981"></span> Bengali <span class="buddy-lang-native">বাংলা</span></div>
+              <div class="buddy-lang-opt" data-val="mr" data-label="Marathi" data-color="#8b5cf6" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#8b5cf6"></span> Marathi <span class="buddy-lang-native">मराठी</span></div>
+              <div class="buddy-lang-opt" data-val="te" data-label="Telugu" data-color="#ec4899" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#ec4899"></span> Telugu <span class="buddy-lang-native">తెలుగు</span></div>
+              <div class="buddy-lang-opt" data-val="ta" data-label="Tamil" data-color="#ef4444" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#ef4444"></span> Tamil <span class="buddy-lang-native">தமிழ்</span></div>
+              <div class="buddy-lang-opt" data-val="gu" data-label="Gujarati" data-color="#f59e0b" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#f59e0b"></span> Gujarati <span class="buddy-lang-native">ગુજરાતી</span></div>
+              <div class="buddy-lang-opt" data-val="ur" data-label="Urdu" data-color="#06b6d4" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#06b6d4"></span> Urdu <span class="buddy-lang-native">اردو</span></div>
+              <div class="buddy-lang-opt" data-val="kn" data-label="Kannada" data-color="#84cc16" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#84cc16"></span> Kannada <span class="buddy-lang-native">ಕನ್ನಡ</span></div>
+              <div class="buddy-lang-opt" data-val="od" data-label="Odia" data-color="#6366f1" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#6366f1"></span> Odia <span class="buddy-lang-native">ଓଡ଼ିଆ</span></div>
+              <div class="buddy-lang-opt" data-val="ml" data-label="Malayalam" data-color="#a855f7" onclick="BuddyLangPicker.select(this)"><span class="buddy-lang-dot" style="background:#a855f7"></span> Malayalam <span class="buddy-lang-native">മലയാളം</span></div>
+            </div>
+            <!-- hidden native select kept for BuddyApp.setLang() sync -->
+            <select id="buddyLangHeader" style="display:none" onchange="BuddyApp.setLang(this.value)">
+              <option value="en">English</option><option value="hi">Hindi</option><option value="bn">Bengali</option>
+              <option value="mr">Marathi</option><option value="te">Telugu</option><option value="ta">Tamil</option>
+              <option value="gu">Gujarati</option><option value="ur">Urdu</option><option value="kn">Kannada</option>
+              <option value="od">Odia</option><option value="ml">Malayalam</option>
+            </select>
+          </div>
+          <span class="buddy-knowledge-badge none" id="buddyKnowledgeBadge" title="Project knowledge loaded">No project</span>
+          <div class="buddy-header-actions">
+            <button class="buddy-win-btn" id="buddyWinDockL" title="Dock Left" onclick="BuddyWindow.dockLeft()">⬅</button>
+            <button class="buddy-win-btn" id="buddyWinDockR" title="Dock Right" onclick="BuddyWindow.dockRight()">➡</button>
+            <button class="buddy-win-btn" id="buddyWinMin" title="Minimize" onclick="BuddyWindow.minimize()">_</button>
+            <button class="buddy-win-btn" id="buddyWinMax" title="Maximize / Full Screen" onclick="BuddyWindow.maximize()">⤢</button>
+            <button class="buddy-settings-gear" id="buddySettingsGear" title="Buddy Settings (⚙️)" onclick="BuddyApp.openSettings()">⚙️</button>
+          </div>
+        </div>
+
+        <div class="buddy-quick-actions">
+          <button class="buddy-quick-btn" onclick="BuddyApp.quickSend('Generate test cases for login feature')">Generate test cases</button>
+          <button class="buddy-quick-btn" onclick="BuddyApp.quickSend('Analyze defect and suggest root cause')">Defect analysis</button>
+          <button class="buddy-quick-btn" onclick="BuddyApp.quickSend('What are the testing risks in this module?')">Risk analysis</button>
+          <button class="buddy-quick-btn" onclick="BuddyApp.quickSend('Create a Playwright automation script')">Playwright script</button>
+          <button class="buddy-quick-btn" onclick="BuddyApp.quickSend('What test coverage gaps do you see?')">Coverage gaps</button>
+          <button class="buddy-quick-btn" onclick="BuddyApp.quickSend('Suggest exploratory testing ideas')">Exploratory ideas</button>
+        </div>
+
+        <div class="buddy-messages" id="buddyMessages">
+          <div class="buddy-welcome" id="buddyWelcome">
+            <span class="buddy-welcome-avatar qabot-active" id="buddyWelcomeEmoji">
+              <svg viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:138px;--skin-color:#FDDCC4;--hair-color:#2c1a0e;--lip-color:#C0607A;filter:drop-shadow(0 8px 24px rgba(242,106,33,0.2))">
+                <g id="wOutfitCorporate"><path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#7B1C3E"/><path d="M55 130 Q67 140 80 143 Q93 140 105 130 L80 155 Z" fill="#5A0F28"/><path d="M55 130 Q66 140 79 143 L71 165 L18 155 L30 142 Z" fill="#680F2E"/><path d="M105 130 Q94 140 81 143 L89 165 L142 155 L130 142 Z" fill="#680F2E"/><path d="M55 130 Q68 140 80 143 Q92 140 105 130" fill="none" stroke="#fff" stroke-width="2.5"/></g>
+                <rect x="66" y="104" width="28" height="28" rx="8" fill="var(--skin-color,#FDDCC4)"/>
+                <g><path d="M42 70 Q42 32 80 28 Q118 32 118 70 L118 88 Q108 100 80 103 Q52 100 42 88 Z" fill="var(--hair-color,#2c1a0e)" opacity="0.9"/></g>
+                <ellipse cx="80" cy="72" rx="36" ry="40" fill="var(--skin-color,#FDDCC4)"/>
+                <path d="M55 50 Q63 46 70 49" stroke="var(--hair-color,#2c1a0e)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+                <path d="M90 49 Q97 46 105 50" stroke="var(--hair-color,#2c1a0e)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+                <ellipse cx="63" cy="66" rx="10" ry="11" fill="#18100A"/><ellipse cx="63" cy="67" rx="7.5" ry="8.5" fill="#7B2D5F"/><ellipse cx="63" cy="68" rx="2.5" ry="3" fill="#140822"/><circle cx="66.5" cy="62" r="2.8" fill="white" opacity="0.95"/>
+                <ellipse cx="97" cy="66" rx="10" ry="11" fill="#18100A"/><ellipse cx="97" cy="67" rx="7.5" ry="8.5" fill="#7B2D5F"/><ellipse cx="97" cy="68" rx="2.5" ry="3" fill="#140822"/><circle cx="100.5" cy="62" r="2.8" fill="white" opacity="0.95"/>
+                <path d="M76 82 Q80 86 84 82" stroke="#C08060" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path d="M67 92 Q80 100 93 92" stroke="var(--lip-color,#C0607A)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+                <ellipse cx="46" cy="79" rx="10" ry="6" fill="#FFB3A7" opacity="0.38"/>
+                <ellipse cx="114" cy="79" rx="10" ry="6" fill="#FFB3A7" opacity="0.38"/>
+                <path d="M44 68 Q46 36 80 30 Q114 36 116 68 Q108 48 100 50 Q92 44 80 46 Q68 44 60 50 Q52 48 44 68 Z" fill="var(--hair-color,#2c1a0e)"/>
+                <path d="M44 68 Q42 76 44 86 Q48 72 50 66" fill="var(--hair-color,#2c1a0e)"/>
+                <path d="M116 68 Q118 76 116 86 Q112 72 110 66" fill="var(--hair-color,#2c1a0e)"/>
+                <g id="wAccessoryEarrings"><circle cx="44" cy="87" r="3.5" fill="#DAA520"/><circle cx="44" cy="87" r="1.8" fill="#FCD34D"/><circle cx="116" cy="87" r="3.5" fill="#DAA520"/><circle cx="116" cy="87" r="1.8" fill="#FCD34D"/></g>
+              </svg>
+            </span>
+            <h2 id="buddyWelcomeTitle">Namaste 🙏 Welcome back! I'm Veda, your QA companion!</h2>
+            <p>I'm your intelligent QA companion. Ask me to generate test cases, analyze defects, review requirements, create automation scripts, or anything testing-related!</p>
+            <div class="buddy-welcome-chips">
+              <span class="buddy-welcome-chip" onclick="BuddyApp.quickSend('What can you do?')">What can you do?</span>
+              <span class="buddy-welcome-chip" onclick="BuddyApp.quickSend('Generate test cases for a user registration feature')">User registration tests</span>
+              <span class="buddy-welcome-chip" onclick="BuddyApp.quickSend('Help me write a QA test strategy')">QA test strategy</span>
+              <span class="buddy-welcome-chip" onclick="BuddyApp.quickSend('What are common defect patterns in login modules?')">Login defect patterns</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="buddy-input-row">
+          <textarea class="buddy-chat-input" id="buddyChatInput" placeholder="Ask me anything about testing, defects, test cases, automation..." rows="1"></textarea>
+          <button class="buddy-send-btn" id="buddySendBtn" onclick="BuddyApp.send()" title="Send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="app-footer" style="display:none"></footer>
+</div>
+
+<!-- Buddy Settings Modal -->
+<div class="modal-overlay" id="buddySettingsModal" style="display:none">
+  <div class="modal buddy-modal">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ Buddy Settings</div>
+      <button type="button" class="modal-close" onclick="closeModal('buddySettingsModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding-top:0">
+      <div class="buddy-modal-tabs">
+        <button class="buddy-modal-tab active" onclick="BuddyApp.modalTab('identity',this)">Identity</button>
+        <button class="buddy-modal-tab" onclick="BuddyApp.modalTab('avatar',this)">Avatar</button>
+        <button class="buddy-modal-tab" onclick="BuddyApp.modalTab('style',this)">Style</button>
+        <button class="buddy-modal-tab" onclick="BuddyApp.modalTab('knowledge',this)">Knowledge</button>
+      </div>
+
+      <!-- Identity Tab -->
+      <div class="buddy-modal-tab-panel active" id="bmt-identity">
+        <div class="form-group-dark">
+          <label class="form-label-dark">Buddy Name</label>
+          <input type="text" class="form-input-dark" id="bsName" maxlength="20" placeholder="Testy" />
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark">Gender</label>
+          <select class="form-input-dark" id="bsGender">
+            <option value="neutral">Neutral (they/them)</option>
+            <option value="female">Female (she/her)</option>
+            <option value="male">Male (he/him)</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark">Role Title</label>
+          <input type="text" class="form-input-dark" id="bsRole" placeholder="QA Intelligence Companion" maxlength="40" />
+        </div>
+      </div>
+
+      <!-- Avatar Tab -->
+      <div class="buddy-modal-tab-panel" id="bmt-avatar">
+        <div class="buddy-modal-avatar-grid" id="bsAvatarGrid">
+          <div class="buddy-modal-avatar-opt" data-av="qabot" onclick="BuddyApp.modalSelectAvatar('qabot',this)">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="50" y1="7" x2="50" y2="19" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="50" cy="5" r="5.5" fill="#3b82f6"/><circle cx="50" cy="5" r="2.5" fill="#bfdbfe"/>
+              <path d="M16 50 Q16 18 50 18 Q84 18 84 50 Q84 72 68 78 Q50 83 32 78 Q16 72 16 50Z" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+              <circle cx="17" cy="52" r="7" fill="none" stroke="#3b82f6" stroke-width="2.5"/><circle cx="17" cy="52" r="3.5" fill="#3b82f6" opacity="0.2"/>
+              <circle cx="83" cy="52" r="7" fill="none" stroke="#3b82f6" stroke-width="2.5"/><circle cx="83" cy="52" r="3.5" fill="#3b82f6" opacity="0.2"/>
+              <rect x="26" y="24" width="48" height="30" rx="10" fill="#0f172a"/>
+              <circle cx="39" cy="36" r="7" fill="#1d4ed8"/><circle cx="61" cy="36" r="7" fill="#1d4ed8"/>
+              <circle cx="39" cy="36" r="4.5" fill="#3b82f6"/><circle cx="61" cy="36" r="4.5" fill="#3b82f6"/>
+              <circle cx="41" cy="34" r="1.8" fill="#bfdbfe"/><circle cx="63" cy="34" r="1.8" fill="#bfdbfe"/>
+              <path d="M39 47 Q50 53 61 47" stroke="#60a5fa" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <ellipse cx="50" cy="70" rx="22" ry="18" fill="#fcd9b5"/>
+              <path d="M28 62 Q32 56 42 58 Q50 56 58 58 Q68 56 72 62" fill="#2c1a0e"/>
+              <ellipse cx="40" cy="69" rx="6" ry="7" fill="#1a1005"/><ellipse cx="60" cy="69" rx="6" ry="7" fill="#1a1005"/>
+              <circle cx="40" cy="69" r="4" fill="#8B5030"/><circle cx="60" cy="69" r="4" fill="#8B5030"/>
+              <circle cx="42" cy="66.5" r="2" fill="white"/><circle cx="62" cy="66.5" r="2" fill="white"/>
+              <path d="M43 79 Q50 84.5 57 79" stroke="#a05030" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <ellipse cx="30" cy="73" rx="7" ry="4" fill="#ffb3a7" opacity="0.5"/><ellipse cx="70" cy="73" rx="7" ry="4" fill="#ffb3a7" opacity="0.5"/>
+              <path d="M18 84 Q30 95 50 97 Q70 95 82 84 Q78 100 50 100 Q22 100 18 84Z" fill="white"/>
+            </svg>
+            <div class="buddy-avatar-label">QA Bot</div>
+          </div>
+          <div class="buddy-modal-avatar-opt" data-av="robot" onclick="BuddyApp.modalSelectAvatar('robot',this)">
+            <svg viewBox="0 0 100 100" fill="none"><rect x="25" y="35" width="50" height="40" rx="8" fill="#2563eb"/><rect x="35" y="45" width="12" height="10" rx="3" fill="#93c5fd"/><rect x="53" y="45" width="12" height="10" rx="3" fill="#93c5fd"/><rect x="38" y="62" width="24" height="5" rx="2.5" fill="#93c5fd" opacity="0.7"/><rect x="43" y="25" width="14" height="12" rx="3" fill="#1d4ed8"/><rect x="48" y="18" width="4" height="8" rx="2" fill="#60a5fa"/><rect x="75" y="50" width="10" height="18" rx="4" fill="#1d4ed8"/><rect x="15" y="50" width="10" height="18" rx="4" fill="#1d4ed8"/><rect x="35" y="75" width="12" height="14" rx="4" fill="#1d4ed8"/><rect x="53" y="75" width="12" height="14" rx="4" fill="#1d4ed8"/></svg>
+            <div class="buddy-avatar-label">Robot</div>
+          </div>
+          <div class="buddy-modal-avatar-opt" data-av="panda" onclick="BuddyApp.modalSelectAvatar('panda',this)">
+            <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="55" r="28" fill="#f1f5f9"/><circle cx="28" cy="32" r="14" fill="#1e293b"/><circle cx="72" cy="32" r="14" fill="#1e293b"/><circle cx="50" cy="55" r="26" fill="#f8fafc"/><ellipse cx="38" cy="50" rx="8" ry="9" fill="#1e293b"/><ellipse cx="62" cy="50" rx="8" ry="9" fill="#1e293b"/><circle cx="38" cy="50" r="4" fill="#3b82f6"/><circle cx="62" cy="50" r="4" fill="#3b82f6"/><ellipse cx="50" cy="62" rx="9" ry="6" fill="#fecaca"/></svg>
+            <div class="buddy-avatar-label">Panda</div>
+          </div>
+          <div class="buddy-modal-avatar-opt" data-av="cat" onclick="BuddyApp.modalSelectAvatar('cat',this)">
+            <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="58" r="26" fill="#f97316"/><polygon points="25,40 32,20 42,42" fill="#f97316"/><polygon points="75,40 68,20 58,42" fill="#f97316"/><ellipse cx="40" cy="56" rx="7" ry="8" fill="#7c2d12"/><ellipse cx="60" cy="56" rx="7" ry="8" fill="#7c2d12"/><ellipse cx="50" cy="66" rx="6" ry="4" fill="#fecaca"/></svg>
+            <div class="buddy-avatar-label">Cat</div>
+          </div>
+          <div class="buddy-modal-avatar-opt" data-av="fox" onclick="BuddyApp.modalSelectAvatar('fox',this)">
+            <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="58" r="25" fill="#ea580c"/><polygon points="22,45 28,18 44,44" fill="#ea580c"/><polygon points="78,45 72,18 56,44" fill="#ea580c"/><ellipse cx="50" cy="62" rx="16" ry="12" fill="#fef3c7"/><ellipse cx="40" cy="55" rx="6" ry="7" fill="#7c2d12"/><ellipse cx="60" cy="55" rx="6" ry="7" fill="#7c2d12"/></svg>
+            <div class="buddy-avatar-label">Fox</div>
+          </div>
+          <div class="buddy-modal-avatar-opt" data-av="owl" onclick="BuddyApp.modalSelectAvatar('owl',this)">
+            <svg viewBox="0 0 100 100" fill="none"><ellipse cx="50" cy="60" rx="24" ry="28" fill="#6b21a8"/><circle cx="38" cy="48" r="10" fill="#fff"/><circle cx="62" cy="48" r="10" fill="#fff"/><circle cx="38" cy="48" r="6" fill="#1e1b4b"/><circle cx="62" cy="48" r="6" fill="#1e1b4b"/><polygon points="47,58 50,53 53,58" fill="#f59e0b"/></svg>
+            <div class="buddy-avatar-label">Owl</div>
+          </div>
+          <div class="buddy-modal-avatar-opt" data-av="bunny" onclick="BuddyApp.modalSelectAvatar('bunny',this)">
+            <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="60" r="24" fill="#f0abfc"/><ellipse cx="35" cy="30" rx="7" ry="18" fill="#f0abfc"/><ellipse cx="65" cy="30" rx="7" ry="18" fill="#f0abfc"/><ellipse cx="35" cy="30" rx="4" ry="14" fill="#fce7f3"/><ellipse cx="65" cy="30" rx="4" ry="14" fill="#fce7f3"/><circle cx="40" cy="57" r="6" fill="#1e1b4b"/><circle cx="60" cy="57" r="6" fill="#1e1b4b"/><circle cx="41.5" cy="55.5" r="2" fill="#fff"/><circle cx="61.5" cy="55.5" r="2" fill="#fff"/><ellipse cx="50" cy="67" rx="6" ry="4" fill="#fecaca"/><path d="M44 70 Q50 75 56 70" stroke="#9d174d" stroke-width="1.5" fill="none"/></svg>
+            <div class="buddy-avatar-label">Bunny</div>
+          </div>
+        </div>
+        <div id="bsAvatarCustom" style="display:none">
+          <label class="form-label-dark" style="font-size:0.75rem">Custom Emoji Avatar</label>
+          <input type="text" class="form-input-dark" id="bsCustomEmoji" maxlength="4" placeholder="🧑‍💻" style="text-align:center;font-size:1.8rem;height:52px" />
+        </div>
+      </div>
+
+      <!-- Style Tab -->
+      <div class="buddy-modal-tab-panel" id="bmt-style">
+        <div class="form-group-dark">
+          <label class="form-label-dark">Personality</label>
+          <select class="form-input-dark" id="bsPersonality">
+            <option value="friendly">Friendly</option>
+            <option value="professional">Professional</option>
+            <option value="mentor">Mentor</option>
+            <option value="funny">Funny</option>
+            <option value="cute">Cute</option>
+            <option value="expert">Expert QA Architect</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark">Communication Style</label>
+          <select class="form-input-dark" id="bsCommStyle">
+            <option value="balanced">Balanced</option>
+            <option value="concise">Concise (bullet points only)</option>
+            <option value="detailed">Detailed (full explanations)</option>
+            <option value="socratic">Socratic (guide with questions)</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark">Voice Tone</label>
+          <select class="form-input-dark" id="bsVoiceTone">
+            <option value="warm">Warm & Encouraging</option>
+            <option value="neutral">Neutral</option>
+            <option value="formal">Formal</option>
+            <option value="energetic">Energetic & Upbeat</option>
+            <option value="calm">Calm & Measured</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark">Response Language Preference</label>
+          <select class="form-input-dark" id="bsLang">
+            <option value="en">English</option>
+            <option value="hi">Hindi — हिन्दी</option>
+            <option value="bn">Bengali — বাংলা</option>
+            <option value="mr">Marathi — मराठी</option>
+            <option value="te">Telugu — తెలుగు</option>
+            <option value="ta">Tamil — தமிழ்</option>
+            <option value="gu">Gujarati — ગુજરાતી</option>
+            <option value="ur">Urdu — اردو</option>
+            <option value="kn">Kannada — ಕನ್ನಡ</option>
+            <option value="od">Odia — ଓଡ଼ିଆ</option>
+            <option value="ml">Malayalam — മലയാളം</option>
+          </select>
+        </div>
+        <div class="form-group-dark">
+          <label class="form-label-dark">🤖 AI Engine</label>
+          <select class="form-input-dark" id="bsEngine">
+            <option value="">Auto (App Default)</option>
+          </select>
+          <div class="buddy-engine-hint">⚠ Engines marked ⚠ need an API key — configure in Dashboard → Settings</div>
+        </div>
+      </div>
+
+      <!-- Knowledge Tab -->
+      <div class="buddy-modal-tab-panel" id="bmt-knowledge">
+        <div id="bsKnowledgeInfo" class="bs-knowledge-info">
+          Loading knowledge base...
+        </div>
+        <div class="bs-knowledge-actions">
+          <button type="button" class="bs-btn-reload" onclick="BuddyApp.refreshKnowledge()">Reload from HLD/LLD Maker</button>
+          <button type="button" class="bs-btn-clear-k" onclick="BuddyApp.clearMemory()">Clear Knowledge</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal('buddySettingsModal')">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="BuddyApp.saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Settings</div><button type="button" class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Settings saved!','success');closeModal('settingsModal')">Save</button></div></div>
+</div>
+<div class="modal-overlay" id="editProfileModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Edit Profile</div><button type="button" class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div class="ep-photo-wrap">
+        <div class="ep-photo-ring" id="epPhotoRing">
+          <div class="ep-photo-inner">
+            <div class="avatar lg" id="epAvatarInitials">AD</div>
+            <img class="ep-photo-img" id="epPhotoImg" alt="Profile photo" style="display:none" />
+          </div>
+          <div class="ep-photo-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Change Photo</span>
+          </div>
+          <input type="file" id="epPhotoInput" accept=".jpg,.jpeg,.png,.jfif" style="display:none" />
+        </div>
+        <div class="ep-spec-box">
+          <div class="ep-spec-title">Photo Requirements</div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Accepted formats</span>
+            <span class="ep-spec-val">JPG &middot; JPEG &middot; PNG &middot; JFIF</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Minimum file size</span>
+            <span class="ep-spec-val">100 KB</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Maximum file size</span>
+            <span class="ep-spec-val">5 MB</span>
+          </div>
+          <div id="epPhotoError" class="ep-photo-error" style="display:none;margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="form-group-dark"><label class="form-label-dark">Full Name</label><input type="text" class="form-input-dark" id="editName" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email" class="form-input-dark" id="editEmail" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Role</label><input type="text" class="form-input-dark" id="editRole" /></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button type="button" class="btn btn-primary" id="saveProfileBtn">Save</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="aboutModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">About</div><button type="button" class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p class="modal-body-text">eMudhra delivers digital identity and enterprise cybersecurity solutions globally.</p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Close</button></div></div>
+</div>
+<div class="modal-overlay" id="confirmModal" style="display:none">
+  <div class="modal modal-sm"><div class="modal-header"><div class="modal-title">Confirm</div><button type="button" class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button type="button" class="btn btn-danger" id="confirmOk">Yes</button></div></div>
+</div>
+
+<script src="/src/app/shared.js?v=20"></script>
+<script src="/src/services/ai_engine.js"></script>
+<script src="/src/features/testing_buddy.js?v=1"></script>
+<script src="/src/components/ui/emi.js"></script>
+<script>
+/* ── Custom language picker ── */
+var BuddyLangPicker = (function() {
+  var LANGS = {
+    en:{label:'English',color:'#3b82f6'},
+    hi:{label:'Hindi',color:'#f97316'},
+    bn:{label:'Bengali',color:'#10b981'},
+    mr:{label:'Marathi',color:'#8b5cf6'},
+    te:{label:'Telugu',color:'#ec4899'},
+    ta:{label:'Tamil',color:'#ef4444'},
+    gu:{label:'Gujarati',color:'#f59e0b'},
+    ur:{label:'Urdu',color:'#06b6d4'},
+    kn:{label:'Kannada',color:'#84cc16'},
+    od:{label:'Odia',color:'#6366f1'},
+    ml:{label:'Malayalam',color:'#a855f7'}
+  };
+  function updateUI(val) {
+    var info = LANGS[val] || LANGS.en;
+    var dot = document.getElementById('buddyLangDot');
+    var lbl = document.getElementById('buddyLangLabel');
+    if (dot) dot.style.background = info.color;
+    if (lbl) lbl.textContent = info.label;
+    document.querySelectorAll('.buddy-lang-opt').forEach(function(o) {
+      o.classList.toggle('active', o.dataset.val === val);
+    });
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#buddyLangCustom')) {
+      var el = document.getElementById('buddyLangCustom');
+      if (el) el.classList.remove('open');
+    }
+  });
+  return {
+    toggle: function() {
+      var el = document.getElementById('buddyLangCustom');
+      if (el) el.classList.toggle('open');
+    },
+    select: function(opt) {
+      var val = opt.dataset.val;
+      updateUI(val);
+      document.getElementById('buddyLangCustom').classList.remove('open');
+      if (typeof BuddyApp !== 'undefined' && BuddyApp.setLang) BuddyApp.setLang(val);
+    },
+    sync: function(val) { updateUI(val); }
+  };
+})();
+</script>
+</body>
+</html>

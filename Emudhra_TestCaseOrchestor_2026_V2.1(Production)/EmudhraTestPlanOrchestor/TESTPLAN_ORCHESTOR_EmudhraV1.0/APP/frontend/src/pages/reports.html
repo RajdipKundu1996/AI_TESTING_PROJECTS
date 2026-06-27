@@ -1,0 +1,494 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports - QA-Gen AI | eMudhra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/shared.css?v=20" />
+  <link rel="stylesheet" href="/src/styles/pages.css?v=15" />
+  <link rel="stylesheet" href="/src/styles/emi.css" />
+</head>
+<body class="theme-light em-light-app page-fade reports-page">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>0</span> tokens
+      </div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>AS</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name></div>
+          <div class="p-role" data-user-role></div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <button class="dropdown-item" data-action="about">About</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD &rarr; LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header reports-header">
+      <div>
+        <div class="analysis-eyebrow">Enterprise Reporting</div>
+        <h1 class="page-title">Reports & Analytics</h1>
+        <p class="page-subtitle"><strong>Quantitative insights</strong> on PRDs analyzed, test plans, test cases, automation coverage, and <strong>user acceptance readiness</strong>.</p>
+      </div>
+      <a class="btn btn-primary" href="enterprise.html#risk">Open Risk Dashboard</a>
+    </div>
+
+    <div class="report-summary-grid">
+      <div class="report-summary-card"><div class="report-summary-icon">PRD</div><div class="report-summary-val" id="rptPrdCount">0</div><div class="report-summary-label"><strong>PRDs</strong> Analyzed</div></div>
+      <div class="report-summary-card"><div class="report-summary-icon">TP</div><div class="report-summary-val" id="rptPlanCount">0</div><div class="report-summary-label"><strong>Test Plans</strong> Generated</div></div>
+      <div class="report-summary-card"><div class="report-summary-icon">TC</div><div class="report-summary-val" id="rptTcCount">0</div><div class="report-summary-label"><strong>Test Cases</strong> Created</div></div>
+      <div class="report-summary-card"><div class="report-summary-icon">AU</div><div class="report-summary-val" id="rptAutoCount">0</div><div class="report-summary-label"><strong>Automation</strong> Scripts</div></div>
+    </div>
+
+    <div class="reports-grid">
+      <div class="card report-chart-card">
+        <div class="card-header"><div class="card-title">Generation Trends</div><span class="report-chip">Weekly</span></div>
+        <canvas id="trendsChart" height="220"></canvas>
+      </div>
+      <div class="card report-chart-card">
+        <div class="card-header"><div class="card-title">Output Distribution</div><span class="report-chip">Coverage Mix</span></div>
+        <canvas id="distChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="reports-grid reports-visual-grid">
+      <div class="card report-chart-card">
+        <div class="card-header"><div class="card-title">User Acceptance Readiness</div><span class="report-chip success" id="acceptanceChip">Calculating</span></div>
+        <div class="acceptance-visual">
+          <div class="acceptance-ring" id="acceptanceRing" style="--acceptance-score:0deg">
+            <div><strong id="acceptanceScore">0%</strong><span>Ready</span></div>
+          </div>
+          <div class="acceptance-copy">
+            <h2><strong>User Acceptance</strong> summary</h2>
+            <p id="acceptanceNarrative">Calculating readiness from generated PRDs, test cases, automation scripts, and coverage.</p>
+            <div class="acceptance-checks" id="acceptanceChecks"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card report-chart-card">
+        <div class="card-header"><div class="card-title">QA Coverage Flow</div><span class="report-chip">Traceability</span></div>
+        <div class="coverage-flow" id="coverageFlow"></div>
+      </div>
+    </div>
+
+    <div class="card report-acceptance-card">
+      <div class="card-header"><div class="card-title">Acceptance Criteria Insights</div><span class="report-chip">Bold Keywords</span></div>
+      <div class="acceptance-grid" id="acceptanceInsights"></div>
+    </div>
+
+    <div class="card report-history-card">
+      <div class="card-header"><div class="card-title">Recent Generation History</div><span class="report-chip">Audit</span></div>
+      <div class="report-table-wrap">
+        <table class="data-table" id="historyTable">
+          <thead><tr><th>#</th><th>PRD Title</th><th>Test Cases</th><th>Coverage</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-brand-row"><div class="footer-emudhra-logo"><img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra" class="footer-logo-img" /></div></div>
+    <div class="footer-text">(c) 2026 eMudhra. All rights reserved.</div>
+    <div class="footer-star">*</div>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Settings</div><button type="button" class="modal-close" data-close-modal>x</button></div>
+    <div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect" data-setting="theme"><option value="light">Light</option><option value="emudhra">eMudhra Soft</option><option value="dark">Dark</option><option value="midnight">Midnight</option><option value="ocean">Ocean Deep</option><option value="forest">Forest Dark</option><option value="carbon">Carbon Black</option><option value="royal">Royal Purple</option><option value="dawn">Dawn Warm</option><option value="system">System</option></select></div></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Saved!','success');closeModal('settingsModal')">Save</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="editProfileModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Edit Profile</div><button type="button" class="modal-close" data-close-modal>x</button></div>
+    <div class="modal-body">
+      <div class="ep-photo-wrap">
+        <div class="ep-photo-ring" id="epPhotoRing">
+          <div class="ep-photo-inner">
+            <div class="avatar lg" id="epAvatarInitials">AD</div>
+            <img class="ep-photo-img" id="epPhotoImg" alt="Profile photo" style="display:none" />
+          </div>
+          <div class="ep-photo-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Change Photo</span>
+          </div>
+          <input type="file" id="epPhotoInput" accept=".jpg,.jpeg,.png,.jfif" style="display:none" />
+        </div>
+        <div class="ep-spec-box">
+          <div class="ep-spec-title">Photo Requirements</div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Accepted formats</span>
+            <span class="ep-spec-val">JPG &middot; JPEG &middot; PNG &middot; JFIF</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Minimum file size</span>
+            <span class="ep-spec-val">100 KB</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Maximum file size</span>
+            <span class="ep-spec-val">5 MB</span>
+          </div>
+          <div id="epPhotoError" class="ep-photo-error" style="display:none;margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="form-group-dark"><label class="form-label-dark">Full Name</label><input type="text" class="form-input-dark" id="editName" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email" class="form-input-dark" id="editEmail" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Role</label><input type="text" class="form-input-dark" id="editRole" /></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button type="button" class="btn btn-primary" id="saveProfileBtn">Save</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="aboutModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">About</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><p class="modal-body-text"><a href="https://www.emudhra.com" target="_blank" rel="noopener noreferrer" class="link-accent">www.emudhra.com</a> - eMudhra delivers PKI, Digital Signatures, and enterprise cybersecurity services globally.</p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Close</button></div></div>
+</div>
+<div class="modal-overlay" id="confirmModal" style="display:none">
+  <div class="modal modal-sm"><div class="modal-header"><div class="modal-title">Confirm</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button type="button" class="btn btn-danger" id="confirmOk">Yes</button></div></div>
+</div>
+
+<script src="/src/app/shared.js?v=20"></script>
+<script>
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function average(values) {
+    const nums = values.map(Number).filter(value => Number.isFinite(value));
+    return nums.length ? Math.round(nums.reduce((sum, value) => sum + value, 0) / nums.length) : 0;
+  }
+
+  function getReportMetrics() {
+    const projects = Array.isArray(AppState.projects) ? AppState.projects : [];
+    const prdCount = projects.length;
+    const planCount = projects.length;
+    const tcTotal = projects.reduce((sum, project) => sum + (Number(project.testCases) || 0), 0);
+    const avgCoverage = average(projects.map(project => project.coverage || 0));
+    const autoCount = Math.round(tcTotal * 0.35);
+    const acceptanceScore = prdCount ? Math.min(100, Math.round((avgCoverage * 0.58) + (tcTotal ? 22 : 0) + (autoCount ? 12 : 0) + (planCount ? 8 : 0))) : 0;
+    return { projects, prdCount, planCount, tcTotal, avgCoverage, autoCount, acceptanceScore };
+  }
+
+  function renderMetricCards(metrics) {
+    document.getElementById('rptPrdCount').textContent = metrics.prdCount;
+    document.getElementById('rptPlanCount').textContent = metrics.planCount;
+    document.getElementById('rptTcCount').textContent = metrics.tcTotal;
+    document.getElementById('rptAutoCount').textContent = metrics.autoCount;
+  }
+
+  function statusBadge(status) {
+    const s = (status || 'Analyzed').trim();
+    const sl = s.toLowerCase();
+    let cls = 'pass';
+    if (sl.includes('fail') || sl.includes('error') || sl.includes('block'))       cls = 'fail';
+    else if (sl.includes('pend') || sl.includes('review') || sl.includes('progress')) cls = 'warn';
+    else if (sl.includes('import') || sl.includes('process') || sl.includes('run'))   cls = 'info';
+    return `<span class="rpt-status-badge ${cls}">${escapeHtml(s)}</span>`;
+  }
+
+  function boldAcceptanceKeywords(text) {
+    const keywords = ['Accepted', 'Covered', 'Ready', 'Blocked', 'Review', 'Automation', 'Traceability', 'Coverage', 'Risk', 'User Acceptance', 'Pass', 'Fail'];
+    let html = escapeHtml(text);
+    keywords.forEach(keyword => {
+      html = html.replace(new RegExp('\\b' + keyword.replace(/\s+/g, '\\s+') + '\\b', 'gi'), match => `<strong>${match}</strong>`);
+    });
+    return html;
+  }
+
+  function renderHistory(metrics) {
+    const tbody = document.getElementById('historyTableBody');
+    if (!tbody) return;
+    if (!metrics.projects.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="report-empty-row">No data yet. Analyze a PRD to see reports.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = metrics.projects.map((project, index) => {
+      const status = project.status || 'Analyzed';
+      return `<tr>
+        <td>${index + 1}</td>
+        <td>${boldAcceptanceKeywords(project.title || 'Untitled PRD')}</td>
+        <td>${Number(project.testCases) || 0}</td>
+        <td><strong>${Number(project.coverage) || 0}%</strong></td>
+        <td>${statusBadge(status)}</td>
+        <td>${escapeHtml(project.date || '-')}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderAcceptance(metrics) {
+    const score = metrics.acceptanceScore;
+    const level = score >= 80 ? 'Ready' : score >= 60 ? 'Review' : 'Blocked';
+    document.getElementById('acceptanceScore').textContent = `${score}%`;
+    document.getElementById('acceptanceRing').style.setProperty('--acceptance-score', `${score * 3.6}deg`);
+    const chip = document.getElementById('acceptanceChip');
+    chip.textContent = level;
+    chip.className = `report-chip ${score >= 80 ? 'success' : score >= 60 ? 'warning' : 'danger'}`;
+    document.getElementById('acceptanceNarrative').innerHTML = boldAcceptanceKeywords(
+      score
+        ? `User Acceptance is ${level}. Coverage is ${metrics.avgCoverage}% with ${metrics.tcTotal} mapped test cases and ${metrics.autoCount} automation candidates.`
+        : 'User Acceptance is Blocked until at least one PRD is analyzed and test cases are generated.'
+    );
+
+    const checks = [
+      ['Traceability', metrics.prdCount > 0, `${metrics.prdCount} PRD source(s)`],
+      ['Coverage', metrics.avgCoverage >= 75, `${metrics.avgCoverage}% average coverage`],
+      ['Test Cases', metrics.tcTotal > 0, `${metrics.tcTotal} execution-ready cases`],
+      ['Automation', metrics.autoCount > 0, `${metrics.autoCount} automation candidates`]
+    ];
+    document.getElementById('acceptanceChecks').innerHTML = checks.map(([name, pass, note]) => `
+      <div class="acceptance-check ${pass ? 'pass' : 'fail'}"><strong>${name}</strong><span>${pass ? 'Pass' : 'Fail'} - ${escapeHtml(note)}</span></div>
+    `).join('');
+
+    const insightRows = [
+      ['Coverage', metrics.avgCoverage >= 80 ? 'Accepted' : 'Review', `Average requirement coverage is ${metrics.avgCoverage}%.`],
+      ['Traceability', metrics.prdCount ? 'Covered' : 'Blocked', `${metrics.prdCount} PRD item(s) linked to report history.`],
+      ['Automation', metrics.autoCount ? 'Ready' : 'Review', `${metrics.autoCount} automation scripts or candidates calculated from test volume.`],
+      ['Risk', score >= 80 ? 'Accepted' : 'Review', `User Acceptance readiness score is ${score}%.`]
+    ];
+    document.getElementById('acceptanceInsights').innerHTML = insightRows.map(([keyword, state, detail]) => `
+      <article class="acceptance-insight ${state.toLowerCase()}">
+        <span>${escapeHtml(keyword)}</span>
+        <strong>${escapeHtml(state)}</strong>
+        <p>${boldAcceptanceKeywords(detail)}</p>
+      </article>
+    `).join('');
+  }
+
+  function renderCoverageFlow(metrics) {
+    const max = Math.max(metrics.prdCount, metrics.planCount, metrics.tcTotal, metrics.autoCount, metrics.acceptanceScore, 1);
+    const nodes = [
+      ['PRD Analysis', metrics.prdCount, 'Requirement source captured'],
+      ['Test Planning', metrics.planCount, 'Strategy and scope generated'],
+      ['Test Cases', metrics.tcTotal, 'Execution-ready validation set'],
+      ['Automation', metrics.autoCount, 'Automation candidates'],
+      ['Acceptance', metrics.acceptanceScore, 'Readiness score']
+    ];
+    document.getElementById('coverageFlow').innerHTML = nodes.map(([label, value, note], index) => `
+      <div class="coverage-node">
+        <div class="coverage-node-mark">${index + 1}</div>
+        <div class="coverage-node-body">
+          <strong>${escapeHtml(label)}</strong>
+          <span>${escapeHtml(note)}</span>
+          <div class="coverage-node-bar"><i style="width:${Math.max(6, Math.round((value / max) * 100))}%"></i></div>
+        </div>
+        <b>${value}${label === 'Acceptance' ? '%' : ''}</b>
+      </div>
+    `).join('');
+  }
+
+  function setupCanvas(canvas, height) {
+    const ratio = window.devicePixelRatio || 1;
+    const width = canvas.offsetWidth || 520;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+    canvas.style.height = `${height}px`;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(ratio, ratio);
+    return { ctx, width, height };
+  }
+
+  function drawRoundedRect(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  function trendData(projects) {
+    const days = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - index));
+      return {
+        label: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        key: date.toDateString(),
+        count: 0
+      };
+    });
+    projects.forEach(project => {
+      const date = new Date(project.date || Date.now());
+      const item = days.find(day => day.key === date.toDateString());
+      if (item) item.count += Number(project.testCases) || 1;
+    });
+    if (!projects.length) return days.map(day => ({ ...day, count: 0 }));
+    return days;
+  }
+
+  function drawTrends(metrics) {
+    const canvas = document.getElementById('trendsChart');
+    if (!canvas) return;
+    const { ctx, width, height } = setupCanvas(canvas, 220);
+    const data = trendData(metrics.projects);
+    const pad = { top: 18, right: 22, bottom: 34, left: 42 };
+    const chartW = width - pad.left - pad.right;
+    const chartH = height - pad.top - pad.bottom;
+    const maxValue = Math.max(...data.map(item => item.count), 5);
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.strokeStyle = '#dbe4ef';
+    ctx.fillStyle = '#64748b';
+    ctx.font = '700 11px Inter';
+    [0, 0.25, 0.5, 0.75, 1].forEach(step => {
+      const y = pad.top + chartH - (step * chartH);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(pad.left + chartW, y);
+      ctx.stroke();
+      ctx.fillText(Math.round(maxValue * step), 8, y + 4);
+    });
+
+    const slot = chartW / data.length;
+    const barW = Math.min(42, slot * 0.58);
+    data.forEach((item, index) => {
+      const x = pad.left + index * slot + (slot - barW) / 2;
+      const barH = item.count ? Math.max(12, (item.count / maxValue) * chartH) : 8;
+      const y = pad.top + chartH - barH;
+      const grad = ctx.createLinearGradient(x, y, x, pad.top + chartH);
+      grad.addColorStop(0, '#2563eb');
+      grad.addColorStop(0.55, '#6e3a91');
+      grad.addColorStop(1, '#f26a21');
+      drawRoundedRect(ctx, x, y, barW, barH, 7);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.fillStyle = '#14213a';
+      ctx.font = '800 11px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(String(item.count), x + barW / 2, y - 7);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '800 10px Inter';
+      ctx.fillText(item.label, x + barW / 2, pad.top + chartH + 20);
+    });
+    ctx.textAlign = 'left';
+  }
+
+  function drawDist(metrics) {
+    const canvas = document.getElementById('distChart');
+    if (!canvas) return;
+    const { ctx, width, height } = setupCanvas(canvas, 220);
+    ctx.clearRect(0, 0, width, height);
+    const segments = [
+      ['Test Plans', metrics.planCount, '#2563eb'],
+      ['Test Cases', metrics.tcTotal, '#f26a21'],
+      ['Automation', metrics.autoCount, '#5ba13b'],
+      ['Coverage', metrics.avgCoverage, '#6e3a91']
+    ];
+    const total = Math.max(1, segments.reduce((sum, row) => sum + row[1], 0));
+    const cx = Math.min(width * 0.38, 190);
+    const cy = height / 2 - 4;
+    const radius = 72;
+    const inner = 42;
+    let start = -Math.PI / 2;
+
+    segments.forEach((segment) => {
+      const angle = (segment[1] / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, start, start + angle);
+      ctx.arc(cx, cy, inner, start + angle, start, true);
+      ctx.closePath();
+      ctx.fillStyle = segment[2];
+      ctx.fill();
+      start += angle;
+    });
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(cx, cy, inner - 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#14213a';
+    ctx.textAlign = 'center';
+    ctx.font = '900 16px Outfit';
+    ctx.fillText(`${metrics.avgCoverage}%`, cx, cy - 2);
+    ctx.font = '800 10px Inter';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText('Coverage', cx, cy + 16);
+
+    const legendX = Math.min(width - 220, cx + 125);
+    segments.forEach((segment, index) => {
+      const y = 52 + index * 36;
+      ctx.fillStyle = segment[2];
+      drawRoundedRect(ctx, legendX, y - 12, 16, 16, 5);
+      ctx.fill();
+      ctx.fillStyle = '#14213a';
+      ctx.font = '900 12px Inter';
+      ctx.textAlign = 'left';
+      ctx.fillText(segment[0], legendX + 26, y - 2);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '800 11px Inter';
+      ctx.fillText(String(segment[1]), legendX + 26, y + 14);
+    });
+  }
+
+  function renderReports() {
+    const metrics = getReportMetrics();
+    renderMetricCards(metrics);
+    renderHistory(metrics);
+    renderAcceptance(metrics);
+    renderCoverageFlow(metrics);
+    drawTrends(metrics);
+    drawDist(metrics);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderReports();
+    window.addEventListener('resize', () => window.requestAnimationFrame(renderReports));
+  });
+</script>
+<script src="/src/components/ui/emi.js"></script>
+</body>
+</html>
+
+
+
+

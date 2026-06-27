@@ -1,0 +1,820 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   VEDA · ENTERPRISE AI ASSISTANT  ·  Complete UI Redesign v3
+   Design Language: ChatGPT × Claude × Linear × Notion AI × Vercel AI
+   Philosophy: Precision-first, clarity-driven, premium soft-card aesthetic
+   Colors: Always forced-light — never affected by page dark/theme vars
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Widget wrapper ─────────────────────────────────────────────────────── */
+#emiWidget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+  font-family: 'Inter', 'Outfit', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Floating avatar button ─────────────────────────────────────────────── */
+#emiRobot {
+  width: 64px;
+  height: 64px;
+  cursor: pointer;
+  pointer-events: all;
+  background: none;
+  border: none;
+  padding: 0;
+  animation: vedaFloat 3.8s ease-in-out infinite;
+  filter:
+    drop-shadow(0 6px 20px rgba(37, 99, 235, 0.38))
+    drop-shadow(0 2px 8px rgba(245, 158, 11, 0.2));
+  transition: filter 0.18s, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 50%;
+  position: relative;
+  outline: none;
+  transform-origin: bottom center;
+}
+#emiRobot:hover {
+  filter:
+    drop-shadow(0 10px 32px rgba(37, 99, 235, 0.55))
+    drop-shadow(0 4px 16px rgba(245, 158, 11, 0.32));
+  animation-play-state: paused;
+  transform: scale(1.1);
+}
+#emiRobot:focus-visible {
+  outline: 2.5px solid #2563EB;
+  outline-offset: 4px;
+}
+
+@keyframes vedaFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  28%       { transform: translateY(-5px) rotate(1.5deg); }
+  58%       { transform: translateY(-10px) rotate(0deg); }
+  80%       { transform: translateY(-4px) rotate(-1.5deg); }
+}
+
+/* ── Avatar sub-animations ──────────────────────────────────────────────── */
+#vedaAntenna {
+  animation: vedaBindiBeat 2.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+@keyframes vedaBindiBeat {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.35); opacity: 0.88; }
+}
+
+#vedaGlow {
+  animation: vedaGlowHalo 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+@keyframes vedaGlowHalo {
+  0%, 100% { transform: scaleX(1);    opacity: 0.18; }
+  50%       { transform: scaleX(1.35); opacity: 0.3;  }
+}
+
+#vedaEyeL, #vedaEyeR {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: vedaBlink 5.6s ease-in-out infinite;
+}
+#vedaEyeR { animation-delay: 0.07s; }
+@keyframes vedaBlink {
+  0%, 83%, 93%, 100% { transform: scaleY(1); }
+  88%                { transform: scaleY(0.05); }
+}
+
+#emiArmRight {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+.emi-arm-wave { animation: vedaWave 0.85s ease-in-out 2 !important; }
+@keyframes vedaWave {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-38deg); }
+  60%      { transform: rotate(-10deg); }
+  85%      { transform: rotate(-32deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXPRESSION STATES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* HAPPY */
+#emiRobot.veda-happy {
+  animation: vedaFloat 3.8s ease-in-out infinite, vedaGlowBeat 1.5s ease-in-out infinite;
+}
+@keyframes vedaGlowBeat {
+  0%, 100% { filter: drop-shadow(0 6px 22px rgba(37,99,235,0.38)) drop-shadow(0 2px 8px rgba(245,158,11,0.2)); }
+  50%       { filter: drop-shadow(0 0 28px rgba(245,158,11,0.65)) drop-shadow(0 8px 30px rgba(37,99,235,0.5)); }
+}
+#vedaRobotSvg.veda-happy #vedaEyeL,
+#vedaRobotSvg.veda-happy #vedaEyeR {
+  animation: vedaHappySquint 0.34s ease forwards, vedaBlink 5.6s ease-in-out infinite 0.45s;
+}
+@keyframes vedaHappySquint { to { transform: scaleY(0.58); } }
+#vedaRobotSvg.veda-happy #vedaMSmile { opacity: 0; transition: opacity 0.28s; }
+#vedaRobotSvg.veda-happy #vedaMHappy { opacity: 1; transition: opacity 0.28s; }
+#vedaRobotSvg.veda-happy #vedaBlushL,
+#vedaRobotSvg.veda-happy #vedaBlushR { opacity: 0.72; transition: opacity 0.38s; }
+
+/* JUMP */
+#emiRobot.veda-jump {
+  animation: vedaJump 0.58s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+@keyframes vedaJump {
+  0%   { transform: translateY(0)    scale(1,1);       }
+  18%  { transform: translateY(-6px)  scale(1.06,0.94); }
+  40%  { transform: translateY(-26px) scale(0.94,1.08); }
+  65%  { transform: translateY(-14px) scale(1.04,0.96); }
+  82%  { transform: translateY(-4px)  scale(0.98,1.02); }
+  100% { transform: translateY(0)    scale(1,1);       }
+}
+
+/* THINKING */
+#vedaRobotSvg.veda-thinking #vedaEyeL,
+#vedaRobotSvg.veda-thinking #vedaEyeR {
+  animation: vedaThinkShift 0.48s ease-in-out infinite alternate;
+}
+@keyframes vedaThinkShift {
+  from { transform: translate(0, 0) scale(0.87); }
+  to   { transform: translate(-2.5px, -2px) scale(0.78); }
+}
+#vedaRobotSvg.veda-thinking #vedaMSmile { opacity: 0; transition: opacity 0.24s; }
+#vedaRobotSvg.veda-thinking #vedaMThink { opacity: 1; transition: opacity 0.24s; }
+#vedaRobotSvg.veda-thinking #vedaBrowL {
+  transform: translateY(-1.5px);
+  transform-box: fill-box; transform-origin: 50% 50%;
+  transition: transform 0.3s;
+}
+
+/* ANALYSE */
+#emiRobot.veda-analyse {
+  animation: vedaFloat 4.5s ease-in-out infinite, vedaAnalysePulse 1.8s ease-in-out infinite;
+}
+@keyframes vedaAnalysePulse {
+  0%, 100% { filter: drop-shadow(0 6px 22px rgba(37,99,235,0.38)); }
+  50%       { filter: drop-shadow(0 0 28px rgba(37,99,235,0.65)) drop-shadow(0 4px 20px rgba(59,130,246,0.45)); }
+}
+#vedaRobotSvg.veda-analyse #vedaEyeL,
+#vedaRobotSvg.veda-analyse #vedaEyeR {
+  animation: vedaScanEyes 0.9s ease-in-out infinite alternate;
+}
+@keyframes vedaScanEyes {
+  from { transform: translateX(-2.5px); }
+  to   { transform: translateX(2.5px); }
+}
+#vedaRobotSvg.veda-analyse #vedaMThink { opacity: 1; transition: opacity 0.24s; }
+#vedaRobotSvg.veda-analyse #vedaMSmile { opacity: 0; transition: opacity 0.24s; }
+
+/* SUCCESS */
+#emiRobot.veda-success {
+  animation: vedaFloat 3s ease-in-out infinite, vedaSuccessGlow 1.2s ease-in-out infinite;
+}
+@keyframes vedaSuccessGlow {
+  0%, 100% { filter: drop-shadow(0 6px 22px rgba(37,99,235,0.38)); }
+  50%       { filter: drop-shadow(0 0 32px rgba(74,222,128,0.65)) drop-shadow(0 8px 24px rgba(37,99,235,0.4)); }
+}
+#vedaRobotSvg.veda-success #vedaMSmile { opacity: 0; }
+#vedaRobotSvg.veda-success #vedaMHappy { opacity: 1; }
+#vedaRobotSvg.veda-success #vedaBlushL,
+#vedaRobotSvg.veda-success #vedaBlushR { opacity: 0.85; }
+
+/* CELEBRATE */
+#emiRobot.veda-celebrate {
+  animation: vedaCelebrate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 6 !important;
+}
+@keyframes vedaCelebrate {
+  0%, 100% { transform: translateY(0)    scale(1)    rotate(0deg);  }
+  25%       { transform: translateY(-18px) scale(1.1)  rotate(-5deg); }
+  75%       { transform: translateY(-8px)  scale(1.05) rotate(5deg);  }
+}
+#vedaRobotSvg.veda-celebrate #vedaMSmile { opacity: 0; }
+#vedaRobotSvg.veda-celebrate #vedaMHappy { opacity: 1; }
+#vedaRobotSvg.veda-celebrate #vedaBlushL,
+#vedaRobotSvg.veda-celebrate #vedaBlushR { opacity: 0.9; }
+
+/* EXCITED */
+#emiRobot.veda-excited {
+  animation: vedaExcitedBounce 0.27s cubic-bezier(0.34, 1.56, 0.64, 1) 4 !important;
+}
+@keyframes vedaExcitedBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-15px) scale(1.1); }
+}
+#vedaRobotSvg.veda-excited #vedaMSmile { opacity: 0; }
+#vedaRobotSvg.veda-excited #vedaMHappy { opacity: 1; }
+#vedaRobotSvg.veda-excited #vedaBlushL,
+#vedaRobotSvg.veda-excited #vedaBlushR { opacity: 0.82; }
+
+/* SAD */
+#emiRobot.veda-sad {
+  animation: vedaFloat 5.5s ease-in-out infinite;
+  filter: drop-shadow(0 5px 16px rgba(37,99,235,0.18));
+}
+#vedaRobotSvg.veda-sad #vedaMSmile { opacity: 0; transition: opacity 0.42s; }
+#vedaRobotSvg.veda-sad #vedaMThink { opacity: 1; transition: opacity 0.42s; }
+#vedaRobotSvg.veda-sad #vedaBrowL {
+  transform: translateY(-1.5px) rotate(-9deg);
+  transform-box: fill-box; transform-origin: 50% 50%;
+  transition: transform 0.42s;
+}
+#vedaRobotSvg.veda-sad #vedaBrowR {
+  transform: translateY(-1.5px) rotate(9deg);
+  transform-box: fill-box; transform-origin: 50% 50%;
+  transition: transform 0.42s;
+}
+
+/* CRY */
+#emiRobot.veda-cry {
+  animation: vedaFloat 6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 14px rgba(37,99,235,0.32));
+}
+#vedaTearL { transform-box: fill-box; transform-origin: 50% 0%; }
+#vedaTearR { transform-box: fill-box; transform-origin: 50% 0%; }
+#vedaRobotSvg.veda-cry #vedaTearL {
+  opacity: 1 !important;
+  animation: vedaTearFall 0.9s ease-in infinite;
+}
+#vedaRobotSvg.veda-cry #vedaTearR {
+  opacity: 1 !important;
+  animation: vedaTearFall 0.9s ease-in infinite;
+  animation-delay: 0.38s;
+}
+@keyframes vedaTearFall {
+  0%   { transform: translateY(0) scaleY(1);    opacity: 0.9; }
+  60%  { transform: translateY(12px) scaleY(1.4); opacity: 0.6; }
+  100% { transform: translateY(18px) scaleY(0.6); opacity: 0; }
+}
+#vedaRobotSvg.veda-cry #vedaMSmile { opacity: 0; transition: opacity 0.35s; }
+#vedaRobotSvg.veda-cry #vedaMCry   { opacity: 1; transition: opacity 0.35s; }
+#vedaRobotSvg.veda-cry #vedaBrowL {
+  transform: translateY(-2.5px) rotate(-12deg);
+  transform-box: fill-box; transform-origin: 50% 50%;
+  transition: transform 0.38s;
+}
+#vedaRobotSvg.veda-cry #vedaBrowR {
+  transform: translateY(-2.5px) rotate(12deg);
+  transform-box: fill-box; transform-origin: 50% 50%;
+  transition: transform 0.38s;
+}
+
+/* WINK */
+#vedaRobotSvg.veda-wink #vedaEyeR {
+  animation: vedaWinkClose 0.88s ease forwards !important;
+}
+@keyframes vedaWinkClose {
+  0%, 88%, 100% { transform: scaleY(1); }
+  20%, 58%      { transform: scaleY(0.04); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SPARKLES + FLOAT EMOJI
+   ═══════════════════════════════════════════════════════════════════════════ */
+.veda-spark {
+  position: fixed;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10002;
+  animation: vedaSparkFly 0.78s ease-out forwards;
+}
+.veda-spark.star {
+  width: 10px; height: 10px;
+  border-radius: 0;
+  -webkit-clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+}
+@keyframes vedaSparkFly {
+  0%   { transform: translate(0,0) scale(1.2); opacity: 1; }
+  100% { transform: translate(var(--sx),var(--sy)) scale(0.08); opacity: 0; }
+}
+
+.veda-float-emoji {
+  position: absolute;
+  bottom: 108%;
+  pointer-events: none;
+  z-index: 10001;
+  font-size: 15px;
+  line-height: 1;
+  animation: vedaFloatUp 2s ease-out forwards;
+}
+@keyframes vedaFloatUp {
+  0%   { transform: translateY(0) scale(0.7); opacity: 0.9; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(-58px) scale(1.1); opacity: 0; }
+}
+
+/* ── Greeting bubble ────────────────────────────────────────────────────── */
+#emiGreeting {
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  border-radius: 16px 16px 4px 16px;
+  padding: 12px 38px 12px 14px;
+  font-size: 0.8rem;
+  color: #0f172a;
+  max-width: 264px;
+  box-shadow:
+    0 12px 40px rgba(37, 99, 235, 0.12),
+    0 3px 10px rgba(0, 0, 0, 0.05);
+  pointer-events: all;
+  cursor: pointer;
+  line-height: 1.6;
+  position: relative;
+  animation: vedaSlideUp 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes vedaSlideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.88); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.emi-greeting-close {
+  position: absolute; top: 8px; right: 10px;
+  background: none; border: none; cursor: pointer;
+  color: #94a3b8; font-size: 0.72rem;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.emi-greeting-close:hover { color: #334155; background: #f1f5f9; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHAT PANEL — Premium Redesign
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+#emiPanel {
+  width: 400px;
+  max-height: 600px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow:
+    0 28px 64px rgba(15, 23, 42, 0.14),
+    0 8px 24px rgba(37, 99, 235, 0.1),
+    0 0 0 1px rgba(37, 99, 235, 0.1);
+  display: none;
+  flex-direction: column;
+  pointer-events: all;
+  overflow: hidden;
+  transform-origin: bottom right;
+  transform: scale(0.9) translateY(14px);
+  opacity: 0;
+  transition:
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.2s ease;
+  color: #0f172a;
+  font-size: 0.84rem;
+}
+#emiPanel.emi-open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.emi-panel-header {
+  background: linear-gradient(135deg, #1E3A5F 0%, #1D4ED8 55%, #3B82F6 100%);
+  padding: 14px 14px 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glow layer */
+.emi-panel-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 75% 50%, rgba(245,158,11,0.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Gold bottom accent line */
+.emi-panel-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.7) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.emi-panel-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12), 0 2px 8px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.emi-panel-info {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+.emi-panel-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+.emi-panel-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  font-size: 0.68rem;
+  color: rgba(219, 234, 254, 0.85);
+  letter-spacing: 0.02em;
+}
+.emi-online-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  animation: vedaOnlinePulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes vedaOnlinePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.82); }
+}
+
+.emi-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.emi-header-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+  flex-shrink: 0;
+}
+.emi-header-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.emi-header-btn:active { transform: scale(0.92); }
+
+.emi-panel-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.84rem;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+  flex-shrink: 0;
+}
+.emi-panel-close:hover {
+  background: rgba(239, 68, 68, 0.28);
+  color: #ffffff;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.emi-panel-close:active { transform: scale(0.92); }
+
+/* ── Messages area ──────────────────────────────────────────────────────── */
+.emi-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #F6F9FF;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.16) transparent;
+}
+.emi-messages::-webkit-scrollbar { width: 4px; }
+.emi-messages::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.18);
+  border-radius: 4px;
+}
+.emi-messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+/* ── Message rows ───────────────────────────────────────────────────────── */
+.emi-msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  animation: vedaMsgIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 100%;
+  max-width: 100%;
+}
+@keyframes vedaMsgIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.emi-msg-icon {
+  width: 30px; height: 30px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1D4ED8 0%, #1E3A5F 100%);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+}
+
+.emi-msg-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.emi-from-user { flex-direction: row-reverse; }
+.emi-from-user .emi-msg-body { align-items: flex-end; }
+
+/* ── Bubbles ────────────────────────────────────────────────────────────── */
+.emi-msg-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  max-width: 88%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* Bot bubble — white card with subtle border */
+.emi-from-bot .emi-msg-bubble {
+  background: #ffffff;
+  color: #0f172a;
+  border-bottom-left-radius: 5px;
+  border: 1px solid rgba(37, 99, 235, 0.09);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 1px 3px rgba(37,99,235,0.05);
+}
+
+/* User bubble — gradient blue */
+.emi-from-user .emi-msg-bubble {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #ffffff;
+  border-bottom-right-radius: 5px;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+}
+
+/* Inline markdown styling */
+.emi-from-bot .emi-msg-bubble strong { color: #1D4ED8; font-weight: 700; }
+.emi-from-user .emi-msg-bubble strong { color: #BFDBFE; font-weight: 700; }
+
+/* ── Timestamps ─────────────────────────────────────────────────────────── */
+.emi-msg-time {
+  font-size: 0.64rem;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
+  padding: 0 2px;
+  font-weight: 400;
+}
+.emi-from-user .emi-msg-time { text-align: right; }
+
+/* ── AI thinking / typing indicator ────────────────────────────────────── */
+.emi-typing-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  animation: vedaMsgIn 0.25s ease;
+}
+
+.emi-typing {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px !important;
+  min-width: 68px;
+  color: transparent !important;
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.09);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  border-bottom-left-radius: 5px;
+}
+.emi-typing span {
+  display: block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  opacity: 0.38;
+  animation: vedaDot 1.3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.emi-typing span:nth-child(1) { background: #2563EB; }
+.emi-typing span:nth-child(2) { background: #3B82F6; animation-delay: 0.22s; }
+.emi-typing span:nth-child(3) { background: #60A5FA; animation-delay: 0.44s; }
+@keyframes vedaDot {
+  0%, 100% { transform: translateY(0); opacity: 0.35; }
+  40%       { transform: translateY(-7px); opacity: 1; }
+}
+
+.emi-thinking-label {
+  font-size: 0.66rem;
+  color: #94a3b8;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  padding: 0 2px;
+}
+
+/* ── Quick action chips ─────────────────────────────────────────────────── */
+.emi-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  max-width: 100%;
+}
+.emi-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 13px;
+  border: 1.5px solid rgba(37, 99, 235, 0.24);
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: #2563EB;
+  cursor: pointer;
+  background: rgba(37, 99, 235, 0.04);
+  font-family: inherit;
+  transition: background 0.16s, color 0.16s, border-color 0.16s, transform 0.12s, box-shadow 0.16s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.emi-chip:hover {
+  background: #2563EB;
+  color: #ffffff;
+  border-color: #2563EB;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+.emi-chip:active { transform: translateY(0); box-shadow: none; }
+
+/* ── Input section ──────────────────────────────────────────────────────── */
+.emi-input-section {
+  flex-shrink: 0;
+  background: #ffffff;
+  border-top: 1px solid rgba(37, 99, 235, 0.07);
+  padding: 12px 14px 14px;
+}
+
+.emi-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F6F9FF;
+  border: 1.5px solid rgba(37, 99, 235, 0.14);
+  border-radius: 14px;
+  padding: 4px 4px 4px 13px;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+}
+.emi-input-wrap:focus-within {
+  border-color: #2563EB;
+  background: #ffffff;
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.1);
+}
+
+.emi-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 7px 0;
+  font-size: 0.82rem;
+  color: #0f172a;
+  outline: none;
+  font-family: inherit;
+  min-width: 0;
+  line-height: 1.5;
+}
+.emi-input::placeholder { color: #94a3b8; }
+
+.emi-send-btn {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.14s, transform 0.12s, box-shadow 0.14s;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.38);
+}
+.emi-send-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.06);
+  box-shadow: 0 5px 16px rgba(37, 99, 235, 0.42);
+}
+.emi-send-btn:active { transform: scale(0.94); box-shadow: none; opacity: 1; }
+
+.emi-input-hint {
+  font-size: 0.62rem;
+  color: #cbd5e1;
+  text-align: center;
+  margin-top: 7px;
+  letter-spacing: 0.025em;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ── Settings section (injected into settings modal) ───────────────────── */
+.emi-settings-section {
+  border-top: 1px solid rgba(37, 99, 235, 0.08);
+  padding-top: 16px;
+  margin-top: 14px;
+}
+.emi-settings-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 0.83rem;
+  color: #1e293b;
+}
+.emi-settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  font-size: 0.77rem;
+  color: #64748b;
+}
+.emi-settings-grid label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+.emi-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 36px; height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.emi-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.emi-toggle-track {
+  position: absolute; inset: 0;
+  background: #cbd5e1;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+.emi-toggle-track::before {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.22);
+}
+.emi-toggle input:checked + .emi-toggle-track { background: #2563EB; }
+.emi-toggle input:checked + .emi-toggle-track::before { transform: translateX(16px); }
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  #emiRobot, #vedaEyeL, #vedaEyeR, #vedaAntenna, #vedaGlow,
+  .emi-arm-wave, .emi-typing span,
+  #emiGreeting, .emi-msg, .veda-spark, .veda-float-emoji,
+  .emi-online-dot { animation: none !important; transition: none !important; }
+  #emiPanel { transition: opacity 0.12s ease !important; }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  #emiWidget { right: 16px; bottom: 16px; }
+  #emiRobot  { width: 54px; height: 54px; }
+  #emiPanel  {
+    width: calc(100vw - 32px);
+    max-height: calc(100svh - 130px);
+    border-radius: 18px;
+  }
+}

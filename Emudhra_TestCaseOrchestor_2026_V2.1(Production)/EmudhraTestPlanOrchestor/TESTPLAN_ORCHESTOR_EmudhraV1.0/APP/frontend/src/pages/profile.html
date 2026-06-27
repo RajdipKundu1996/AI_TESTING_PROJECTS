@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile | QA-Gen AI &mdash; eMudhra</title>
+  <script>if(!sessionStorage.getItem('qa_gen_user')){window.location.replace('../index.html');}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/shared.css?v=5" />
+  <style>
+    .profile-page { max-width: 860px; margin: 0 auto; padding: 32px 24px 60px; }
+    .profile-hero {
+      display: flex; align-items: center; gap: 24px;
+      background: linear-gradient(135deg, #0c1f3e 0%, #1a3a6b 100%);
+      border-radius: 18px; padding: 32px 36px; margin-bottom: 28px;
+      box-shadow: 0 8px 40px rgba(12,31,62,0.18);
+    }
+    .profile-avatar-wrap { position: relative; flex-shrink: 0; }
+    .profile-avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, #e65c10, #c44e0e);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800;
+      color: #fff; border: 3px solid rgba(255,255,255,0.25);
+      background-size: cover; background-position: center;
+    }
+    .profile-avatar.has-photo { font-size: 0; color: transparent; }
+    .profile-hero-info { flex: 1; }
+    .profile-hero-name { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .profile-hero-email { font-size: 0.84rem; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+    .profile-hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .profile-badge {
+      padding: 3px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+      border: 1.5px solid; letter-spacing: 0.03em;
+    }
+    .badge-type { background: rgba(201,168,76,0.15); color: #c9a84c; border-color: rgba(201,168,76,0.35); }
+    .badge-org  { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.18); }
+    .badge-id   { background: rgba(99,179,237,0.12); color: #63b3ed; border-color: rgba(99,179,237,0.3); }
+
+    .profile-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .profile-card {
+      background: #fff; border-radius: 14px; padding: 24px 26px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07); border: 1px solid #e2e8f0;
+    }
+    .profile-card.full-width { grid-column: 1 / -1; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card-title { font-size: 0.88rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 7px; }
+    .card-title span { font-size: 1.1rem; }
+    .edit-btn {
+      font-size: 0.75rem; font-weight: 600; color: #e65c10; background: rgba(230,92,16,0.08);
+      border: 1.5px solid rgba(230,92,16,0.22); border-radius: 7px; padding: 4px 12px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .edit-btn:hover { background: rgba(230,92,16,0.14); }
+
+    .info-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-label { font-size: 0.72rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; min-width: 110px; padding-top: 1px; }
+    .info-val { font-size: 0.86rem; font-weight: 500; color: #1e293b; word-break: break-word; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: #1e293b; margin-bottom: 5px; }
+    .form-group input {
+      width: 100%; padding: 9px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+      font-size: 0.85rem; font-family: 'Inter', sans-serif; color: #1e293b;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus { border-color: #e65c10; box-shadow: 0 0 0 3px rgba(230,92,16,0.1); }
+    .form-group input:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; }
+    .field-err { font-size: 0.72rem; color: #ef4444; margin-top: 3px; display: none; }
+    .field-err.show { display: block; }
+
+    .save-btn {
+      padding: 9px 22px; background: linear-gradient(135deg, #e65c10, #c44e0e);
+      color: #fff; font-size: 0.84rem; font-weight: 700; border: none; border-radius: 9px;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.15s;
+    }
+    .save-btn:hover { opacity: 0.9; }
+    .save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .cancel-btn {
+      padding: 9px 18px; background: transparent; color: #64748b;
+      font-size: 0.84rem; font-weight: 600; border: 1.5px solid #e2e8f0; border-radius: 9px;
+      cursor: pointer; font-family: 'Inter', sans-serif; margin-right: 8px;
+    }
+    .cancel-btn:hover { background: #f1f5f9; }
+
+    .toast-bar {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      padding: 11px 22px; border-radius: 10px; font-size: 0.83rem; font-weight: 600;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.18); z-index: 9999;
+      display: none; align-items: center; gap: 8px;
+      animation: slideUp 0.3s ease;
+    }
+    .toast-bar.show { display: flex; }
+    .toast-bar.success { background: #d1fae5; color: #065f46; border: 1.5px solid #6ee7b7; }
+    .toast-bar.error   { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; }
+    @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity:0; } to { transform: translateX(-50%) translateY(0); opacity:1; } }
+
+    @media (max-width: 640px) {
+      .profile-hero { flex-direction: column; text-align: center; padding: 24px 20px; }
+      .profile-hero-badges { justify-content: center; }
+      .profile-sections { grid-template-columns: 1fr; }
+      .profile-card.full-width { grid-column: 1; }
+    }
+  </style>
+</head>
+<body class="em-light-app">
+  <div id="topbar-placeholder"></div>
+
+  <main class="profile-page">
+
+    <!-- Hero card -->
+    <div class="profile-hero">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="heroAvatar" data-user-initials></div>
+      </div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name" id="heroName">Loading…</div>
+        <div class="profile-hero-email" id="heroEmail"></div>
+        <div class="profile-hero-badges">
+          <span class="profile-badge badge-type" id="heroBadgeType"></span>
+          <span class="profile-badge badge-org"  id="heroBadgeOrg"></span>
+          <span class="profile-badge badge-id"   id="heroBadgeId"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="profile-sections">
+
+      <!-- Account Info (read-only) -->
+      <div class="profile-card">
+        <div class="card-header">
+          <div class="card-title"><span>&#128100;</span> Account Info</div>
+        </div>
+        <div class="info-row"><div class="info-label">Full Name</div><div class="info-val" id="infoName">—</div></div>
+        <div class="info-row"><div class="info-label">Employee ID</div><div class="info-val" id="infoEmpId">—</div></div>
+        <div class="info-row"><div class="info-label">Organization</div><div class="info-val" id="infoOrg">—</div></div>
+        <div class="info-row"><div class="info-label">Account Type</div><div class="info-val" id="infoType">—</div></div>
+        <div class="info-row"><div class="info-label">Registered</div><div class="info-val" id="infoRegistered">—</div></div>
+        <div class="info-row"><div class="info-label">Last Updated</div><div class="info-val" id="infoUpdated">—</div></div>
+      </div>
+
+      <!-- Edit Contact -->
+      <div class="profile-card" id="contactCard">
+        <div class="card-header">
+          <div class="card-title"><span>&#9993;</span> Contact Details</div>
+          <button class="edit-btn" id="editContactBtn">Edit</button>
+        </div>
+        <!-- View mode -->
+        <div id="contactView">
+          <div class="info-row"><div class="info-label">Email</div><div class="info-val" id="infoEmail">—</div></div>
+          <div class="info-row"><div class="info-label">Mobile</div><div class="info-val" id="infoMobile">—</div></div>
+        </div>
+        <!-- Edit mode -->
+        <div id="contactEdit" style="display:none">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="editName" placeholder="Full name" />
+            <div class="field-err" id="errName"></div>
+          </div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="editMobile" placeholder="+91 98765 43210" />
+            <div class="field-err" id="errMobile"></div>
+          </div>
+          <div class="form-group">
+            <label>Official Email (read-only)</label>
+            <input type="email" id="editEmail" disabled />
+          </div>
+          <div style="margin-top:20px;">
+            <button class="cancel-btn" id="cancelContactBtn">Cancel</button>
+            <button class="save-btn" id="saveContactBtn">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="profile-card full-width">
+        <div class="card-header">
+          <div class="card-title"><span>&#128274;</span> Change Password</div>
+          <button class="edit-btn" id="editPwdBtn">Change</button>
+        </div>
+        <div id="pwdView">
+          <div class="info-row"><div class="info-label">Password</div><div class="info-val">&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;</div></div>
+        </div>
+        <div id="pwdEdit" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label>Current Password</label>
+              <input type="password" id="pwdCurrent" placeholder="Current password" />
+              <div class="field-err" id="errPwdCurrent"></div>
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" id="pwdNew" placeholder="Min 8 chars" />
+              <div class="field-err" id="errPwdNew"></div>
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <input type="password" id="pwdConfirm" placeholder="Re-enter new password" />
+              <div class="field-err" id="errPwdConfirm"></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <button class="cancel-btn" id="cancelPwdBtn">Cancel</button>
+            <button class="save-btn" id="savePwdBtn">Update Password</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast-bar" id="toastBar"></div>
+
+  <script src="../app/shared.js?v=13"></script>
+  <script>
+  (function() {
+    var AUTH_API = 'http://127.0.0.1:3005';
+    var session  = JSON.parse(sessionStorage.getItem('qa_gen_user') || '{}');
+    var email    = session.email || '';
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function fmtDate(val) {
+      if (!val) return '—';
+      var s = String(val).trim();
+      // Handle DD/MM/YYYY HH:MM:SS stored by auth_server fmtDT
+      if (/^\d{2}\/\d{2}\/\d{4}/.test(s)) {
+        var parts = s.split(' ')[0].split('/');
+        var d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+        if (!isNaN(d.getTime())) return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+        return s.split(' ')[0];
+      }
+      try { return new Date(s).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }); }
+      catch(_) { return s; }
+    }
+    function normMobile(raw) {
+      var d = raw.replace(/\D/g,'');
+      if (d.length === 10) return '+91' + d;
+      if (d.length === 12 && d.startsWith('91')) return '+' + d;
+      if (d.length === 11 && d.startsWith('0')) return '+91' + d.slice(1);
+      return '+' + d;
+    }
+    function toast(msg, type) {
+      var el = document.getElementById('toastBar');
+      el.textContent = msg;
+      el.className = 'toast-bar show ' + (type || 'success');
+      clearTimeout(el._t);
+      el._t = setTimeout(function() { el.classList.remove('show'); }, 3500);
+    }
+    function showErr(id, msg) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.toggle('show', !!msg);
+    }
+
+    // ── Load profile ───────────────────────────────────────────────────────────
+    function loadProfile() {
+      fetch(AUTH_API + '/api/profile?email=' + encodeURIComponent(email))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.success) return;
+          var u = data.user;
+          // Hero
+          var initials = (u.fullName || '?').split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2);
+          var av = document.getElementById('heroAvatar');
+          av.textContent = initials;
+          var photo = localStorage.getItem('qa_gen_profile_photo');
+          if (photo) { av.style.backgroundImage = 'url(' + photo + ')'; av.classList.add('has-photo'); }
+          document.getElementById('heroName').textContent  = u.fullName;
+          document.getElementById('heroEmail').textContent = u.email;
+          document.getElementById('heroBadgeType').textContent = u.accountType || 'Internal';
+          document.getElementById('heroBadgeOrg').textContent  = u.organization || '';
+          document.getElementById('heroBadgeId').textContent   = u.employeeId || '';
+          // Info card
+          document.getElementById('infoName').textContent       = u.fullName;
+          document.getElementById('infoEmpId').textContent      = u.employeeId;
+          document.getElementById('infoOrg').textContent        = u.organization;
+          document.getElementById('infoType').textContent       = u.accountType;
+          document.getElementById('infoRegistered').textContent = fmtDate(u.registeredAt);
+          document.getElementById('infoUpdated').textContent    = fmtDate(u.lastUpdated);
+          // Contact card
+          document.getElementById('infoEmail').textContent  = u.email;
+          document.getElementById('infoMobile').textContent = u.mobile || '—';
+          // Pre-fill edit form
+          document.getElementById('editName').value   = u.fullName;
+          document.getElementById('editMobile').value = u.mobile || '';
+          document.getElementById('editEmail').value  = u.email;
+        })
+        .catch(function() {
+          // Fallback from session
+          var initials = (session.name || '?').split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2);
+          document.getElementById('heroAvatar').textContent = initials;
+          document.getElementById('heroName').textContent   = session.name || '—';
+          document.getElementById('heroEmail').textContent  = email;
+          document.getElementById('heroBadgeType').textContent = session.accountType || 'Internal';
+          document.getElementById('heroBadgeOrg').textContent  = session.organization || '';
+          document.getElementById('heroBadgeId').textContent   = session.employeeId || '';
+          document.getElementById('infoName').textContent  = session.name;
+          document.getElementById('infoEmail').textContent = email;
+          document.getElementById('editName').value  = session.name || '';
+          document.getElementById('editEmail').value = email;
+        });
+    }
+    loadProfile();
+
+    // ── Contact edit toggle ────────────────────────────────────────────────────
+    document.getElementById('editContactBtn').addEventListener('click', function() {
+      document.getElementById('contactView').style.display = 'none';
+      document.getElementById('contactEdit').style.display = 'block';
+      this.style.display = 'none';
+    });
+    document.getElementById('cancelContactBtn').addEventListener('click', function() {
+      document.getElementById('contactView').style.display = '';
+      document.getElementById('contactEdit').style.display = 'none';
+      document.getElementById('editContactBtn').style.display = '';
+      showErr('errName',''); showErr('errMobile','');
+    });
+
+    document.getElementById('saveContactBtn').addEventListener('click', function() {
+      var name   = document.getElementById('editName').value.trim();
+      var mobile = document.getElementById('editMobile').value.trim();
+      showErr('errName',''); showErr('errMobile','');
+      var ok = true;
+      if (!name || name.length < 2) { showErr('errName','Enter your full name (min 2 chars)'); ok = false; }
+      var digits = mobile.replace(/\D/g,'');
+      if (digits.length < 10) { showErr('errMobile','Enter a valid 10-digit mobile number'); ok = false; }
+      if (!ok) return;
+      var normMob = normMobile(mobile);
+      var btn = this;
+      btn.disabled = true; btn.textContent = 'Saving…';
+      fetch(AUTH_API + '/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, fullName: name, mobile: normMob })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        btn.disabled = false; btn.textContent = 'Save Changes';
+        if (data.success) {
+          // Update session
+          session.name   = name;
+          session.mobile = normMob;
+          sessionStorage.setItem('qa_gen_user', JSON.stringify(session));
+          document.getElementById('cancelContactBtn').click();
+          toast('Contact details updated successfully!', 'success');
+          loadProfile();
+        } else if (data.error === 'mobile_exists') {
+          showErr('errMobile', 'This mobile number is already registered');
+        } else {
+          toast(data.message || 'Update failed. Please try again.', 'error');
+        }
+      })
+      .catch(function() {
+        btn.disabled = false; btn.textContent = 'Save Changes';
+        toast('Could not reach authentication server.', 'error');
+      });
+    });
+
+    // ── Password edit toggle ───────────────────────────────────────────────────
+    document.getElementById('editPwdBtn').addEventListener('click', function() {
+      document.getElementById('pwdView').style.display = 'none';
+      document.getElementById('pwdEdit').style.display = 'block';
+      this.style.display = 'none';
+    });
+    document.getElementById('cancelPwdBtn').addEventListener('click', function() {
+      document.getElementById('pwdView').style.display = '';
+      document.getElementById('pwdEdit').style.display = 'none';
+      document.getElementById('editPwdBtn').style.display = '';
+      ['pwdCurrent','pwdNew','pwdConfirm'].forEach(function(id){ document.getElementById(id).value=''; });
+      showErr('errPwdCurrent',''); showErr('errPwdNew',''); showErr('errPwdConfirm','');
+    });
+
+    document.getElementById('savePwdBtn').addEventListener('click', function() {
+      var cur  = document.getElementById('pwdCurrent').value;
+      var nw   = document.getElementById('pwdNew').value;
+      var conf = document.getElementById('pwdConfirm').value;
+      showErr('errPwdCurrent',''); showErr('errPwdNew',''); showErr('errPwdConfirm','');
+      var ok = true;
+      if (!cur)  { showErr('errPwdCurrent','Enter your current password'); ok = false; }
+      if (!nw || nw.length < 8 || !/[A-Z]/.test(nw) || !/[a-z]/.test(nw) || !/[0-9]/.test(nw) || !/[^A-Za-z0-9]/.test(nw)) {
+        showErr('errPwdNew','Min 8 chars: uppercase, lowercase, number, special character'); ok = false;
+      }
+      if (nw !== conf) { showErr('errPwdConfirm','Passwords do not match'); ok = false; }
+      if (!ok) return;
+      var btn = this;
+      btn.disabled = true; btn.textContent = 'Updating…';
+      fetch(AUTH_API + '/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, currentPassword: cur, newPassword: nw })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        btn.disabled = false; btn.textContent = 'Update Password';
+        if (data.success) {
+          document.getElementById('cancelPwdBtn').click();
+          toast('Password updated successfully!', 'success');
+        } else if (data.error === 'wrong_password') {
+          showErr('errPwdCurrent','Current password is incorrect');
+        } else {
+          toast(data.message || 'Update failed. Please try again.', 'error');
+        }
+      })
+      .catch(function() {
+        btn.disabled = false; btn.textContent = 'Update Password';
+        toast('Could not reach authentication server.', 'error');
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

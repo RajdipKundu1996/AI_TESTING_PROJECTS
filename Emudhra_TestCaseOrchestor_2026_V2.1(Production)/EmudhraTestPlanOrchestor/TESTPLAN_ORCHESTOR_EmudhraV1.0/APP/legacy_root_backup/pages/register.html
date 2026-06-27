@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account | QA-Gen AI — eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #e65c10;
+      --orange-dark: #c44e0e;
+      --gold: #c9a84c;
+      --navy: #0c1f3e;
+      --navy-mid: #1a3a6b;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --surface: #f8fafc;
+      --white: #ffffff;
+      --error: #ef4444;
+      --success: #10b981;
+      --radius: 12px;
+    }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; }
+    body { background: var(--surface); display: flex; flex-direction: column; min-height: 100vh; }
+
+    .reg-shell {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Brand panel ── */
+    .reg-brand {
+      background: linear-gradient(160deg, var(--navy) 0%, #162d55 60%, #1e3a6b 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 40px; position: relative; overflow: hidden;
+    }
+    .reg-brand::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.12) 0%, transparent 60%);
+    }
+    .brand-orbit { position: absolute; border-radius: 50%; border: 1px solid; opacity: 0.15; }
+    .orbit-a { width: 300px; height: 300px; top: -80px; right: -80px; border-color: var(--gold); }
+    .orbit-b { width: 180px; height: 180px; bottom: 40px; left: -60px; border-color: var(--orange); }
+    .reg-brand-copy { position: relative; z-index: 1; max-width: 340px; }
+    .reg-brand-copy img { width: 140px; height: auto; border-radius: 10px; margin-bottom: 28px; }
+    .brand-kicker { font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .reg-brand-copy h1 { font-family: 'Outfit', sans-serif; font-size: 2.6rem; font-weight: 800; color: #fff; line-height: 1.05; margin-bottom: 14px; }
+    .reg-brand-copy p { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.65; margin-bottom: 32px; }
+    .brand-steps { display: flex; flex-direction: column; gap: 12px; }
+    .brand-step { display: flex; align-items: center; gap: 12px; }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(201,168,76,0.18); border: 1.5px solid rgba(201,168,76,0.5); color: var(--gold); font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-label { font-size: 0.82rem; color: rgba(255,255,255,0.72); }
+
+    /* ── Form panel ── */
+    .reg-form-panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px 24px; overflow-y: auto;
+    }
+    .reg-card {
+      width: 100%; max-width: 500px;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+      padding: 40px 40px 36px;
+    }
+    .reg-card img.card-logo { width: 64px; height: auto; border-radius: 8px; margin-bottom: 18px; }
+    .reg-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .reg-title { font-family: 'Outfit', sans-serif; font-size: 1.55rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .reg-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 28px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-row.single { grid-template-columns: 1fr; }
+    .field { margin-bottom: 0; }
+    .form-fields { display: flex; flex-direction: column; gap: 14px; }
+
+    .field label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .field label span.req { color: var(--error); margin-left: 2px; }
+    .input-wrap { position: relative; }
+    .input-wrap .inp-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+      font-size: 0.8rem; font-weight: 600;
+    }
+    .field input {
+      width: 100%; padding: 10px 12px 10px 32px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.86rem; font-family: 'Inter', sans-serif;
+      color: var(--text); background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .field input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.12); }
+    .field input.invalid { border-color: var(--error); }
+    .field input.valid { border-color: var(--success); }
+    .field-err { font-size: 0.72rem; color: var(--error); margin-top: 4px; display: none; }
+    .field.has-error .field-err { display: block; }
+    .field.has-error input { border-color: var(--error); }
+
+    /* Password wrapper */
+    .pwd-wrap { position: relative; }
+    .pwd-wrap input { padding-right: 40px; }
+    .pwd-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 2px; }
+
+    /* Strength meter */
+    .pwd-strength { margin-top: 6px; }
+    .strength-bar { display: flex; gap: 4px; margin-bottom: 4px; }
+    .strength-seg { height: 3px; flex: 1; border-radius: 2px; background: #e2e8f0; transition: background 0.25s; }
+    .strength-label { font-size: 0.7rem; color: var(--text-muted); }
+
+    .strength-0 .strength-label { color: var(--text-muted); }
+    .strength-1 .strength-seg:nth-child(1) { background: #ef4444; }
+    .strength-1 .strength-label { color: #ef4444; }
+    .strength-2 .strength-seg:nth-child(-n+2) { background: #f97316; }
+    .strength-2 .strength-label { color: #f97316; }
+    .strength-3 .strength-seg:nth-child(-n+3) { background: #eab308; }
+    .strength-3 .strength-label { color: #eab308; }
+    .strength-4 .strength-seg { background: #10b981; }
+    .strength-4 .strength-label { color: #10b981; }
+
+    /* Submit button */
+    .reg-btn {
+      width: 100%; padding: 12px;
+      background: linear-gradient(135deg, var(--orange) 0%, #c44e0e 100%);
+      color: #fff; font-size: 0.9rem; font-weight: 700;
+      border: none; border-radius: 10px; cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    .reg-btn:hover { opacity: 0.92; }
+    .reg-btn:active { transform: scale(0.99); }
+    .reg-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .reg-links { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 18px; }
+    .reg-links a { color: var(--orange); font-weight: 600; text-decoration: none; }
+    .reg-links a:hover { text-decoration: underline; }
+
+    /* ── OTP Modal ── */
+    .otp-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,28,55,0.65); backdrop-filter: blur(4px);
+      z-index: 9999; align-items: center; justify-content: center;
+    }
+    .otp-overlay.open { display: flex; }
+    .otp-modal {
+      background: #fff; border-radius: 18px;
+      padding: 36px 40px 32px; max-width: 420px; width: 90%;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.22);
+      text-align: center;
+    }
+    .otp-icon { font-size: 2.4rem; margin-bottom: 12px; }
+    .otp-modal h3 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .otp-modal p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    .otp-demo-notice {
+      background: linear-gradient(135deg, #fef3c7, #fef9ee);
+      border: 1.5px solid #fcd34d; border-radius: 8px;
+      padding: 10px 14px; margin-bottom: 22px;
+      font-size: 0.78rem; color: #92400e; font-weight: 500;
+    }
+    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .otp-box {
+      width: 46px; height: 54px;
+      border: 2px solid var(--border); border-radius: 10px;
+      font-size: 1.4rem; font-weight: 700; text-align: center;
+      font-family: 'Outfit', sans-serif; color: var(--text);
+      outline: none; transition: border-color 0.2s;
+    }
+    .otp-box:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.15); }
+    .otp-box.filled { border-color: var(--orange); background: rgba(230,92,16,0.04); }
+    .otp-verify-btn {
+      width: 100%; padding: 11px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; font-size: 0.88rem; font-weight: 700;
+      border: none; border-radius: 9px; cursor: pointer;
+      margin-bottom: 12px; font-family: 'Inter', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .otp-verify-btn:hover { opacity: 0.9; }
+    .otp-verify-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .otp-resend { font-size: 0.78rem; color: var(--text-muted); }
+    .otp-resend a { color: var(--orange); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .otp-err { font-size: 0.78rem; color: var(--error); margin-top: 8px; min-height: 18px; }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,28,55,0.7); z-index: 10000;
+      align-items: center; justify-content: center;
+    }
+    .success-overlay.open { display: flex; }
+    .success-modal {
+      background: #fff; border-radius: 18px;
+      padding: 44px 48px; max-width: 380px; width: 90%;
+      text-align: center; animation: popIn 0.3s ease;
+    }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-check { font-size: 3rem; margin-bottom: 16px; }
+    .success-modal h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .success-modal p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; }
+
+    @media (max-width: 768px) {
+      .reg-shell { grid-template-columns: 1fr; }
+      .reg-brand { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .reg-card { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+<div class="reg-shell">
+  <!-- Brand panel -->
+  <section class="reg-brand" aria-label="eMudhra QA-Gen AI">
+    <div class="brand-orbit orbit-a"></div>
+    <div class="brand-orbit orbit-b"></div>
+    <div class="reg-brand-copy">
+      <img src="../assets/emudhra-logo.jpg?v=6" alt="eMudhra" />
+      <div class="brand-kicker">TestPlan Orchestrator Cloud</div>
+      <h1>Join QA-Gen AI</h1>
+      <p>Create your enterprise workspace account to access AI-powered test planning, scenario coverage, and audit-ready test cases.</p>
+      <div class="brand-steps">
+        <div class="brand-step"><div class="step-num">1</div><div class="step-label">Fill in your eMudhra work details</div></div>
+        <div class="brand-step"><div class="step-num">2</div><div class="step-label">Verify your identity via OTP</div></div>
+        <div class="brand-step"><div class="step-num">3</div><div class="step-label">Sign in and start orchestrating</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Registration form -->
+  <section class="reg-form-panel">
+    <div class="reg-card">
+      <img class="card-logo" src="../assets/emudhra-logo.jpg?v=6" alt="eMudhra" />
+      <div class="reg-eyebrow">Enterprise Workspace</div>
+      <h2 class="reg-title">Create your account</h2>
+      <p class="reg-sub">All fields are required. Use your official eMudhra work email.</p>
+
+      <div class="form-fields">
+        <div class="form-row">
+          <div class="field" id="field-fullname">
+            <label for="regFullName">Full Name <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">&#9786;</span>
+              <input type="text" id="regFullName" placeholder="e.g. Sahil Khan" autocomplete="name" />
+            </div>
+            <div class="field-err" id="err-fullname">Enter your full name</div>
+          </div>
+          <div class="field" id="field-empid">
+            <label for="regEmpId">Employee ID <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">#</span>
+              <input type="text" id="regEmpId" placeholder="EMU-XXXX" autocomplete="off" />
+            </div>
+            <div class="field-err" id="err-empid">Use format EMU-XXXX</div>
+          </div>
+        </div>
+
+        <div class="form-row single">
+          <div class="field" id="field-org">
+            <label for="regOrg">Organization <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">&#127968;</span>
+              <input type="text" id="regOrg" placeholder="e.g. eMudhra Limited" autocomplete="organization" />
+            </div>
+            <div class="field-err" id="err-org">Enter your organization name</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field" id="field-email">
+            <label for="regEmail">Official Email <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">@</span>
+              <input type="email" id="regEmail" placeholder="you@emudhra.com" autocomplete="email" />
+            </div>
+            <div class="field-err" id="err-email">Enter a valid @emudhra.com email</div>
+          </div>
+          <div class="field" id="field-phone">
+            <label for="regPhone">Mobile Number <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">&#128222;</span>
+              <input type="tel" id="regPhone" placeholder="+91 98765 43210" autocomplete="tel" />
+            </div>
+            <div class="field-err" id="err-phone">Enter a valid mobile number</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field" id="field-password">
+            <label for="regPassword">Password <span class="req">*</span></label>
+            <div class="pwd-wrap input-wrap">
+              <span class="inp-icon">#</span>
+              <input type="password" id="regPassword" placeholder="Min. 8 characters" autocomplete="new-password" />
+              <button type="button" class="pwd-eye" id="pwdEye1" aria-label="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pwd-strength strength-0" id="pwdStrength">
+              <div class="strength-bar">
+                <div class="strength-seg"></div>
+                <div class="strength-seg"></div>
+                <div class="strength-seg"></div>
+                <div class="strength-seg"></div>
+              </div>
+              <div class="strength-label" id="strengthLabel">Enter a password</div>
+            </div>
+            <div class="field-err" id="err-password">Password must be at least 8 characters</div>
+          </div>
+          <div class="field" id="field-confirm">
+            <label for="regConfirm">Confirm Password <span class="req">*</span></label>
+            <div class="pwd-wrap input-wrap">
+              <span class="inp-icon">#</span>
+              <input type="password" id="regConfirm" placeholder="Re-enter password" autocomplete="new-password" />
+              <button type="button" class="pwd-eye" id="pwdEye2" aria-label="Show confirm password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="field-err" id="err-confirm">Passwords do not match</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="reg-btn" id="regSubmitBtn" type="button">Create Account &rarr;</button>
+
+      <p class="reg-links">Already have an account? <a href="../index.html">Sign in</a></p>
+    </div>
+  </section>
+</div>
+
+<!-- OTP Verification Modal -->
+<div class="otp-overlay" id="otpOverlay">
+  <div class="otp-modal">
+    <div class="otp-icon">&#128241;</div>
+    <h3>Verify Your Identity</h3>
+    <p id="otpModalDesc">We've sent a 6-digit OTP to your registered email and mobile number.</p>
+    <div class="otp-demo-notice">
+      &#128161; <strong>Demo mode:</strong> Use OTP &nbsp;<strong id="demoOtp" style="letter-spacing:0.15em; font-size:1.05em;">1 2 3 4 5 6</strong>
+    </div>
+    <div class="otp-boxes" id="otpBoxes">
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+    </div>
+    <div class="otp-err" id="otpErr"></div>
+    <button class="otp-verify-btn" id="otpVerifyBtn" type="button">Verify &amp; Create Account</button>
+    <div class="otp-resend">Didn't receive? <a id="otpResendLink">Resend OTP</a></div>
+  </div>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-modal">
+    <div class="success-check">&#10003;</div>
+    <h3>Account Created!</h3>
+    <p>Your QA-Gen AI account has been registered successfully. Redirecting to sign in&hellip;</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  var REGISTERED_KEY = 'qa_registered_users_v1';
+  var DEMO_OTP = '123456';
+  var formData = {};
+
+  // ─── Password eye toggles ───
+  function togglePwd(inputId, btn) {
+    var inp = document.getElementById(inputId);
+    var showing = inp.type === 'text';
+    inp.type = showing ? 'password' : 'text';
+    btn.innerHTML = showing
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  }
+  document.getElementById('pwdEye1').addEventListener('click', function() { togglePwd('regPassword', this); });
+  document.getElementById('pwdEye2').addEventListener('click', function() { togglePwd('regConfirm', this); });
+
+  // ─── Password strength ───
+  document.getElementById('regPassword').addEventListener('input', function() {
+    var v = this.value;
+    var score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    var labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    var el = document.getElementById('pwdStrength');
+    el.className = 'pwd-strength strength-' + score;
+    document.getElementById('strengthLabel').textContent = v.length ? labels[score] : 'Enter a password';
+  });
+
+  // ─── Validation helpers ───
+  function setError(fieldId, errId, msg) {
+    var f = document.getElementById(fieldId);
+    var e = document.getElementById(errId);
+    f.classList.add('has-error');
+    if (msg) e.textContent = msg;
+    return false;
+  }
+  function clearError(fieldId) {
+    document.getElementById(fieldId).classList.remove('has-error');
+  }
+  function validateAll() {
+    var ok = true;
+    var name = document.getElementById('regFullName').value.trim();
+    var empId = document.getElementById('regEmpId').value.trim();
+    var org = document.getElementById('regOrg').value.trim();
+    var email = document.getElementById('regEmail').value.trim();
+    var phone = document.getElementById('regPhone').value.trim();
+    var pwd = document.getElementById('regPassword').value;
+    var confirm = document.getElementById('regConfirm').value;
+
+    clearError('field-fullname'); clearError('field-empid'); clearError('field-org');
+    clearError('field-email'); clearError('field-phone');
+    clearError('field-password'); clearError('field-confirm');
+
+    if (!name || name.length < 2) { setError('field-fullname', 'err-fullname', 'Enter your full name (min 2 characters)'); ok = false; }
+    if (!empId) { setError('field-empid', 'err-empid', 'Enter your Employee ID'); ok = false; }
+    if (!org || org.length < 2) { setError('field-org', 'err-org', 'Enter your organization name'); ok = false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('field-email', 'err-email', 'Enter a valid work email address'); ok = false;
+    }
+    if (!phone || phone.replace(/[\s\-\+]/g, '').length < 10) {
+      setError('field-phone', 'err-phone', 'Enter a valid mobile number (min 10 digits)'); ok = false;
+    }
+    if (!pwd || pwd.length < 8) { setError('field-password', 'err-password', 'Password must be at least 8 characters'); ok = false; }
+    if (pwd !== confirm) { setError('field-confirm', 'err-confirm', 'Passwords do not match'); ok = false; }
+
+    if (ok) {
+      // Check duplicate email
+      try {
+        var existing = JSON.parse(localStorage.getItem(REGISTERED_KEY) || '[]');
+        if (existing.some(function(u) { return u.email.toLowerCase() === email.toLowerCase(); })) {
+          setError('field-email', 'err-email', 'An account with this email already exists');
+          ok = false;
+        }
+      } catch(e) {}
+    }
+
+    if (ok) {
+      formData = { name: name, empId: empId, org: org, email: email, phone: phone, password: pwd };
+    }
+    return ok;
+  }
+
+  // ─── Submit → show OTP modal ───
+  document.getElementById('regSubmitBtn').addEventListener('click', function() {
+    if (!validateAll()) return;
+    var email = formData.email;
+    var maskedEmail = email.substring(0, 3) + '***' + email.substring(email.indexOf('@'));
+    document.getElementById('otpModalDesc').textContent =
+      'We\'ve sent a 6-digit OTP to ' + maskedEmail + ' and your registered mobile number.';
+    document.getElementById('otpOverlay').classList.add('open');
+    document.querySelector('#otpBoxes .otp-box').focus();
+  });
+
+  // ─── OTP box behavior ───
+  var boxes = document.querySelectorAll('.otp-box');
+  boxes.forEach(function(box, i) {
+    box.addEventListener('input', function() {
+      var v = this.value.replace(/\D/g, '');
+      this.value = v;
+      if (v) {
+        this.classList.add('filled');
+        if (i < boxes.length - 1) boxes[i + 1].focus();
+      } else {
+        this.classList.remove('filled');
+      }
+    });
+    box.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && i > 0) boxes[i - 1].focus();
+    });
+    box.addEventListener('paste', function(e) {
+      e.preventDefault();
+      var text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      text.split('').forEach(function(ch, j) {
+        if (boxes[j]) { boxes[j].value = ch; boxes[j].classList.add('filled'); }
+      });
+      if (boxes[Math.min(text.length, 5)]) boxes[Math.min(text.length, 5)].focus();
+    });
+  });
+
+  // ─── Verify OTP ───
+  document.getElementById('otpVerifyBtn').addEventListener('click', function() {
+    var entered = Array.from(boxes).map(function(b) { return b.value; }).join('');
+    document.getElementById('otpErr').textContent = '';
+    if (entered.length < 6) {
+      document.getElementById('otpErr').textContent = 'Please enter all 6 digits.'; return;
+    }
+    if (entered !== DEMO_OTP) {
+      document.getElementById('otpErr').textContent = 'Incorrect OTP. Try again (hint: 123456 for demo).';
+      boxes.forEach(function(b) { b.classList.add('invalid-flash'); });
+      setTimeout(function() { boxes.forEach(function(b) { b.classList.remove('invalid-flash'); }); }, 600);
+      return;
+    }
+    // Save user to localStorage
+    try {
+      var users = JSON.parse(localStorage.getItem(REGISTERED_KEY) || '[]');
+      var initials = formData.name.split(/\s+/).filter(Boolean).slice(0,2).map(function(w){ return w[0].toUpperCase(); }).join('');
+      users.push({
+        name: formData.name,
+        initials: initials,
+        email: formData.email,
+        password: formData.password,
+        empId: formData.empId,
+        org: formData.org,
+        phone: formData.phone,
+        role: 'QA Engineer',
+        status: 'Active',
+        location: 'India',
+        registeredDate: new Date().toLocaleDateString('en-GB'),
+        tokens: 0,
+        device: navigator.userAgent.includes('Chrome') ? 'Chrome / Browser' : 'Browser',
+        ip: '—',
+        lastSeen: 'Just registered',
+        activeSessions: 0
+      });
+      localStorage.setItem(REGISTERED_KEY, JSON.stringify(users));
+    } catch(e) {}
+
+    // Show success
+    document.getElementById('otpOverlay').classList.remove('open');
+    document.getElementById('successOverlay').classList.add('open');
+    setTimeout(function() {
+      window.location.href = '../index.html?registered=1';
+    }, 2200);
+  });
+
+  // ─── Resend OTP ───
+  document.getElementById('otpResendLink').addEventListener('click', function() {
+    boxes.forEach(function(b) { b.value = ''; b.classList.remove('filled'); });
+    document.getElementById('otpErr').textContent = '';
+    boxes[0].focus();
+    this.textContent = 'Sent!';
+    var self = this;
+    setTimeout(function() { self.textContent = 'Resend OTP'; }, 3000);
+  });
+
+  // ─── Enter key on form ───
+  document.querySelectorAll('.field input').forEach(function(inp) {
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('regSubmitBtn').click();
+    });
+  });
+})();
+</script>
+</body>
+</html>

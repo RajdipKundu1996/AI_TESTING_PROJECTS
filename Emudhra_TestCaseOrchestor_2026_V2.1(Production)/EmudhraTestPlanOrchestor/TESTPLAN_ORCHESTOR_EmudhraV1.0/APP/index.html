@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA-Gen AI | Login &mdash; eMudhra Test Orchestrator</title>
+  <meta name="description" content="QA-Gen AI is a professional AI-based test plan orchestration platform powered by eMudhra." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/login.css?v=2" />
+  <style>
+    .login-alt-row { display:flex; align-items:center; justify-content:space-between; margin-top:14px; gap:8px; }
+    .login-alt-link { font-size:0.78rem; color:#c9a84c; font-weight:600; text-decoration:none; cursor:pointer; }
+    .login-alt-link:hover { text-decoration:underline; }
+    .otp-step { display:none; }
+    .otp-step-header { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+    .otp-back-btn { background:none; border:none; color:#64748b; font-size:0.8rem; font-weight:600; cursor:pointer; padding:4px 8px 4px 0; display:flex; align-items:center; gap:4px; }
+    .otp-back-btn:hover { color:#1e293b; }
+    .otp-step-title { font-size:0.95rem; font-weight:700; color:#1e293b; }
+    .otp-method-group { display:flex; flex-direction:column; gap:10px; margin:16px 0 20px; }
+    .otp-method-opt { display:flex; align-items:center; gap:12px; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:10px; cursor:pointer; transition:border-color 0.2s, background 0.2s; }
+    .otp-method-opt:has(input:checked) { border-color:#e65c10; background:rgba(230,92,16,0.04); }
+    .otp-method-opt input[type=radio] { accent-color:#e65c10; width:16px; height:16px; }
+    .otp-method-label { font-size:0.84rem; font-weight:600; color:#1e293b; }
+    .otp-method-sub { font-size:0.74rem; color:#64748b; margin-top:1px; }
+    .otp-boxes-row { display:flex; gap:8px; justify-content:center; margin:18px 0 20px; }
+    .otp-dig-box { width:44px; height:52px; border:2px solid #e2e8f0; border-radius:9px; font-size:1.3rem; font-weight:700; text-align:center; font-family:'Outfit',sans-serif; color:#1e293b; outline:none; transition:border-color 0.2s; }
+    .otp-dig-box:focus { border-color:#e65c10; box-shadow:0 0 0 3px rgba(230,92,16,0.12); }
+    .otp-dig-box.filled { border-color:#e65c10; background:rgba(230,92,16,0.04); }
+    .otp-demo-hint { background:linear-gradient(135deg,#fef3c7,#fef9ee); border:1.5px solid #fcd34d; border-radius:8px; padding:9px 12px; font-size:0.76rem; color:#92400e; font-weight:500; margin-bottom:16px; }
+    .reg-success-toast { display:none; background:linear-gradient(135deg,#d1fae5,#ecfdf5); border:1.5px solid #6ee7b7; border-radius:10px; padding:10px 14px; font-size:0.8rem; color:#065f46; font-weight:500; margin-bottom:14px; }
+    .reg-success-toast.show { display:flex; align-items:center; gap:8px; }
+    .initially-hidden { display:none; }
+    .otp-send-btn { margin-top:16px; }
+    .otp-target-note { font-size:0.8rem; color:#64748b; margin-bottom:4px; }
+    .otp-sent-desc { font-size:0.8rem; color:#64748b; margin-bottom:16px; }
+    .otp-code-strong { letter-spacing:0.18em; }
+    .otp-verify-btn-mt { margin-top:4px; }
+    .otp-resend-row { text-align:center; margin-top:12px; font-size:0.78rem; color:#64748b; }
+  </style>
+</head>
+<body>
+  <canvas id="particleCanvas"></canvas>
+  <div class="login-shell">
+    <section class="login-brand-panel" aria-label="eMudhra Test Orchestrator">
+      <div class="brand-aura"></div>
+      <div class="brand-orbit orbit-one"></div>
+      <div class="brand-orbit orbit-two"></div>
+      <div class="brand-copy">
+        <img class="brand-logo-img" src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" />
+        <div class="brand-kicker">TestPlan Orchestrator Cloud</div>
+        <h1>QA-Gen AI</h1>
+        <p>Professional test planning, scenario coverage, audit-ready test cases, and automation assets for eMudhra delivery teams.</p>
+        <div class="brand-metrics">
+          <div><strong>RICEPOT</strong><span>Requirement depth</span></div>
+          <div><strong>BLAST</strong><span>Coverage strategy</span></div>
+          <div><strong>XLSX</strong><span>Export ready</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-auth-panel">
+      <!-- Animated background orbs -->
+      <div class="auth-panel-orbs" aria-hidden="true">
+        <div class="auth-orb auth-orb-1"></div>
+        <div class="auth-orb auth-orb-2"></div>
+      </div>
+
+      <div class="simple-card">
+        <img class="simple-logo" src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" />
+        <div class="auth-eyebrow">Secure workspace access</div>
+        <h2 class="simple-title">Welcome back</h2>
+        <p class="simple-sub">Sign in with your eMudhra work account.</p>
+
+        <!-- ── Password login form ── -->
+        <div class="simple-form">
+          <label for="username" class="form-label">Work email</label>
+          <div class="input-shell">
+            <span class="input-mark">@</span>
+            <input type="email" id="username" name="username" class="form-input" placeholder="you@emudhra.com" autocomplete="username" />
+          </div>
+
+          <label for="password" class="form-label">Password</label>
+          <div class="input-shell">
+            <span class="input-mark">#</span>
+            <input type="password" id="password" name="password" class="form-input pwd-input" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" class="pwd-eye-btn" id="pwdEyeBtn" aria-label="Show password" tabindex="-1">
+              <svg id="eyeIconShow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="eyeIconHide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="error-message initially-hidden" id="loginError">
+            <span>!</span>
+            <span id="loginErrorText"></span>
+          </div>
+
+          <button class="btn-login" id="loginBtn" type="button">
+            <span class="btn-text">Sign in to workspace</span>
+          </button>
+
+          <!-- ── Divider ── -->
+          <div class="auth-divider"><span>or continue with</span></div>
+
+          <!-- ── Action cards ── -->
+          <div class="auth-alt-btns">
+            <a class="auth-alt-btn otp-btn" id="useOtpLink" role="button" tabindex="0">
+              <div class="aab-icon">&#128241;</div>
+              <div class="aab-title">Login with OTP</div>
+              <div class="aab-sub">Passwordless &amp; secure</div>
+              <span class="aab-arrow">&#8594;</span>
+            </a>
+            <a class="auth-alt-btn create-btn" href="pages/register.html">
+              <div class="aab-icon">&#10024;</div>
+              <div class="aab-title">Create Account</div>
+              <div class="aab-sub">New to QA-Gen AI?</div>
+              <span class="aab-arrow">&#8594;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Mobile OTP Flow ── -->
+        <div id="mobileOtpFlow" class="motpInitHidden">
+
+          <!-- Step 1 — Mobile number entry -->
+          <div id="motpStep1">
+            <div class="motpFlowHdr">
+              <button type="button" class="otp-back-btn" id="motpBackToPassword">&#8592; Back to Sign In</button>
+            </div>
+            <div class="motpStepTitle">
+              <span class="motpStepEmoji">&#128241;</span>
+              <div>
+                <div class="motpStepHead">Login with OTP</div>
+                <div class="motpStepSub">Enter your registered mobile number</div>
+              </div>
+            </div>
+            <div class="motpStepPips" aria-hidden="true">
+              <div class="motpPip active"></div>
+              <div class="motpPipLine"></div>
+              <div class="motpPip"></div>
+            </div>
+            <div class="reg-success-toast" id="regSuccessToast">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Account created! Sign in with your registered mobile OTP.
+            </div>
+            <label for="motpMobile" class="form-label">Mobile Number <span class="req-star">*</span></label>
+            <div class="input-shell">
+              <span class="input-mark">&#128241;</span>
+              <input type="tel" id="motpMobile" class="form-input" placeholder="Enter 10-digit mobile number" inputmode="numeric" maxlength="10" autocomplete="tel" />
+            </div>
+            <div class="motpFieldErr motpInitHidden" id="motpMobileError"></div>
+            <button class="btn-login motpSendTopGap" id="motpSendBtn" type="button" disabled>
+              <span class="btn-text">Send OTP &#8594;</span>
+            </button>
+          </div>
+
+          <!-- Step 2 — OTP entry, countdown, lockout -->
+          <div id="motpStep2" class="motpInitHidden">
+            <div class="motpFlowHdr">
+              <button type="button" class="otp-back-btn" id="motpBackToStep1">&#8592; Change Number</button>
+            </div>
+            <div class="motpStepTitle">
+              <span class="motpStepEmoji">&#128273;</span>
+              <div>
+                <div class="motpStepHead">Enter OTP</div>
+                <div class="motpStepSub">Sent to +91&nbsp;<span id="motpMaskedMobile">XXXXXX0000</span></div>
+              </div>
+            </div>
+            <div class="motpStepPips" aria-hidden="true">
+              <div class="motpPip"></div>
+              <div class="motpPipLine active"></div>
+              <div class="motpPip active"></div>
+            </div>
+            <div class="motpSentBanner motpInitHidden" id="motpSentBanner">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="motpSentBannerText">OTP has been sent successfully.</span>
+            </div>
+            <div class="motpCountdown" id="motpCountdownRow">
+              <span class="motpCountdownLabel">OTP expires in</span>
+              <span class="motpCountdownTimer" id="motpCountdownDisplay">05:00</span>
+            </div>
+            <div class="otp-boxes-row" id="motpBoxes" role="group" aria-label="One-time password digits">
+              <input class="otp-dig-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 1" title="OTP digit 1" />
+              <input class="otp-dig-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 2" title="OTP digit 2" />
+              <input class="otp-dig-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 3" title="OTP digit 3" />
+              <input class="otp-dig-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 4" title="OTP digit 4" />
+              <input class="otp-dig-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 5" title="OTP digit 5" />
+              <input class="otp-dig-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 6" title="OTP digit 6" />
+            </div>
+            <div class="otp-demo-hint">&#128161; <strong>Demo OTP:</strong> &nbsp;<strong class="otp-code-strong">4&nbsp;8&nbsp;2&nbsp;9&nbsp;1&nbsp;6</strong></div>
+            <button class="btn-login" id="motpVerifyBtn" type="button">
+              <span class="btn-text">Verify &amp; Sign In</span>
+            </button>
+            <div class="motpMsg motpInitHidden" id="motpVerifyMsg"></div>
+            <div class="motpResendRow">
+              <span class="motpResendCooldown" id="motpResendCooldownRow">
+                Resend in <strong id="motpResendTimer">30</strong>s
+              </span>
+              <button type="button" class="otp-resend-link" id="motpResendBtn" disabled>Resend OTP</button>
+            </div>
+            <!-- Lockout panel -->
+            <div class="motpLockPanel motpInitHidden" id="motpLockPanel">
+              <div class="motpLockIcon">&#128274;</div>
+              <div class="motpLockTitle">Account Temporarily Locked</div>
+              <div class="motpLockSub">User is locked due to multiple invalid OTP attempts.</div>
+              <div class="motpLockCountdown">Unlocks in &nbsp;<span class="motpLockTimer" id="motpLockCountdown">02:00</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="simple-links"><a href="https://www.emudhra.com" target="_blank" rel="noopener">eMudhra website</a><span></span><a href="/pages/docs.html" id="docLink" target="_blank" rel="noopener">Docs</a></div>
+      </div>
+    </section>
+    <div class="login-footer-line">
+      <span>eMudhra</span>
+      <span>Trust Delivered</span>
+      <span>Enterprise QA Orchestration</span>
+    </div>
+  </div>
+  <script src="js/login.js"></script>
+
+  <!-- Service worker registration for caching and faster loads -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('ServiceWorker registered:', reg.scope);
+        }).catch(err => {
+          console.warn('ServiceWorker registration failed:', err);
+        });
+      });
+    }
+  </script>
+
+  <script>
+    document.getElementById('pwdEyeBtn').addEventListener('click', function() {
+      var input = document.getElementById('password');
+      var showIcon = document.getElementById('eyeIconShow');
+      var hideIcon = document.getElementById('eyeIconHide');
+      var showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      showIcon.classList.toggle('pwd-visible', !showing);
+      hideIcon.classList.toggle('pwd-visible', !showing);
+      this.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+    });
+  </script>
+
+  <script>
+    // Add subtle entrance and pulse to the brand logo once the DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const headerLogo = document.querySelector('.brand-logo-img');
+        if (headerLogo) setTimeout(() => headerLogo.classList.add('enter'), 80);
+        const img = document.querySelector('.simple-logo');
+        if (img) setTimeout(() => img.classList.add('brand-pulse'), 300);
+      } catch (e) {
+        console.warn('Brand animation init failed', e);
+      }
+    });
+  </script>
+</body>
+</html>
+

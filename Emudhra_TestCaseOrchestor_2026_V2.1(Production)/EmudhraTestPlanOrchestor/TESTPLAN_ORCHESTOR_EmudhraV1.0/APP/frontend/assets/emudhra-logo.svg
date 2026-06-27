@@ -1,0 +1,35 @@
+<svg width="660" height="210" viewBox="0 0 660 210" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="em-title em-desc">
+  <title id="em-title">eMudhra</title>
+  <desc id="em-desc">eMudhra — Trust Delivered</desc>
+
+  <!-- ===== "e" orbit mark ===== -->
+  <g transform="rotate(-18 105 102)">
+    <!-- outer purple swoosh (open on right) -->
+    <path d="M173.8,138.7 A84,64 0 1 1 173.8,65.3"
+          stroke="#7B2D8B" stroke-width="19" stroke-linecap="round" fill="none"/>
+    <!-- inner violet highlight -->
+    <path d="M150,140 A68,52 0 1 1 142,56"
+          stroke="#C060E0" stroke-width="10" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- green lowercase e -->
+  <text x="99" y="152" text-anchor="middle"
+        font-family="'Arial Rounded MT Bold','Trebuchet MS',Arial,sans-serif"
+        font-size="144" font-weight="900" fill="#6CB42E">e</text>
+
+  <!-- ===== Wordmark ===== -->
+  <text x="215" y="133"
+        font-family="'Arial Rounded MT Bold','Trebuchet MS',Arial,sans-serif"
+        font-size="96" font-weight="900" letter-spacing="-1" fill="#F26A21">emudhra</text>
+
+  <!-- primary orange underline -->
+  <rect x="217" y="144" width="428" height="10" rx="3" fill="#F26A21"/>
+  <!-- secondary green accent line -->
+  <rect x="217" y="156" width="428" height="4" rx="2" fill="#6CB42E" opacity="0.75"/>
+
+  <!-- tagline in orange italic -->
+  <text x="222" y="194"
+        font-family="'Arial Rounded MT Bold','Trebuchet MS',Arial,sans-serif"
+        font-size="29" font-weight="800" letter-spacing="10"
+        fill="#F26A21" font-style="italic">Trust Delivered</text>
+</svg>

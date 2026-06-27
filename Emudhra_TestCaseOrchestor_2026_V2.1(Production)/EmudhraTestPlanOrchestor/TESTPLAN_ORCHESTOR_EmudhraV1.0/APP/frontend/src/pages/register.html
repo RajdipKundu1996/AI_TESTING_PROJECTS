@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account | QA-Gen AI — eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #e65c10;
+      --orange-dark: #c44e0e;
+      --gold: #c9a84c;
+      --navy: #0c1f3e;
+      --navy-mid: #1a3a6b;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --surface: #f8fafc;
+      --white: #ffffff;
+      --error: #ef4444;
+      --success: #10b981;
+      --radius: 12px;
+    }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; }
+    body { background: var(--surface); display: flex; flex-direction: column; min-height: 100vh; }
+
+    .reg-shell {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Brand panel ── */
+    .reg-brand {
+      background: linear-gradient(160deg, var(--navy) 0%, #162d55 60%, #1e3a6b 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 40px; position: relative; overflow: hidden;
+    }
+    .reg-brand::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.12) 0%, transparent 60%);
+    }
+    .brand-orbit { position: absolute; border-radius: 50%; border: 1px solid; opacity: 0.15; }
+    .orbit-a { width: 300px; height: 300px; top: -80px; right: -80px; border-color: var(--gold); }
+    .orbit-b { width: 180px; height: 180px; bottom: 40px; left: -60px; border-color: var(--orange); }
+    .reg-brand-copy { position: relative; z-index: 1; max-width: 340px; }
+    .reg-brand-copy img { width: 140px; height: auto; border-radius: 10px; margin-bottom: 28px; }
+    .brand-kicker { font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .reg-brand-copy h1 { font-family: 'Outfit', sans-serif; font-size: 2.6rem; font-weight: 800; color: #fff; line-height: 1.05; margin-bottom: 14px; }
+    .reg-brand-copy p { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.65; margin-bottom: 32px; }
+    .brand-steps { display: flex; flex-direction: column; gap: 12px; }
+    .brand-step { display: flex; align-items: center; gap: 12px; }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(201,168,76,0.18); border: 1.5px solid rgba(201,168,76,0.5); color: var(--gold); font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-label { font-size: 0.82rem; color: rgba(255,255,255,0.72); }
+
+    /* ── Form panel ── */
+    .reg-form-panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px 20px; overflow-y: auto;
+    }
+    .reg-card {
+      width: 100%; max-width: 620px;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+      padding: 36px 44px 32px;
+    }
+    .reg-card img.card-logo { width: 64px; height: auto; border-radius: 8px; margin-bottom: 18px; }
+    .reg-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .reg-title { font-family: 'Outfit', sans-serif; font-size: 1.55rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .reg-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 28px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-row.single { grid-template-columns: 1fr; }
+    .field { margin-bottom: 0; }
+    .form-fields { display: flex; flex-direction: column; gap: 14px; }
+
+    .field label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .field label span.req { color: var(--error); margin-left: 2px; }
+    .input-wrap { position: relative; }
+    .input-wrap .inp-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+      font-size: 0.8rem; font-weight: 600;
+    }
+    .field input {
+      width: 100%; padding: 10px 12px 10px 32px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.86rem; font-family: 'Inter', sans-serif;
+      color: var(--text); background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .field input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.12); }
+    .field select {
+      width: 100%; padding: 10px 12px 10px 32px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.86rem; font-family: 'Inter', sans-serif;
+      color: var(--text); background: var(--white);
+      outline: none; -webkit-appearance: none; appearance: none;
+      cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field select:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.12); }
+
+    /* Phone combo: custom country-code dropdown + number input side by side */
+    .phone-combo { display: flex; align-items: stretch; }
+
+    /* Custom country-code dropdown */
+    .cc-dropdown { position: relative; flex-shrink: 0; width: 178px; }
+    .cc-trigger {
+      display: flex; align-items: center; gap: 5px;
+      width: 100%; height: 100%; padding: 9px 8px;
+      border: 1.5px solid var(--border); border-right: none;
+      border-radius: 8px 0 0 8px;
+      background: #f8fafc; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 0.79rem;
+      color: var(--text); outline: none; white-space: nowrap; overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .cc-trigger:hover { background: #f1f5f9; }
+    .cc-dropdown.open .cc-trigger,
+    .cc-trigger:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.12); z-index: 1; }
+    .cc-flag { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; flex-shrink: 0; vertical-align: middle; }
+    .cc-tname { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; font-size: 0.79rem; }
+    .cc-tcode { color: var(--text-muted); font-size: 0.74rem; flex-shrink: 0; }
+    .cc-arrow { font-size: 0.55rem; color: #94a3b8; flex-shrink: 0; margin-left: 1px; transition: transform 0.18s; line-height: 1; }
+    .cc-dropdown.open .cc-arrow { transform: rotate(180deg); }
+
+    .cc-panel {
+      position: absolute; left: 0; top: calc(100% + 4px);
+      width: 240px; background: #fff;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      box-shadow: 0 8px 36px rgba(0,0,0,0.14);
+      display: none; z-index: 9999; overflow: hidden;
+    }
+    .cc-dropdown.open .cc-panel { display: block; }
+    .cc-search {
+      width: 100%; padding: 9px 12px;
+      border: none; border-bottom: 1px solid var(--border);
+      font-size: 0.8rem; font-family: 'Inter', sans-serif;
+      color: var(--text); outline: none; background: #f8fafc;
+    }
+    .cc-search::placeholder { color: #94a3b8; }
+    .cc-list { list-style: none; max-height: 220px; overflow-y: auto; margin: 0; padding: 4px 0; }
+    .cc-list::-webkit-scrollbar { width: 4px; }
+    .cc-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+    .cc-list li {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 12px; cursor: pointer; font-size: 0.82rem;
+      transition: background 0.12s;
+    }
+    .cc-list li:hover, .cc-list li.cc-active { background: rgba(230,92,16,0.07); }
+    .cc-list li img { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; flex-shrink: 0; }
+    .cc-item-name { flex: 1; color: var(--text); font-size: 0.82rem; }
+    .cc-item-code { color: var(--text-muted); font-size: 0.75rem; flex-shrink: 0; }
+    .cc-no-results { padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+
+    .cc-input {
+      flex: 1; padding: 10px 12px;
+      border: 1.5px solid var(--border); border-radius: 0 8px 8px 0;
+      font-size: 0.86rem; font-family: 'Inter', sans-serif;
+      color: var(--text); background: var(--white);
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      min-width: 0;
+    }
+    .cc-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.12); }
+    .field.has-error .cc-trigger,
+    .field.has-error .cc-input { border-color: var(--error); }
+    .field input.invalid { border-color: var(--error); }
+    .field input.valid { border-color: var(--success); }
+    .field-err { font-size: 0.72rem; color: var(--error); margin-top: 4px; display: none; }
+    .field.has-error .field-err { display: block; }
+    .field.has-error input { border-color: var(--error); }
+
+    /* Password wrapper */
+    .pwd-wrap { position: relative; }
+    .pwd-wrap input { padding-right: 40px; }
+    .pwd-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 2px; }
+
+    /* Strength meter */
+    .pwd-strength { margin-top: 6px; }
+    .strength-bar { display: flex; gap: 4px; margin-bottom: 4px; }
+    .strength-seg { height: 3px; flex: 1; border-radius: 2px; background: #e2e8f0; transition: background 0.25s; }
+    .strength-label { font-size: 0.7rem; color: var(--text-muted); }
+
+    .strength-0 .strength-label { color: var(--text-muted); }
+    .strength-1 .strength-seg:nth-child(1) { background: #ef4444; }
+    .strength-1 .strength-label { color: #ef4444; }
+    .strength-2 .strength-seg:nth-child(-n+2) { background: #f97316; }
+    .strength-2 .strength-label { color: #f97316; }
+    .strength-3 .strength-seg:nth-child(-n+3) { background: #eab308; }
+    .strength-3 .strength-label { color: #eab308; }
+    .strength-4 .strength-seg { background: #10b981; }
+    .strength-4 .strength-label { color: #10b981; }
+
+    /* Submit button */
+    .reg-btn {
+      width: 100%; padding: 12px;
+      background: linear-gradient(135deg, var(--orange) 0%, #c44e0e 100%);
+      color: #fff; font-size: 0.9rem; font-weight: 700;
+      border: none; border-radius: 10px; cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    .reg-btn:hover { opacity: 0.92; }
+    .reg-btn:active { transform: scale(0.99); }
+    .reg-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .reg-links { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 18px; }
+    .reg-links a { color: var(--orange); font-weight: 600; text-decoration: none; }
+    .reg-links a:hover { text-decoration: underline; }
+
+    /* ── OTP Modal ── */
+    .otp-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,28,55,0.65); backdrop-filter: blur(4px);
+      z-index: 9999; align-items: center; justify-content: center;
+    }
+    .otp-overlay.open { display: flex; }
+    .otp-modal {
+      background: #fff; border-radius: 18px;
+      padding: 36px 40px 32px; max-width: 420px; width: 90%;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.22);
+      text-align: center;
+    }
+    .otp-icon { font-size: 2.4rem; margin-bottom: 12px; }
+    .otp-modal h3 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .otp-modal p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    .otp-demo-notice {
+      background: linear-gradient(135deg, #fef3c7, #fef9ee);
+      border: 1.5px solid #fcd34d; border-radius: 8px;
+      padding: 10px 14px; margin-bottom: 22px;
+      font-size: 0.78rem; color: #92400e; font-weight: 500;
+    }
+    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .otp-box {
+      width: 46px; height: 54px;
+      border: 2px solid var(--border); border-radius: 10px;
+      font-size: 1.4rem; font-weight: 700; text-align: center;
+      font-family: 'Outfit', sans-serif; color: var(--text);
+      outline: none; transition: border-color 0.2s;
+    }
+    .otp-box:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,92,16,0.15); }
+    .otp-box.filled { border-color: var(--orange); background: rgba(230,92,16,0.04); }
+    .otp-verify-btn {
+      width: 100%; padding: 11px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; font-size: 0.88rem; font-weight: 700;
+      border: none; border-radius: 9px; cursor: pointer;
+      margin-bottom: 12px; font-family: 'Inter', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .otp-verify-btn:hover { opacity: 0.9; }
+    .otp-verify-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .otp-resend { font-size: 0.78rem; color: var(--text-muted); }
+    .otp-resend a { color: var(--orange); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .otp-err { font-size: 0.78rem; color: var(--error); margin-top: 8px; min-height: 18px; }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,28,55,0.7); z-index: 10000;
+      align-items: center; justify-content: center;
+    }
+    .success-overlay.open { display: flex; }
+    .success-modal {
+      background: #fff; border-radius: 18px;
+      padding: 44px 48px; max-width: 380px; width: 90%;
+      text-align: center; animation: popIn 0.3s ease;
+    }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-check { font-size: 3rem; margin-bottom: 16px; }
+    .success-modal h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .success-modal p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .reg-shell { grid-template-columns: 1fr; }
+      .reg-brand { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .reg-card { padding: 28px 24px; max-width: 100%; }
+      .reg-form-panel { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="reg-shell">
+  <!-- Brand panel -->
+  <section class="reg-brand" aria-label="eMudhra QA-Gen AI">
+    <div class="brand-orbit orbit-a"></div>
+    <div class="brand-orbit orbit-b"></div>
+    <div class="reg-brand-copy">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra" />
+      <div class="brand-kicker">TestPlan Orchestrator Cloud</div>
+      <h1>Join QA-Gen AI</h1>
+      <p>Create your enterprise workspace account to access AI-powered test planning, scenario coverage, and audit-ready test cases.</p>
+      <div class="brand-steps">
+        <div class="brand-step"><div class="step-num">1</div><div class="step-label">Fill in your eMudhra work details</div></div>
+        <div class="brand-step"><div class="step-num">2</div><div class="step-label">Verify your identity via OTP</div></div>
+        <div class="brand-step"><div class="step-num">3</div><div class="step-label">Sign in and start orchestrating</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Registration form -->
+  <section class="reg-form-panel">
+    <div class="reg-card">
+      <img class="card-logo" src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra" />
+      <div class="reg-eyebrow">Enterprise Workspace</div>
+      <h2 class="reg-title">Create your account</h2>
+      <p class="reg-sub">All fields are required. Use your official eMudhra work email.</p>
+
+      <div class="form-fields">
+        <div class="form-row">
+          <div class="field" id="field-fullname">
+            <label for="regFullName">Full Name <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">&#9786;</span>
+              <input type="text" id="regFullName" placeholder="e.g. Sahil Khan" autocomplete="name" />
+            </div>
+            <div class="field-err" id="err-fullname">Enter your full name</div>
+          </div>
+          <div class="field" id="field-empid">
+            <label for="regEmpId">Employee ID <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">#</span>
+              <input type="text" id="regEmpId" placeholder="e.g. 23483 or EMU-1234" autocomplete="off" />
+            </div>
+            <div class="field-err" id="err-empid">Enter a valid Employee ID (min 3 characters)</div>
+          </div>
+        </div>
+
+        <div class="form-row single">
+          <div class="field" id="field-org">
+            <label for="regOrg">Organization <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">&#127968;</span>
+              <select id="regOrg">
+                <option value="">-- Select Organization --</option>
+                <option value="eMudhra Limited">eMudhra Limited (Internal)</option>
+                <option value="External">External / Partner</option>
+              </select>
+            </div>
+            <div class="field-err" id="err-org">Please select your organization</div>
+          </div>
+        </div>
+
+        <div class="form-row single">
+          <div class="field" id="field-email">
+            <label for="regEmail">Official Email <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">@</span>
+              <input type="email" id="regEmail" placeholder="you@emudhra.com" autocomplete="email" />
+            </div>
+            <div class="field-err" id="err-email">Enter a valid @emudhra.com email</div>
+          </div>
+        </div>
+
+        <div class="form-row single">
+          <div class="field" id="field-phone">
+            <label for="regPhone">Mobile Number <span class="req">*</span></label>
+            <div class="phone-combo">
+              <!-- Custom country-code picker (flag images work on Windows; emoji flags don't) -->
+              <div class="cc-dropdown" id="ccDropdown">
+                <button type="button" class="cc-trigger" id="ccTrigger" aria-haspopup="listbox" aria-expanded="false">
+                  <img class="cc-flag" id="ccFlagImg" src="https://flagcdn.com/w20/in.png" alt="India" />
+                  <span class="cc-tname" id="ccTrigName">India</span>
+                  <span class="cc-tcode" id="ccTrigCode">+91</span>
+                  <span class="cc-arrow">&#9660;</span>
+                </button>
+                <div class="cc-panel" id="ccPanel" role="listbox">
+                  <input type="text" class="cc-search" id="ccSearch" placeholder="Search country…" autocomplete="off" />
+                  <ul class="cc-list" id="ccList"></ul>
+                </div>
+              </div>
+              <!-- Hidden input keeps the same ID so getMobile() still works unchanged -->
+              <input type="hidden" id="regCountryCode" value="+91" />
+              <input type="tel" id="regPhone" class="cc-input" placeholder="Enter 10-digit mobile number" maxlength="10" inputmode="numeric" autocomplete="tel-national" />
+            </div>
+            <div class="field-err" id="err-phone">Enter a valid 10-digit number (no leading zero)</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field" id="field-password">
+            <label for="regPassword">Password <span class="req">*</span></label>
+            <div class="pwd-wrap input-wrap">
+              <span class="inp-icon">#</span>
+              <input type="password" id="regPassword" placeholder="Min. 8 characters" autocomplete="new-password" />
+              <button type="button" class="pwd-eye" id="pwdEye1" aria-label="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pwd-strength strength-0" id="pwdStrength">
+              <div class="strength-bar">
+                <div class="strength-seg"></div>
+                <div class="strength-seg"></div>
+                <div class="strength-seg"></div>
+                <div class="strength-seg"></div>
+              </div>
+              <div class="strength-label" id="strengthLabel">Enter a password</div>
+            </div>
+            <div class="field-err" id="err-password">Password must be at least 8 characters</div>
+          </div>
+          <div class="field" id="field-confirm">
+            <label for="regConfirm">Confirm Password <span class="req">*</span></label>
+            <div class="pwd-wrap input-wrap">
+              <span class="inp-icon">#</span>
+              <input type="password" id="regConfirm" placeholder="Re-enter password" autocomplete="new-password" />
+              <button type="button" class="pwd-eye" id="pwdEye2" aria-label="Show confirm password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="field-err" id="err-confirm">Passwords do not match</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="reg-btn" id="regSubmitBtn" type="button">Create Account &rarr;</button>
+
+      <p class="reg-links">Already have an account? <a href="../../index.html">Sign in</a></p>
+    </div>
+  </section>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-modal">
+    <div class="success-check">&#10003;</div>
+    <h3>Account Created!</h3>
+    <p>Your QA-Gen AI account has been registered successfully. Redirecting to sign in&hellip;</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  var AUTH_API = 'http://127.0.0.1:3005';
+
+  // ─── Password eye toggles ───
+  function togglePwd(inputId, btn) {
+    var inp = document.getElementById(inputId);
+    var showing = inp.type === 'text';
+    inp.type = showing ? 'password' : 'text';
+    btn.innerHTML = showing
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  }
+  document.getElementById('pwdEye1').addEventListener('click', function() { togglePwd('regPassword', this); });
+  document.getElementById('pwdEye2').addEventListener('click', function() { togglePwd('regConfirm', this); });
+
+  // ─── Password strength ───
+  document.getElementById('regPassword').addEventListener('input', function() {
+    var v = this.value;
+    var score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    var labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    var el = document.getElementById('pwdStrength');
+    el.className = 'pwd-strength strength-' + score;
+    document.getElementById('strengthLabel').textContent = v.length ? labels[score] : 'Enter a password';
+  });
+
+  // ─── Custom Country-Code Dropdown ───
+  var COUNTRIES = [
+    { code: '+91',  iso: 'in', name: 'India' },
+    { code: '+1',   iso: 'us', name: 'USA' },
+    { code: '+44',  iso: 'gb', name: 'UK' },
+    { code: '+61',  iso: 'au', name: 'Australia' },
+    { code: '+1',   iso: 'ca', name: 'Canada' },
+    { code: '+971', iso: 'ae', name: 'UAE' },
+    { code: '+966', iso: 'sa', name: 'Saudi Arabia' },
+    { code: '+65',  iso: 'sg', name: 'Singapore' },
+    { code: '+60',  iso: 'my', name: 'Malaysia' },
+    { code: '+62',  iso: 'id', name: 'Indonesia' },
+    { code: '+66',  iso: 'th', name: 'Thailand' },
+    { code: '+81',  iso: 'jp', name: 'Japan' },
+    { code: '+82',  iso: 'kr', name: 'South Korea' },
+    { code: '+86',  iso: 'cn', name: 'China' },
+    { code: '+92',  iso: 'pk', name: 'Pakistan' },
+    { code: '+880', iso: 'bd', name: 'Bangladesh' },
+    { code: '+94',  iso: 'lk', name: 'Sri Lanka' },
+    { code: '+977', iso: 'np', name: 'Nepal' },
+    { code: '+49',  iso: 'de', name: 'Germany' },
+    { code: '+33',  iso: 'fr', name: 'France' },
+    { code: '+39',  iso: 'it', name: 'Italy' },
+    { code: '+34',  iso: 'es', name: 'Spain' },
+    { code: '+31',  iso: 'nl', name: 'Netherlands' },
+    { code: '+7',   iso: 'ru', name: 'Russia' },
+    { code: '+55',  iso: 'br', name: 'Brazil' },
+    { code: '+27',  iso: 'za', name: 'South Africa' },
+    { code: '+234', iso: 'ng', name: 'Nigeria' },
+    { code: '+254', iso: 'ke', name: 'Kenya' },
+  ];
+  var _ccSel = COUNTRIES[0];
+  var _ccOpen = false;
+
+  function flagUrl(iso) { return 'https://flagcdn.com/w20/' + iso + '.png'; }
+
+  function renderCcList(filter) {
+    var list = document.getElementById('ccList');
+    var items = filter
+      ? COUNTRIES.filter(function(c) { return c.name.toLowerCase().indexOf(filter.toLowerCase()) !== -1 || c.code.indexOf(filter) !== -1; })
+      : COUNTRIES;
+    list.innerHTML = '';
+    if (!items.length) {
+      var li = document.createElement('li');
+      li.className = 'cc-no-results';
+      li.textContent = 'No results';
+      list.appendChild(li);
+      return;
+    }
+    items.forEach(function(c) {
+      var li = document.createElement('li');
+      if (c.iso === _ccSel.iso && c.code === _ccSel.code) li.classList.add('cc-active');
+      li.setAttribute('role', 'option');
+      li.innerHTML = '<img src="' + flagUrl(c.iso) + '" alt="' + c.name + '" />'
+        + '<span class="cc-item-name">' + c.name + '</span>'
+        + '<span class="cc-item-code">' + c.code + '</span>';
+      li.addEventListener('click', function() {
+        _ccSel = c;
+        document.getElementById('ccFlagImg').src = flagUrl(c.iso);
+        document.getElementById('ccFlagImg').alt = c.name;
+        document.getElementById('ccTrigName').textContent = c.name;
+        document.getElementById('ccTrigCode').textContent = c.code;
+        document.getElementById('regCountryCode').value = c.code;
+        closeCcDropdown();
+        document.getElementById('regPhone').focus();
+      });
+      list.appendChild(li);
+    });
+  }
+
+  function openCcDropdown() {
+    _ccOpen = true;
+    document.getElementById('ccDropdown').classList.add('open');
+    document.getElementById('ccTrigger').setAttribute('aria-expanded', 'true');
+    document.getElementById('ccSearch').value = '';
+    renderCcList('');
+    setTimeout(function() { document.getElementById('ccSearch').focus(); }, 40);
+  }
+  function closeCcDropdown() {
+    _ccOpen = false;
+    document.getElementById('ccDropdown').classList.remove('open');
+    document.getElementById('ccTrigger').setAttribute('aria-expanded', 'false');
+  }
+
+  document.getElementById('ccTrigger').addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (_ccOpen) { closeCcDropdown(); } else { openCcDropdown(); }
+  });
+  document.getElementById('ccSearch').addEventListener('input', function() { renderCcList(this.value); });
+  document.getElementById('ccSearch').addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeCcDropdown(); document.getElementById('ccTrigger').focus(); }
+  });
+  document.addEventListener('click', function(e) {
+    if (_ccOpen && !document.getElementById('ccDropdown').contains(e.target)) closeCcDropdown();
+  });
+  renderCcList('');
+
+  // ─── Get combined mobile value ───
+  function getMobile() {
+    var cc  = document.getElementById('regCountryCode').value;
+    var num = document.getElementById('regPhone').value.trim();
+    return cc + num;
+  }
+
+  // ─── Validation helpers ───
+  function setError(fieldId, errId, msg) {
+    var f = document.getElementById(fieldId);
+    var e = document.getElementById(errId);
+    f.classList.add('has-error');
+    if (msg) e.textContent = msg;
+    return false;
+  }
+  function clearError(fieldId) {
+    document.getElementById(fieldId).classList.remove('has-error');
+  }
+
+  // ─── Phone input: digits only, strip leading zeros, max 10 ───
+  document.getElementById('regPhone').addEventListener('input', function() {
+    var v = this.value.replace(/\D/g, '');      // digits only
+    if (v.startsWith('0')) v = v.replace(/^0+/, '');  // no leading zero
+    if (v.length > 10) v = v.slice(0, 10);     // max 10 digits
+    this.value = v;
+    if (v.length === 10) {
+      clearError('field-phone');
+      var mobile = getMobile();
+      clearTimeout(window._mobileCheckTimer);
+      window._mobileCheckTimer = setTimeout(function() {
+        fetch(AUTH_API + '/api/check-mobile?mobile=' + encodeURIComponent(mobile))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.exists) setError('field-phone', 'err-phone', 'This mobile number is already registered');
+          })
+          .catch(function() {});
+      }, 500);
+    }
+  });
+
+  // ─── Real-time email uniqueness check ───
+  var _emailCheckTimer = null;
+  document.getElementById('regEmail').addEventListener('input', function() {
+    clearTimeout(_emailCheckTimer);
+    var email = this.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    clearError('field-email');
+    _emailCheckTimer = setTimeout(function() {
+      fetch(AUTH_API + '/api/check-email?email=' + encodeURIComponent(email))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.exists) setError('field-email', 'err-email', 'This email is already registered');
+        })
+        .catch(function() {});
+    }, 500);
+  });
+
+  // ─── Submit ───
+  document.getElementById('regSubmitBtn').addEventListener('click', function() {
+    var name    = document.getElementById('regFullName').value.trim();
+    var empId   = document.getElementById('regEmpId').value.trim();
+    var org     = document.getElementById('regOrg').value;
+    var email   = document.getElementById('regEmail').value.trim();
+    var phoneNum = document.getElementById('regPhone').value.trim();
+    var pwd     = document.getElementById('regPassword').value;
+    var confirm = document.getElementById('regConfirm').value;
+
+    clearError('field-fullname'); clearError('field-empid'); clearError('field-org');
+    clearError('field-email');    clearError('field-phone');
+    clearError('field-password'); clearError('field-confirm');
+
+    var ok = true;
+    if (!name || name.length < 2)
+      { setError('field-fullname', 'err-fullname', 'Enter your full name (min 2 characters)'); ok = false; }
+    if (!empId || empId.length < 3 || !/^[A-Z0-9][A-Z0-9\-]{2,19}$/i.test(empId))
+      { setError('field-empid', 'err-empid', 'Enter a valid Employee ID (min 3 alphanumeric characters)'); ok = false; }
+    if (!org)
+      { setError('field-org', 'err-org', 'Please select your organization'); ok = false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      { setError('field-email', 'err-email', 'Enter a valid work email address'); ok = false; }
+    if (org === 'eMudhra Limited' && !email.toLowerCase().endsWith('@emudhra.com'))
+      { setError('field-email', 'err-email', 'Internal employees must use an @emudhra.com email'); ok = false; }
+    if (org === 'External' && email.toLowerCase().endsWith('@emudhra.com'))
+      { setError('field-email', 'err-email', 'External users cannot use an @emudhra.com email'); ok = false; }
+    if (!phoneNum || phoneNum.length !== 10 || /^0/.test(phoneNum))
+      { setError('field-phone', 'err-phone', 'Enter a valid 10-digit number (no leading zero)'); ok = false; }
+    if (!pwd || pwd.length < 8 || !/[A-Z]/.test(pwd) || !/[a-z]/.test(pwd) || !/[0-9]/.test(pwd) || !/[^A-Za-z0-9]/.test(pwd))
+      { setError('field-password', 'err-password', 'Min 8 chars with uppercase, lowercase, number and special character'); ok = false; }
+    if (pwd !== confirm)
+      { setError('field-confirm', 'err-confirm', 'Passwords do not match'); ok = false; }
+    if (!ok) return;
+
+    var mobile = getMobile();
+    var btn    = this;
+    btn.disabled = true;
+    btn.textContent = 'Creating account…';
+
+    fetch(AUTH_API + '/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fullName: name, employeeId: empId, organization: org, email: email, mobile: mobile, password: pwd })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.disabled = false;
+      btn.textContent = 'Create Account →';
+      if (data.success) {
+        document.getElementById('successOverlay').classList.add('open');
+        setTimeout(function() { window.location.href = '../../index.html?registered=1'; }, 2200);
+        return;
+      }
+      if (data.error === 'email_exists')  { setError('field-email', 'err-email', 'This email is already registered'); }
+      else if (data.error === 'mobile_exists') { setError('field-phone', 'err-phone', 'This mobile is already registered'); }
+      else if (data.error === 'validation_error') {
+        // highlight most likely field from message
+        var msg = data.message || 'Validation error';
+        if (msg.toLowerCase().includes('name'))     setError('field-fullname', 'err-fullname', msg);
+        else if (msg.toLowerCase().includes('emp'))  setError('field-empid', 'err-empid', msg);
+        else if (msg.toLowerCase().includes('org'))  setError('field-org', 'err-org', msg);
+        else if (msg.toLowerCase().includes('email')) setError('field-email', 'err-email', msg);
+        else if (msg.toLowerCase().includes('mobile')) setError('field-phone', 'err-phone', msg);
+        else if (msg.toLowerCase().includes('password')) setError('field-password', 'err-password', msg);
+        else alert(msg);
+      } else {
+        alert('Registration failed. Please try again.');
+      }
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = 'Create Account →';
+      alert('Could not reach authentication server. Please ensure the app is started correctly.');
+    });
+  });
+
+  // ─── Enter key on form ───
+  document.querySelectorAll('.field input').forEach(function(inp) {
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('regSubmitBtn').click();
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HLD → LLD Maker - QA-Gen AI | eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/shared.css?v=20" />
+  <link rel="stylesheet" href="/src/styles/pages.css?v=17" />
+  <link rel="stylesheet" href="/src/styles/emi.css" />
+  <!-- PDF.js for browser-side PDF extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Mammoth.js for DOCX extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- SheetJS from local node_modules for XLSX/CSV -->
+  <script src="/node_modules/xlsx/xlsx.js"></script>
+  <!-- Mermaid.js for diagram rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <script>
+    // Set PDF.js worker path immediately after loading
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <style>
+    /* ======== Layout ======== */
+    .hld-page-wrap { display:grid; grid-template-columns:380px 1fr; gap:0; height:calc(100vh - var(--topbar-h,64px)); overflow:hidden; }
+    .hld-left { display:flex; flex-direction:column; border-right:1px solid var(--border-subtle); overflow-y:auto; background:var(--navy-800,var(--surface-card)); }
+    .hld-right { display:flex; flex-direction:column; overflow:hidden; }
+    /* ======== Left Panel ======== */
+    .hld-section { padding:16px; border-bottom:1px solid var(--border-subtle); }
+    .hld-section-title { font-size:0.68rem; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--accent-blue); margin-bottom:12px; }
+    .hld-eyebrow { font-size:0.65rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent-blue); opacity:0.7; margin-bottom:4px; }
+    .hld-page-title { font-size:1.3rem; font-weight:900; color:var(--text-primary); margin:0 0 4px; }
+    .hld-page-sub { font-size:0.78rem; color:var(--text-secondary); line-height:1.55; margin:0; }
+    /* Upload zone */
+    .hld-upload-zone { border:2px dashed var(--border-subtle); border-radius:10px; padding:20px 12px; text-align:center; cursor:pointer; transition:all 0.2s; position:relative; }
+    .hld-upload-zone:hover,.hld-upload-zone.drag-over { border-color:var(--accent-blue); background:rgba(59,130,246,0.06); }
+    .hld-upload-icon { font-size:1.8rem; margin-bottom:6px; }
+    .hld-upload-line1 { font-size:0.82rem; color:var(--text-primary); font-weight:700; }
+    .hld-upload-line2 { font-size:0.72rem; color:var(--text-muted); margin-top:2px; }
+    .hld-upload-types { display:flex; gap:5px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
+    .hld-type-chip { padding:2px 7px; border:1px solid var(--border-subtle); border-radius:8px; font-size:0.65rem; font-weight:700; color:var(--text-muted); }
+    /* Progress bar */
+    .hld-progress-wrap { margin-top:10px; display:none; }
+    .hld-progress-bar { height:5px; background:rgba(59,130,246,0.15); border-radius:5px; overflow:hidden; }
+    .hld-progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#3b82f6,#7c3aed); border-radius:5px; transition:width 0.3s; }
+    .hld-progress-label { font-size:0.7rem; color:var(--text-muted); margin-top:4px; text-align:center; }
+    /* File chip */
+    .hld-file-info { display:none; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); border-radius:8px; padding:10px 12px; margin-top:8px; }
+    .hld-file-name { font-size:0.8rem; font-weight:700; color:var(--text-primary); word-break:break-all; }
+    .hld-file-meta { font-size:0.7rem; color:var(--text-muted); margin-top:2px; }
+    .hld-file-actions { display:flex; gap:8px; margin-top:8px; }
+    .hld-file-btn { font-size:0.7rem; padding:3px 10px; border-radius:5px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); cursor:pointer; }
+    .hld-file-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
+    .hld-file-btn.danger:hover { border-color:#ef4444; color:#ef4444; }
+    /* Textarea */
+    .hld-or-divider { text-align:center; font-size:0.7rem; color:var(--text-muted); margin:10px 0; position:relative; }
+    .hld-or-divider::before,.hld-or-divider::after { content:''; position:absolute; top:50%; width:40%; height:1px; background:var(--border-subtle); }
+    .hld-or-divider::before { left:0; } .hld-or-divider::after { right:0; }
+    .hld-textarea { width:100%; min-height:110px; resize:vertical; background:var(--navy-900,rgba(10,22,40,0.8)); border:1.5px solid var(--border-subtle); border-radius:8px; color:var(--text-primary); font-size:0.8rem; font-family:inherit; padding:10px 12px; box-sizing:border-box; }
+    .hld-textarea:focus { outline:none; border-color:var(--accent-blue); }
+    .hld-char-count { font-size:0.65rem; color:var(--text-muted); text-align:right; margin-top:2px; }
+    /* Config */
+    .hld-cfg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .hld-cfg-item label { display:block; font-size:0.7rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; }
+    .hld-select { width:100%; background:var(--navy-900,rgba(10,22,40,0.8)); border:1.5px solid var(--border-subtle); border-radius:7px; color:var(--text-primary); font-size:0.78rem; padding:9px 10px; box-sizing:border-box; }
+    .hld-select:focus { outline:none; border-color:var(--accent-blue); }
+    /* Generate button */
+    .hld-gen-btn { width:100%; padding:13px; background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; border:none; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer; transition:opacity 0.2s,transform 0.1s; margin-top:2px; letter-spacing:0.3px; }
+    .hld-gen-btn:hover:not(:disabled) { opacity:0.88; transform:translateY(-1px); }
+    .hld-gen-btn:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
+    .hld-status { font-size:0.74rem; text-align:center; padding:6px; border-radius:6px; display:none; margin-top:6px; }
+    .hld-status.info { background:rgba(59,130,246,0.1); color:var(--accent-blue); display:block; }
+    .hld-status.success { background:rgba(34,197,94,0.1); color:#22c55e; display:block; }
+    .hld-status.error { background:rgba(239,68,68,0.1); color:#ef4444; display:block; }
+    /* Saved docs */
+    .hld-doc-list { max-height:130px; overflow-y:auto; }
+    .hld-doc-item { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; cursor:pointer; transition:background 0.15s; }
+    .hld-doc-item:hover { background:rgba(59,130,246,0.08); }
+    .hld-doc-icon { font-size:0.9rem; flex-shrink:0; }
+    .hld-doc-name { font-size:0.74rem; color:var(--text-primary); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .hld-doc-date { font-size:0.65rem; color:var(--text-muted); }
+    /* ======== Right Panel ======== */
+    .hld-output-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border-subtle); background:var(--surface-card,var(--navy-800)); flex-shrink:0; }
+    .hld-stats-row { display:flex; gap:8px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--border-subtle); background:var(--navy-900,rgba(10,22,40,0.4)); flex-shrink:0; }
+    .hld-stat { background:var(--surface-card,var(--navy-800)); border:1px solid var(--border-subtle); border-radius:8px; padding:6px 12px; display:flex; align-items:center; gap:6px; }
+    .hld-stat-val { font-size:1.1rem; font-weight:900; color:var(--accent-blue); line-height:1; }
+    .hld-stat-label { font-size:0.65rem; color:var(--text-muted); font-weight:600; letter-spacing:0.3px; }
+    .hld-tab-bar { display:flex; gap:3px; padding:8px 14px; border-bottom:1px solid var(--border-subtle); background:var(--surface-card,var(--navy-800)); flex-shrink:0; flex-wrap:wrap; }
+    .hld-tab { padding:6px 12px; border-radius:6px; border:none; background:transparent; color:var(--text-secondary); font-size:0.74rem; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:5px; }
+    .hld-tab.active { background:var(--accent-blue); color:#fff; }
+    .hld-tab:not(.active):hover { background:rgba(59,130,246,0.1); color:var(--accent-blue); }
+    .hld-tab-icon { font-size:0.85rem; }
+    .hld-content-area { flex:1; overflow-y:auto; padding:20px; }
+    .hld-tab-panel { display:none; }
+    .hld-tab-panel.active { display:block; }
+    /* Empty state */
+    .hld-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:360px; color:var(--text-muted); gap:12px; }
+    .hld-empty-emoji { font-size:3.5rem; opacity:0.35; }
+    .hld-empty-title { font-size:1rem; font-weight:800; opacity:0.5; }
+    .hld-empty-sub { font-size:0.78rem; opacity:0.4; text-align:center; max-width:300px; }
+    /* Loading state */
+    .hld-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:360px; gap:16px; }
+    .hld-spinner { width:36px; height:36px; border:3px solid rgba(59,130,246,0.2); border-top-color:var(--accent-blue); border-radius:50%; animation:hldSpin 0.8s linear infinite; }
+    @keyframes hldSpin { to { transform:rotate(360deg); } }
+    .hld-loading-msg { font-size:0.82rem; color:var(--text-secondary); font-weight:600; }
+    .hld-loading-bar { width:260px; height:4px; background:rgba(59,130,246,0.15); border-radius:4px; overflow:hidden; }
+    .hld-loading-fill { height:100%; background:var(--accent-blue); border-radius:4px; animation:hldPulse 1.8s ease-in-out infinite; }
+    @keyframes hldPulse { 0%{width:5%}60%{width:88%}100%{width:5%} }
+    /* Markdown rendering */
+    .hld-md { font-size:0.82rem; line-height:1.75; color:var(--text-primary); }
+    .hld-md h1 { font-size:1.2rem; font-weight:900; color:var(--text-primary); margin:1em 0 0.5em; border-bottom:2px solid var(--accent-blue); padding-bottom:6px; }
+    .hld-md h2 { font-size:1rem; font-weight:800; color:var(--text-primary); margin:0.9em 0 0.4em; }
+    .hld-md h3 { font-size:0.88rem; font-weight:800; color:var(--accent-blue); margin:0.8em 0 0.35em; }
+    .hld-md h4 { font-size:0.82rem; font-weight:700; color:var(--text-secondary); margin:0.6em 0 0.3em; }
+    .hld-md p { margin:0.4em 0; }
+    .hld-md ul,.hld-md ol { padding-left:1.5em; margin:0.3em 0; }
+    .hld-md li { margin:0.2em 0; }
+    .hld-md strong { font-weight:800; color:var(--text-primary); }
+    .hld-md em { font-style:italic; color:var(--text-secondary); }
+    .hld-md code { background:rgba(59,130,246,0.12); padding:1px 6px; border-radius:4px; font-size:0.78rem; font-family:'Courier New',monospace; color:var(--accent-blue); }
+    .hld-md pre { background:var(--navy-900,rgba(5,12,28,0.95)); border:1px solid var(--border-subtle); border-radius:10px; padding:14px 16px; overflow-x:auto; font-size:0.75rem; font-family:'Courier New',monospace; line-height:1.55; margin:0.6em 0; }
+    .hld-md pre code { background:none; padding:0; color:#e2e8f0; font-size:inherit; }
+    .hld-md blockquote { border-left:3px solid var(--accent-blue); padding:8px 14px; margin:0.5em 0; background:rgba(59,130,246,0.07); border-radius:0 8px 8px 0; }
+    .hld-md table { border-collapse:collapse; width:100%; margin:0.7em 0; font-size:0.78rem; overflow-x:auto; display:block; }
+    .hld-md thead th { background:rgba(59,130,246,0.14); color:var(--accent-blue); font-weight:800; padding:8px 12px; text-align:left; white-space:nowrap; }
+    .hld-md tbody td { padding:7px 12px; border-bottom:1px solid var(--border-subtle); vertical-align:top; }
+    .hld-md tbody tr:hover td { background:rgba(59,130,246,0.04); }
+    /* Mermaid diagrams */
+    .mermaid-wrap { background:var(--navy-900,rgba(5,12,28,0.9)); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin:10px 0; overflow-x:auto; text-align:center; }
+    .mermaid-wrap svg { max-width:100%; height:auto; }
+    .mermaid-toolbar { display:flex; gap:6px; margin-top:8px; justify-content:flex-end; }
+    .mermaid-btn { padding:4px 10px; border-radius:5px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.68rem; cursor:pointer; }
+    .mermaid-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
+    /* Module cards */
+    .hld-module-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; margin-top:10px; }
+    .hld-module-card { background:var(--navy-900,rgba(10,22,40,0.6)); border:1px solid var(--border-subtle); border-radius:10px; padding:14px; transition:border-color 0.2s; }
+    .hld-module-card:hover { border-color:var(--accent-blue); }
+    .hld-module-name { font-size:0.88rem; font-weight:800; color:var(--accent-blue); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .hld-module-body { font-size:0.76rem; color:var(--text-secondary); line-height:1.6; }
+    /* API cards */
+    .hld-api-row { display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--navy-900,rgba(10,22,40,0.5)); border:1px solid var(--border-subtle); border-radius:7px; margin-bottom:6px; }
+    .api-method { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:800; min-width:52px; text-align:center; }
+    .m-get { background:rgba(34,197,94,0.15); color:#22c55e; }
+    .m-post { background:rgba(59,130,246,0.15); color:#3b82f6; }
+    .m-put { background:rgba(245,158,11,0.15); color:#f59e0b; }
+    .m-del { background:rgba(239,68,68,0.15); color:#ef4444; }
+    .m-patch { background:rgba(139,92,246,0.15); color:#8b5cf6; }
+    .hld-api-path { font-size:0.78rem; font-family:monospace; color:var(--text-primary); font-weight:600; }
+    .hld-api-desc { font-size:0.72rem; color:var(--text-muted); margin-left:auto; }
+    /* Risk badges */
+    .risk-tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:700; }
+    .risk-h { background:rgba(239,68,68,0.15); color:#ef4444; }
+    .risk-m { background:rgba(245,158,11,0.15); color:#f59e0b; }
+    .risk-l { background:rgba(34,197,94,0.15); color:#22c55e; }
+    /* Export bar */
+    .hld-export-bar { display:flex; align-items:center; gap:8px; padding:10px 16px; border-top:1px solid var(--border-subtle); background:var(--surface-card,var(--navy-800)); flex-shrink:0; }
+    .hld-export-label { font-size:0.72rem; font-weight:700; color:var(--text-muted); }
+    .hld-export-btn { padding:5px 12px; border-radius:6px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.72rem; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    .hld-export-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); background:rgba(59,130,246,0.08); }
+    .hld-stream-cursor { display:inline-block; width:2px; height:13px; background:var(--accent-blue); margin-left:2px; animation:hldBlink 1s step-end infinite; vertical-align:middle; }
+    @keyframes hldBlink { 50%{opacity:0} }
+    /* Responsive */
+    @media(max-width:860px) { .hld-page-wrap{grid-template-columns:1fr} .hld-left{max-height:50vh} }
+  </style>
+</head>
+<body class="theme-light em-light-app page-fade hld-lld-page">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span data-tokens>100,000</span> tokens</div>
+      <div class="sub-badge sub-green" id="subBadge"><span data-sub-days>365 days</span></div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>QA</div>
+        <div class="profile-info"><div class="p-name" data-user-name>User</div><div class="p-role" data-user-role>QA Engineer</div></div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)"><div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div><div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div></div>
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD → LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content" style="padding:0;overflow:hidden;">
+    <div class="hld-page-wrap">
+
+      <!-- LEFT PANEL -->
+      <div class="hld-left">
+        <div class="hld-section">
+          <div class="hld-eyebrow">Architecture Intelligence</div>
+          <h1 class="hld-page-title">HLD → LLD Maker</h1>
+          <p class="hld-page-sub">Upload any document — PRD, BRD, SRS, User Stories, Feature Spec. AI will extract requirements and generate complete architecture.</p>
+        </div>
+
+        <div class="hld-section">
+          <div class="hld-section-title">Document Upload</div>
+          <div class="hld-upload-zone" id="hldDropZone" role="button" tabindex="0">
+            <div class="hld-upload-icon">📄</div>
+            <div class="hld-upload-line1">Drop file here or <span style="color:var(--accent-blue)">click to browse</span></div>
+            <div class="hld-upload-line2">All major document formats supported</div>
+            <div class="hld-upload-types">
+              <span class="hld-type-chip">PDF</span>
+              <span class="hld-type-chip">DOCX</span>
+              <span class="hld-type-chip">TXT</span>
+              <span class="hld-type-chip">MD</span>
+              <span class="hld-type-chip">XLSX</span>
+              <span class="hld-type-chip">CSV</span>
+            </div>
+            <input type="file" id="hldFileInput" accept=".pdf,.docx,.txt,.md,.xlsx,.csv,.xls" style="display:none" />
+          </div>
+          <div class="hld-progress-wrap" id="hldProgressWrap">
+            <div class="hld-progress-bar"><div class="hld-progress-fill" id="hldProgressFill"></div></div>
+            <div class="hld-progress-label" id="hldProgressLabel">Reading file...</div>
+          </div>
+          <div class="hld-file-info" id="hldFileInfo">
+            <div class="hld-file-name" id="hldFileName"></div>
+            <div class="hld-file-meta" id="hldFileMeta"></div>
+            <div class="hld-file-actions">
+              <button class="hld-file-btn" id="hldPreviewBtn">Preview</button>
+              <button class="hld-file-btn danger" id="hldRemoveBtn">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hld-section">
+          <div class="hld-section-title">Or Paste Document Text</div>
+          <textarea class="hld-textarea" id="hldPrdText" placeholder="Paste PRD, BRD, SRS, user stories, or any feature specification here..."></textarea>
+          <div class="hld-char-count" id="hldCharCount">0 characters</div>
+        </div>
+
+        <div class="hld-section">
+          <div class="hld-section-title">Analysis Settings</div>
+          <div class="hld-cfg-grid">
+            <div class="hld-cfg-item">
+              <label>Depth</label>
+              <select class="hld-select" id="hldDepth">
+                <option value="standard">Standard</option>
+                <option value="deep" selected>Deep</option>
+                <option value="expert">Expert</option>
+              </select>
+            </div>
+            <div class="hld-cfg-item">
+              <label>Architecture</label>
+              <select class="hld-select" id="hldArchType">
+                <option value="auto">Auto-Detect</option>
+                <option value="microservices">Microservices</option>
+                <option value="monolith">Monolith</option>
+                <option value="serverless">Serverless</option>
+                <option value="event-driven">Event-Driven</option>
+              </select>
+            </div>
+            <div class="hld-cfg-item">
+              <label>Tech Stack</label>
+              <select class="hld-select" id="hldTechStack">
+                <option value="auto">Auto-Detect</option>
+                <option value="java">Java / Spring</option>
+                <option value="node">Node.js</option>
+                <option value="python">Python</option>
+                <option value="dotnet">.NET / C#</option>
+                <option value="react">React / Next.js</option>
+              </select>
+            </div>
+            <div class="hld-cfg-item">
+              <label>Diagrams</label>
+              <select class="hld-select" id="hldDiagramMode">
+                <option value="mermaid" selected>Mermaid (Rendered)</option>
+                <option value="text">Text Flowcharts</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="hld-section">
+          <button class="hld-gen-btn" id="hldGenBtn" disabled>
+            🚀 Analyze &amp; Generate Architecture
+          </button>
+          <div class="hld-status" id="hldStatus"></div>
+        </div>
+
+        <div class="hld-section" id="hldSavedSection" style="display:none">
+          <div class="hld-section-title">Saved Documents</div>
+          <div class="hld-doc-list" id="hldDocList"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="hld-right">
+        <div class="hld-output-header">
+          <div style="font-weight:800;font-size:0.88rem;color:var(--text-primary)" id="hldOutputTitle">Interactive Architecture Explorer</div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="hld-export-btn" id="hldCopyBtn">Copy</button>
+            <button class="hld-export-btn" id="hldShareBtn">Save to Buddy</button>
+          </div>
+        </div>
+
+        <div class="hld-stats-row">
+          <div class="hld-stat"><span class="hld-stat-val" id="sModules">—</span><span class="hld-stat-label">Modules</span></div>
+          <div class="hld-stat"><span class="hld-stat-val" id="sApis">—</span><span class="hld-stat-label">APIs</span></div>
+          <div class="hld-stat"><span class="hld-stat-val" id="sTables">—</span><span class="hld-stat-label">DB Tables</span></div>
+          <div class="hld-stat"><span class="hld-stat-val" id="sRisks">—</span><span class="hld-stat-label">Risks</span></div>
+          <div class="hld-stat"><span class="hld-stat-val" id="sFlows">—</span><span class="hld-stat-label">Workflows</span></div>
+          <div class="hld-stat"><span class="hld-stat-val" id="sTests">—</span><span class="hld-stat-label">Test Areas</span></div>
+        </div>
+
+        <div class="hld-tab-bar" id="hldTabBar">
+          <button class="hld-tab active" data-tab="overview"><span class="hld-tab-icon">🏗️</span>Overview</button>
+          <button class="hld-tab" data-tab="modules"><span class="hld-tab-icon">📦</span>Modules</button>
+          <button class="hld-tab" data-tab="workflows"><span class="hld-tab-icon">🔄</span>Workflows</button>
+          <button class="hld-tab" data-tab="hld"><span class="hld-tab-icon">🗺️</span>HLD</button>
+          <button class="hld-tab" data-tab="lld"><span class="hld-tab-icon">🔬</span>LLD</button>
+          <button class="hld-tab" data-tab="apis"><span class="hld-tab-icon">⚡</span>APIs</button>
+          <button class="hld-tab" data-tab="database"><span class="hld-tab-icon">🗄️</span>Database</button>
+          <button class="hld-tab" data-tab="risks"><span class="hld-tab-icon">⚠️</span>Risks</button>
+          <button class="hld-tab" data-tab="testing"><span class="hld-tab-icon">🧪</span>Testing</button>
+        </div>
+
+        <div class="hld-content-area" id="hldContentArea">
+          <div class="hld-tab-panel active" id="tab-overview">
+            <div class="hld-empty" id="emptyOverview">
+              <div class="hld-empty-emoji">🏗️</div>
+              <div class="hld-empty-title">Architecture Overview</div>
+              <div class="hld-empty-sub">Upload a document and click Generate to analyze your architecture. All 9 tabs will be populated automatically.</div>
+            </div>
+            <div id="contentOverview" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-modules">
+            <div class="hld-empty" id="emptyModules"><div class="hld-empty-emoji">📦</div><div class="hld-empty-title">Module Breakdown</div><div class="hld-empty-sub">Discovered modules with components, APIs, DB tables, dependencies, and risks</div></div>
+            <div id="contentModules" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-workflows">
+            <div class="hld-empty" id="emptyWorkflows"><div class="hld-empty-emoji">🔄</div><div class="hld-empty-title">Workflow Diagrams</div><div class="hld-empty-sub">Process flows, sequence diagrams, and cross-module interaction maps</div></div>
+            <div id="contentWorkflows" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-hld">
+            <div class="hld-empty" id="emptyHld"><div class="hld-empty-emoji">🗺️</div><div class="hld-empty-title">High Level Design</div><div class="hld-empty-sub">System architecture, component diagram, service interactions, deployment</div></div>
+            <div id="contentHld" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-lld">
+            <div class="hld-empty" id="emptyLld"><div class="hld-empty-emoji">🔬</div><div class="hld-empty-title">Low Level Design</div><div class="hld-empty-sub">Class design, DTOs, sequence flows, validation rules, error handling</div></div>
+            <div id="contentLld" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-apis">
+            <div class="hld-empty" id="emptyApis"><div class="hld-empty-emoji">⚡</div><div class="hld-empty-title">API Contracts</div><div class="hld-empty-sub">All identified REST endpoints with methods, payloads, and response schemas</div></div>
+            <div id="contentApis" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-database">
+            <div class="hld-empty" id="emptyDatabase"><div class="hld-empty-emoji">🗄️</div><div class="hld-empty-title">Database Design</div><div class="hld-empty-sub">Entity relationships, table definitions, indexes, and data flow</div></div>
+            <div id="contentDatabase" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-risks">
+            <div class="hld-empty" id="emptyRisks"><div class="hld-empty-emoji">⚠️</div><div class="hld-empty-title">Risk Analysis</div><div class="hld-empty-sub">Technical, security, business, and testing risks with mitigation strategies</div></div>
+            <div id="contentRisks" class="hld-md" style="display:none"></div>
+          </div>
+          <div class="hld-tab-panel" id="tab-testing">
+            <div class="hld-empty" id="emptyTesting"><div class="hld-empty-emoji">🧪</div><div class="hld-empty-title">Testing Coverage</div><div class="hld-empty-sub">Full test strategy, automation candidates, and coverage matrix</div></div>
+            <div id="contentTesting" class="hld-md" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="hld-export-bar">
+          <span class="hld-export-label">Export:</span>
+          <button class="hld-export-btn" id="expMd">Markdown</button>
+          <button class="hld-export-btn" id="expTxt">Plain Text</button>
+          <button class="hld-export-btn" id="expMermaid">Mermaid Code</button>
+          <button class="hld-export-btn" id="expJson">JSON</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer" style="display:none"></footer>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal-overlay" id="previewModal" style="display:none">
+  <div class="modal" style="max-width:700px;max-height:80vh;overflow-y:auto">
+    <div class="modal-header"><div class="modal-title">Document Preview</div><button type="button" class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body"><pre id="previewContent" style="white-space:pre-wrap;word-break:break-word;font-size:0.76rem;color:var(--text-primary);max-height:60vh;overflow-y:auto"></pre></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Close</button></div>
+  </div>
+</div>
+<!-- Standard modals -->
+<div class="modal-overlay" id="settingsModal" style="display:none"><div class="modal"><div class="modal-header"><div class="modal-title">Settings</div><button type="button" class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Saved!','success');closeModal('settingsModal')">Save</button></div></div></div>
+<div class="modal-overlay" id="editProfileModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Edit Profile</div><button type="button" class="modal-close" data-close-modal>✕</button></div>
+    <div class="modal-body">
+      <div class="ep-photo-wrap">
+        <div class="ep-photo-ring" id="epPhotoRing">
+          <div class="ep-photo-inner">
+            <div class="avatar lg" id="epAvatarInitials">AD</div>
+            <img class="ep-photo-img" id="epPhotoImg" alt="Profile photo" style="display:none" />
+          </div>
+          <div class="ep-photo-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Change Photo</span>
+          </div>
+          <input type="file" id="epPhotoInput" accept=".jpg,.jpeg,.png,.jfif" style="display:none" />
+        </div>
+        <div class="ep-spec-box">
+          <div class="ep-spec-title">Photo Requirements</div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Accepted formats</span>
+            <span class="ep-spec-val">JPG &middot; JPEG &middot; PNG &middot; JFIF</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Minimum file size</span>
+            <span class="ep-spec-val">100 KB</span>
+          </div>
+          <div class="ep-spec-row">
+            <span class="ep-spec-key">Maximum file size</span>
+            <span class="ep-spec-val">5 MB</span>
+          </div>
+          <div id="epPhotoError" class="ep-photo-error" style="display:none;margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="form-group-dark"><label class="form-label-dark">Full Name</label><input type="text" class="form-input-dark" id="editName" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email" class="form-input-dark" id="editEmail" /></div>
+      <div class="form-group-dark"><label class="form-label-dark">Role</label><input type="text" class="form-input-dark" id="editRole" /></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button type="button" class="btn btn-primary" id="saveProfileBtn">Save</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="confirmModal" style="display:none"><div class="modal modal-sm"><div class="modal-header"><div class="modal-title">Confirm</div><button type="button" class="modal-close" data-close-modal>✕</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button type="button" class="btn btn-danger" id="confirmOk">Yes</button></div></div></div>
+
+<script src="/src/app/shared.js?v=20"></script>
+<script src="/src/services/ai_engine.js"></script>
+<script src="/src/features/hld_lld.js?v=3"></script>
+<script src="/src/components/ui/emi.js"></script>
+</body>
+</html>

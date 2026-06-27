@@ -1,0 +1,923 @@
+/* ================================================================
+   PREMIUM EFFECTS LAYER — eMudhra QA-Gen AI  v4
+   ----------------------------------------------------------------
+   PHILOSOPHY: Purely additive. Uses the active theme's own CSS
+   variables (--surface-card, --text-primary, --accent-blue, etc.)
+   so every theme gets premium effects in its own colour palette.
+   Never overrides body background or text colours — the theme
+   system owns those.
+   ================================================================ */
+
+/* ── Keyframes ────────────────────────────────────────────────── */
+@keyframes pm-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes pm-char-in {
+  from { opacity:0; transform:translateY(38%) skewY(5deg); filter:blur(3px); }
+  to   { opacity:1; transform:translateY(0)   skewY(0);    filter:blur(0);   }
+}
+@keyframes pm-fade-up {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pm-glow-pulse {
+  0%,100% { box-shadow: var(--shadow-glow, 0 0 24px rgba(59,130,246,.25)); }
+  50%      { box-shadow: 0 0 45px rgba(59,130,246,.5), 0 0 70px rgba(139,92,246,.2); }
+}
+@keyframes pm-topbar-line {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes pm-reveal-up {
+  from { opacity:0; transform:translateY(26px) scale(.97); }
+  to   { opacity:1; transform:translateY(0)    scale(1);   }
+}
+@keyframes pm-orb-drift {
+  0%,100% { transform: translate(0,0)       scale(1);    }
+  40%      { transform: translate(35px,-22px) scale(1.08); }
+  70%      { transform: translate(-20px,16px) scale(0.94); }
+}
+
+/* ── Stacking context ─────────────────────────────────────────── */
+.app-layout {
+  position: relative;
+  isolation: isolate;
+}
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Topbar: glass + animated accent line ─────────────────────── */
+.topbar {
+  backdrop-filter: blur(22px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
+  position: relative;
+  z-index: 100;
+}
+/* Rainbow accent line that uses each theme's accent colours */
+.topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-blue,   #3b82f6) 0%,
+    var(--accent-purple, #8b5cf6) 22%,
+    var(--accent-teal,   #06b6d4) 44%,
+    var(--accent-green,  #10b981) 66%,
+    var(--accent-amber,  #f59e0b) 88%,
+    var(--accent-blue,   #3b82f6) 100%
+  );
+  background-size: 200% auto;
+  animation: pm-topbar-line 6s linear infinite;
+  pointer-events: none;
+}
+
+/* Brand gradient text */
+.brand-name {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  background: linear-gradient(
+    100deg,
+    var(--accent-blue,  #3b82f6) 0%,
+    var(--accent-purple,#8b5cf6) 45%,
+    var(--accent-teal,  #06b6d4) 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  background-size: 200% auto;
+  animation: pm-shimmer 6s linear infinite;
+  letter-spacing: -.3px;
+}
+/* Brand icon glow */
+.brand-icon {
+  animation: pm-glow-pulse 3.5s ease-in-out infinite;
+}
+/* Topbar interactive buttons */
+.icon-btn {
+  border-radius: var(--radius-md, 12px) !important;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease !important;
+}
+.icon-btn:hover {
+  background: var(--surface-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 0 0 1px var(--border-subtle) !important;
+}
+.profile-trigger {
+  border-radius: var(--radius-full, 50px) !important;
+  transition: all .25s ease !important;
+}
+.profile-trigger:hover {
+  background: var(--surface-hover) !important;
+  box-shadow: 0 0 0 1px var(--border-subtle) !important;
+}
+
+/* ── Sidebar: glass + active indicator ───────────────────────── */
+.sidebar {
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  position: relative;
+  z-index: 90;
+}
+/* Sidebar section labels — always use theme accent */
+.sidebar-label {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: .64rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+  /* colour comes from the theme; we just ensure font quality */
+  opacity: 1 !important;
+}
+/* Nav item active bar + hover */
+.nav-item {
+  border-radius: var(--radius-md, 10px) !important;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent-blue, #3b82f6), var(--accent-purple, #8b5cf6));
+  border-radius: 0 3px 3px 0;
+  transform: scaleY(0);
+  transition: transform .25s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+.nav-item:hover {
+  transform: translateX(3px) !important;
+  background: var(--surface-hover) !important;
+}
+.nav-item:hover::before { transform: scaleY(1); }
+.nav-item.active::before { transform: scaleY(1); }
+
+/* ── Feature / Module cards ───────────────────────────────────── */
+.feature-card {
+  /* Background and border-colour from the active theme */
+  background: var(--surface-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  /* Coloured top accent bar — uses theme accent vars per position */
+  border-top: 3px solid var(--accent-blue, #3b82f6) !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,.35), 0 0 0 0 transparent !important;
+  transition: transform .32s cubic-bezier(0.16,1,0.3,1),
+              box-shadow .32s ease,
+              border-color .25s ease !important;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+/* Per-position accent colours using the theme's own accent vars */
+.feature-card:nth-child(1)  { border-top-color: var(--accent-blue,   #3b82f6) !important; }
+.feature-card:nth-child(2)  { border-top-color: var(--accent-purple, #8b5cf6) !important; }
+.feature-card:nth-child(3)  { border-top-color: var(--accent-teal,   #06b6d4) !important; }
+.feature-card:nth-child(4)  { border-top-color: var(--accent-amber,  #f59e0b) !important; }
+.feature-card:nth-child(5)  { border-top-color: var(--accent-rose,   #f43f5e) !important; }
+.feature-card:nth-child(6)  { border-top-color: var(--accent-cyan,   #22d3ee) !important; }
+.feature-card:nth-child(7)  { border-top-color: var(--accent-orange, #f97316) !important; }
+/* Text inside cards uses theme's text variables — always readable */
+.feature-card,
+.feature-card h1,.feature-card h2,.feature-card h3,
+.feature-card h4,.feature-card h5,.feature-card h6 {
+  color: var(--text-primary, #f0f4f8) !important;
+  -webkit-text-fill-color: unset !important;
+}
+.feature-card p,
+.feature-card .card-desc,
+.feature-card .feature-desc {
+  color: var(--text-secondary, #c8d6e8) !important;
+  -webkit-text-fill-color: unset !important;
+}
+/* Hover lift + glow */
+.feature-card:hover {
+  transform: translateY(-7px) scale(1.025) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,.45),
+              0 0 0 1px var(--border-subtle),
+              var(--shadow-glow, 0 0 30px rgba(59,130,246,.15)) !important;
+}
+/* Selected / active state */
+.feature-card.active,
+.feature-card.selected {
+  background: var(--surface-hover) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4),
+              0 0 0 1px var(--accent-blue, #3b82f6) !important;
+}
+/* Feature icon — use each card's accent colour as glow */
+.feature-icon {
+  box-shadow: 0 4px 16px rgba(0,0,0,.3) !important;
+  transition: transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease !important;
+}
+.feature-card:hover .feature-icon {
+  transform: scale(1.14) rotate(6deg) !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35), var(--shadow-glow, 0 0 20px rgba(59,130,246,.3)) !important;
+}
+
+/* ── Light theme: invert feature-card to white so text stays readable ── */
+.em-light-app .feature-card {
+  background: rgba(255,255,255,0.94) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,.10), 0 0 0 0 transparent !important;
+}
+.em-light-app .feature-card:hover {
+  background: rgba(255,255,255,1) !important;
+  box-shadow: 0 16px 44px rgba(0,0,0,.12),
+              0 0 0 1px rgba(0,0,0,0.07),
+              var(--shadow-glow, 0 0 24px rgba(59,130,246,.08)) !important;
+}
+.em-light-app .feature-card,
+.em-light-app .feature-card h1,.em-light-app .feature-card h2,
+.em-light-app .feature-card h3,.em-light-app .feature-card h4,
+.em-light-app .feature-card h5,.em-light-app .feature-card h6 {
+  color: var(--text-dark, #1e2d3d) !important;
+  -webkit-text-fill-color: unset !important;
+}
+.em-light-app .feature-card p,
+.em-light-app .feature-card .card-desc,
+.em-light-app .feature-card .feature-desc {
+  color: var(--text-medium, #374151) !important;
+  -webkit-text-fill-color: unset !important;
+}
+
+/* ── Generic cards ────────────────────────────────────────────── */
+.app-layout .card {
+  box-shadow: 0 4px 20px rgba(0,0,0,.3) !important;
+  transition: transform .3s cubic-bezier(0.16,1,0.3,1), box-shadow .3s ease !important;
+  border-radius: var(--radius-lg, 14px) !important;
+}
+.app-layout .card:not(.input-card):hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 44px rgba(0,0,0,.4), var(--shadow-glow, 0 0 24px rgba(59,130,246,.12)) !important;
+}
+/* Input card focus ring */
+.input-card {
+  transition: box-shadow .25s ease, border-color .25s ease !important;
+  border-radius: var(--radius-xl, 18px) !important;
+}
+.input-card:focus-within {
+  box-shadow: 0 0 0 3px rgba(59,130,246,.14), 0 4px 20px rgba(0,0,0,.3) !important;
+  border-color: var(--accent-blue, #3b82f6) !important;
+}
+
+/* Dashboard stat / summary cards */
+.stat-card,
+.dash-user-card,
+.token-card,
+.sub-card,
+.chart-donut-card,
+.chart-line-card {
+  box-shadow: 0 4px 20px rgba(0,0,0,.3) !important;
+  transition: transform .3s cubic-bezier(0.16,1,0.3,1), box-shadow .3s ease !important;
+  border-radius: var(--radius-lg, 14px) !important;
+}
+.stat-card:hover,
+.dash-user-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 44px rgba(0,0,0,.4) !important;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.btn-primary,
+.analyze-btn,
+.add-project-btn,
+.admin-primary-action {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: .025em !important;
+  border-radius: var(--radius-md, 12px) !important;
+  box-shadow: var(--button-shadow, 0 8px 24px rgba(0,0,0,.2)) !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow .2s ease, filter .2s ease !important;
+}
+/* Gloss sheen on hover */
+.btn-primary::after,
+.analyze-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.12);
+  opacity: 0;
+  transition: opacity .2s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.btn-primary:hover,
+.analyze-btn:hover,
+.add-project-btn:hover,
+.admin-primary-action:hover {
+  transform: translateY(-2px) scale(1.025) !important;
+  box-shadow: var(--button-hover-shadow,0 14px 30px rgba(59,130,246,.25)) !important;
+  filter: brightness(1.08) !important;
+}
+.btn-primary:hover::after,
+.analyze-btn:hover::after { opacity: 1; }
+.btn-primary:active,
+.analyze-btn:active { transform: translateY(0) scale(.97) !important; }
+
+.btn-outline {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-md, 12px) !important;
+  transition: all .22s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.btn-outline:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25) !important;
+}
+.btn-gold {
+  border-radius: var(--radius-md, 12px) !important;
+  transition: all .22s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.btn-gold:hover {
+  transform: translateY(-2px) !important;
+  filter: brightness(1.08) !important;
+}
+
+/* ── Modals: glass effect ─────────────────────────────────────── */
+.modal-overlay,
+.af-modal-overlay {
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+}
+.modal,
+.buddy-modal {
+  -webkit-backdrop-filter: blur(24px) !important;
+  backdrop-filter: blur(24px) !important;
+  border-radius: var(--radius-xl, 22px) !important;
+  box-shadow: var(--modal-shadow, 0 32px 90px rgba(0,0,0,.55)) !important;
+}
+.modal-header {
+  border-radius: var(--radius-xl, 22px) var(--radius-xl, 22px) 0 0 !important;
+}
+/* Gradient title */
+.modal-title {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  background: linear-gradient(100deg,
+    var(--accent-blue,  #3b82f6) 0%,
+    var(--accent-purple,#8b5cf6) 50%,
+    var(--accent-teal,  #06b6d4) 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* ── Dropdowns & theme panel ──────────────────────────────────── */
+.dropdown,
+.qg-theme-panel {
+  -webkit-backdrop-filter: blur(20px) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45) !important;
+}
+.dropdown-item {
+  border-radius: var(--radius-sm, 8px) !important;
+  transition: background .15s ease !important;
+}
+
+/* ── Page title gradient ──────────────────────────────────────── */
+.page-title {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  background: linear-gradient(100deg,
+    var(--accent-blue,  #3b82f6) 0%,
+    var(--accent-purple,#8b5cf6) 50%,
+    var(--accent-teal,  #06b6d4) 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  background-size: 200% auto;
+  animation: pm-shimmer 5s linear infinite;
+}
+
+/* Workspace hero heading */
+.workspace-brand {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  background: linear-gradient(100deg,
+    var(--accent-blue,  #3b82f6) 0%,
+    var(--accent-purple,#8b5cf6) 45%,
+    var(--accent-cyan,  #22d3ee) 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  background-size: 200% auto;
+  animation: pm-shimmer 7s linear infinite;
+}
+
+/* ── Tab underline indicator ──────────────────────────────────── */
+.out-tab {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
+  transition: color .2s ease !important;
+  position: relative;
+}
+.out-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent-blue, #3b82f6), var(--accent-teal, #06b6d4));
+  transform: scaleX(0);
+  transition: transform .25s cubic-bezier(0.16,1,0.3,1);
+  border-radius: 2px 2px 0 0;
+  pointer-events: none;
+}
+.out-tab.active::after { transform: scaleX(1); }
+
+/* HLD/LLD tabs — same treatment */
+.hld-tab-bar .hld-tab {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
+  transition: color .2s ease !important;
+  position: relative;
+}
+.hld-tab-bar .hld-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent-blue, #3b82f6), var(--accent-teal, #06b6d4));
+  transform: scaleX(0);
+  transition: transform .25s cubic-bezier(0.16,1,0.3,1);
+  border-radius: 2px 2px 0 0;
+  pointer-events: none;
+}
+.hld-tab-bar .hld-tab.active::after { transform: scaleX(1); }
+
+/* ── Module selector chip hover ───────────────────────────────── */
+.module-chip {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
+  transition: transform .2s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease !important;
+}
+.module-chip:hover { transform: translateY(-2px) !important; }
+
+/* ── History items ────────────────────────────────────────────── */
+.history-item {
+  transition: transform .18s ease, background .18s ease !important;
+}
+.history-item:hover { transform: translateX(4px) !important; }
+
+/* ── Processing overlay glass ─────────────────────────────────── */
+.processing-overlay {
+  -webkit-backdrop-filter: blur(24px) saturate(120%) !important;
+  backdrop-filter: blur(24px) saturate(120%) !important;
+}
+.processing-card {
+  border-radius: var(--radius-xl, 24px) !important;
+  box-shadow: 0 0 60px rgba(59,130,246,.18), var(--modal-shadow) !important;
+}
+
+/* ── AF card hover ────────────────────────────────────────────── */
+.af-card {
+  transition: transform .3s cubic-bezier(0.16,1,0.3,1), box-shadow .3s ease !important;
+  border-radius: var(--radius-lg, 16px) !important;
+}
+.af-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 36px rgba(0,0,0,.35) !important;
+}
+.af-btn {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
+  transition: transform .2s ease !important;
+}
+.af-btn:hover { transform: translateY(-1px) !important; }
+
+/* ── Toasts ───────────────────────────────────────────────────── */
+.toast {
+  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(16px) !important;
+  border-radius: var(--radius-lg, 14px) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4) !important;
+}
+
+/* ── Progress bars ────────────────────────────────────────────── */
+.progress-bar { border-radius: var(--radius-full, 50px) !important; }
+.progress-fill {
+  border-radius: var(--radius-full, 50px) !important;
+  transition: width .8s cubic-bezier(0.16,1,0.3,1) !important;
+}
+
+/* ── Scrollbar: slim, accent-coloured ─────────────────────────── */
+.app-layout ::-webkit-scrollbar { width: 5px; height: 5px; }
+.app-layout ::-webkit-scrollbar-track { background: rgba(0,0,0,.15); border-radius: 6px; }
+.app-layout ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,
+    var(--accent-blue, #3b82f6),
+    var(--accent-teal, #06b6d4)
+  );
+  border-radius: 6px;
+  border: none;
+}
+.app-layout ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,
+    var(--accent-purple, #8b5cf6),
+    var(--accent-blue,   #3b82f6)
+  );
+}
+
+/* ── Text selection ───────────────────────────────────────────── */
+.app-layout ::selection {
+  background: rgba(59,130,246,.3);
+  color: #fff;
+}
+
+/* ── Scroll reveal utilities ──────────────────────────────────── */
+.pm-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .65s cubic-bezier(0.16,1,0.3,1),
+              transform .65s cubic-bezier(0.16,1,0.3,1);
+}
+.pm-reveal.pm-visible       { opacity: 1; transform: translateY(0); }
+.pm-reveal-left {
+  opacity: 0;
+  transform: translateX(-22px);
+  transition: opacity .6s cubic-bezier(0.16,1,0.3,1),
+              transform .6s cubic-bezier(0.16,1,0.3,1);
+}
+.pm-reveal-left.pm-visible  { opacity: 1; transform: translateX(0); }
+.pm-reveal-scale {
+  opacity: 0;
+  transform: scale(.93);
+  transition: opacity .6s cubic-bezier(0.16,1,0.3,1),
+              transform .6s cubic-bezier(0.16,1,0.3,1);
+}
+.pm-reveal-scale.pm-visible { opacity: 1; transform: scale(1); }
+
+.pm-stagger > *:nth-child(1) { transition-delay: 0s;    }
+.pm-stagger > *:nth-child(2) { transition-delay: .07s;  }
+.pm-stagger > *:nth-child(3) { transition-delay: .14s;  }
+.pm-stagger > *:nth-child(4) { transition-delay: .21s;  }
+.pm-stagger > *:nth-child(5) { transition-delay: .28s;  }
+.pm-stagger > *:nth-child(6) { transition-delay: .35s;  }
+
+/* ── Kinetic typography ───────────────────────────────────────── */
+.pm-kinetic-char {
+  display: inline-block;
+  animation: pm-char-in .55s cubic-bezier(0.16,1,0.3,1) both;
+  will-change: transform, opacity;
+}
+
+/* ── Cursor glow ──────────────────────────────────────────────── */
+.pm-cursor-glow {
+  position: fixed;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(59,130,246,.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .pm-kinetic-char { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .pm-reveal,.pm-reveal-left,.pm-reveal-scale { opacity: 1 !important; transform: none !important; }
+}
+
+/* ── Mobile ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pm-cursor-glow { display: none !important; }
+  .feature-card:hover { transform: none !important; }
+}
+
+/* ================================================================
+   MIND-BLOWING ANIMATION LAYER — v2  (all pages, all elements)
+   ================================================================ */
+
+/* ── Extra keyframes ──────────────────────────────────────────── */
+@keyframes pm-slide-right {
+  from { opacity:0; transform:translateX(-18px) scale(.97); }
+  to   { opacity:1; transform:translateX(0)     scale(1);   }
+}
+@keyframes pm-pop-in {
+  0%   { opacity:0; transform:scale(.55) rotate(-4deg); }
+  70%  { transform:scale(1.08) rotate(1deg); }
+  100% { opacity:1; transform:scale(1)    rotate(0);    }
+}
+@keyframes pm-shimmer-fast {
+  0%   { background-position: -200% center; }
+  100% { background-position:  300% center; }
+}
+@keyframes pm-float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-7px); }
+}
+@keyframes pm-border-dance {
+  0%,100% { border-color: var(--accent-blue, #3b82f6); }
+  33%     { border-color: var(--accent-purple, #8b5cf6); }
+  66%     { border-color: var(--accent-teal, #06b6d4); }
+}
+@keyframes pm-count-up {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pm-tab-slide {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes pm-skeleton {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+@keyframes pm-nav-pop {
+  0%   { opacity:0; transform:translateX(-12px); }
+  100% { opacity:1; transform:translateX(0); }
+}
+@keyframes pm-badge-bounce {
+  0%,100% { transform:scale(1); }
+  40%     { transform:scale(1.18); }
+  70%     { transform:scale(0.95); }
+}
+@keyframes pm-status-blink {
+  0%,100% { opacity:1; box-shadow: 0 0 0 0 currentColor; }
+  50%     { opacity:.8; box-shadow: 0 0 0 5px transparent; }
+}
+@keyframes pm-spin-in {
+  from { opacity:0; transform:rotate(-120deg) scale(.4); }
+  to   { opacity:1; transform:rotate(0)       scale(1);  }
+}
+@keyframes pm-progress-stripe {
+  0%   { background-position: 0 0; }
+  100% { background-position: 28px 0; }
+}
+@keyframes pm-glow-border {
+  0%,100% { box-shadow: 0 0 0 0 transparent; }
+  50%     { box-shadow: 0 0 18px 2px rgba(59,130,246,.3); }
+}
+
+/* ── Nav items: stagger on page load ─────────────────────────── */
+.pm-nav-enter { animation: pm-nav-pop .4s cubic-bezier(.16,1,.3,1) both; }
+.pm-nav-enter:nth-child(1)  { animation-delay: .04s; }
+.pm-nav-enter:nth-child(2)  { animation-delay: .09s; }
+.pm-nav-enter:nth-child(3)  { animation-delay: .14s; }
+.pm-nav-enter:nth-child(4)  { animation-delay: .19s; }
+.pm-nav-enter:nth-child(5)  { animation-delay: .24s; }
+.pm-nav-enter:nth-child(6)  { animation-delay: .29s; }
+.pm-nav-enter:nth-child(7)  { animation-delay: .34s; }
+.pm-nav-enter:nth-child(8)  { animation-delay: .39s; }
+
+/* ── Nav item hover: glowing active pill ─────────────────────── */
+.nav-item {
+  position: relative;
+  transition: color .2s ease, background .2s ease, transform .18s ease !important;
+}
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%; transform: translateY(-50%) scaleY(0);
+  width: 3px; height: 60%;
+  background: var(--accent-blue, #3b82f6);
+  border-radius: 0 3px 3px 0;
+  transition: transform .22s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-item:hover::before,
+.nav-item.active::before { transform: translateY(-50%) scaleY(1); }
+.nav-item:hover { transform: translateX(3px) !important; }
+.nav-item.active { transform: translateX(3px) !important; }
+
+/* ── Card universal entrance ─────────────────────────────────── */
+.pm-card-enter {
+  opacity: 0;
+  transform: translateY(22px) scale(.98);
+  transition: opacity .55s cubic-bezier(.16,1,.3,1),
+              transform .55s cubic-bezier(.16,1,.3,1);
+}
+.pm-card-enter.pm-visible { opacity:1; transform:translateY(0) scale(1); }
+
+/* ── Cards: hover lift + glow ────────────────────────────────── */
+.af-card {
+  transition: transform .25s cubic-bezier(.16,1,.3,1),
+              box-shadow .25s ease !important;
+}
+.af-card:hover {
+  transform: translateY(-5px) scale(1.005) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,.18), 0 0 0 1px rgba(59,130,246,.15) !important;
+}
+
+/* ── HLD stat cards bounce-in ────────────────────────────────── */
+.hld-stat {
+  animation: pm-pop-in .5s cubic-bezier(.34,1.56,.64,1) both;
+  transition: transform .2s ease, box-shadow .2s ease !important;
+}
+.hld-stat:hover { transform: translateY(-3px) scale(1.04) !important; }
+.hld-stat:nth-child(1) { animation-delay: .05s; }
+.hld-stat:nth-child(2) { animation-delay: .10s; }
+.hld-stat:nth-child(3) { animation-delay: .15s; }
+.hld-stat:nth-child(4) { animation-delay: .20s; }
+.hld-stat:nth-child(5) { animation-delay: .25s; }
+.hld-stat:nth-child(6) { animation-delay: .30s; }
+
+/* ── Buttons: shimmer + lift ─────────────────────────────────── */
+.btn-primary, .analyze-btn, .btn-gold, .af-btn.primary,
+.hld-gen-btn, button[class*="enterprise-"][class*="btn"] {
+  position: relative;
+  overflow: hidden;
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .18s ease,
+              opacity .15s ease !important;
+}
+.btn-primary::after, .analyze-btn::after, .af-btn.primary::after,
+.hld-gen-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+    transparent 35%,
+    rgba(255,255,255,.22) 50%,
+    transparent 65%);
+  background-size: 200% 100%;
+  background-position: -200% center;
+  transition: background-position .6s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::after, .analyze-btn:hover::after,
+.af-btn.primary:hover::after, .hld-gen-btn:hover::after {
+  background-position: 200% center;
+}
+.btn-primary:hover, .analyze-btn:hover, .af-btn.primary:hover,
+.hld-gen-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(59,130,246,.35) !important;
+}
+.btn-primary:active, .analyze-btn:active, .af-btn.primary:active {
+  transform: translateY(0) scale(.98) !important;
+}
+
+/* ── Secondary/outline buttons ───────────────────────────────── */
+.af-btn:not(.primary), .hld-file-btn, .hld-export-btn, .af-btn-secondary {
+  transition: transform .15s ease, border-color .15s ease, color .15s ease !important;
+}
+.af-btn:not(.primary):hover, .hld-export-btn:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* ── Input / textarea focus animation ────────────────────────── */
+.af-input, .af-select, .hld-textarea, .hld-select,
+input[class*="input"], textarea {
+  transition: border-color .22s ease,
+              box-shadow .22s ease,
+              transform .18s ease !important;
+}
+.af-input:focus, .af-select:focus, .hld-textarea:focus, .hld-select:focus {
+  transform: scale(1.008) !important;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.18),
+              0 4px 16px rgba(59,130,246,.12) !important;
+}
+
+/* ── Tab active indicator slide ──────────────────────────────── */
+.hld-tab { position: relative; overflow: hidden; transition: color .2s, background .2s !important; }
+.hld-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent-blue, #3b82f6);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+}
+.hld-tab.active::after { transform: scaleX(1); }
+
+/* ── Enterprise feature chips bounce ────────────────────────── */
+.af-pill, .hld-type-chip, [class*="enterprise-chip"], [class*="panel-chip"] {
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .18s ease !important;
+}
+.af-pill:hover, .hld-type-chip:hover { transform: scale(1.1) translateY(-1px) !important; }
+
+/* ── Hero badge pulse glow ───────────────────────────────────── */
+.af-hero-badge {
+  animation: pm-glow-pulse 3s ease-in-out infinite;
+  transition: transform .2s ease !important;
+}
+.af-hero-badge:hover { transform: scale(1.12) !important; }
+
+/* ── Recording status dot ────────────────────────────────────── */
+.af-status-dot, .status-dot, [class*="status-indicator"] {
+  animation: pm-status-blink 2s ease-in-out infinite;
+}
+
+/* ── Skeleton shimmer for loading states ─────────────────────── */
+.pm-skeleton {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,.05) 25%,
+    rgba(255,255,255,.15) 50%,
+    rgba(255,255,255,.05) 75%);
+  background-size: 400px 100%;
+  animation: pm-skeleton 1.6s linear infinite;
+  border-radius: 6px;
+}
+
+/* ── Card icon float on hover ────────────────────────────────── */
+.af-card:hover .af-card-icon {
+  animation: pm-float 2s ease-in-out infinite;
+}
+
+/* ── Topbar badges entrance ──────────────────────────────────── */
+.token-badge, .sub-badge {
+  animation: pm-pop-in .6s cubic-bezier(.34,1.56,.64,1) .3s both;
+}
+
+/* ── Avatar spin-in ──────────────────────────────────────────── */
+.topbar .avatar {
+  animation: pm-spin-in .55s cubic-bezier(.34,1.56,.64,1) .15s both;
+}
+
+/* ── Profile dropdown entrance ───────────────────────────────── */
+.dropdown { transform-origin: top right; }
+
+/* ── Feature card: shimmer border on hover ───────────────────── */
+.feature-card {
+  transition: transform .3s cubic-bezier(.16,1,.3,1),
+              box-shadow .3s ease,
+              border-color .3s ease !important;
+}
+.feature-card:hover {
+  border-color: rgba(59,130,246,.35) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,.2),
+              0 0 0 1px rgba(59,130,246,.2),
+              0 0 32px rgba(59,130,246,.08) !important;
+}
+
+/* ── Sidebar label entrance ──────────────────────────────────── */
+.sidebar-label {
+  animation: pm-fade-up .4s ease .1s both;
+}
+
+/* ── Table row hover glow ────────────────────────────────────── */
+table tbody tr {
+  transition: background .18s ease, transform .15s ease !important;
+}
+table tbody tr:hover {
+  transform: translateX(2px) !important;
+  background: rgba(59,130,246,.06) !important;
+}
+
+/* ── Enterprise QE tab cards hover ──────────────────────────── */
+[class*="enterprise-tab"] button, [data-enterprise-tab] {
+  transition: transform .18s ease, color .18s ease, background .18s ease !important;
+}
+[data-enterprise-tab]:hover { transform: translateY(-2px) !important; }
+
+/* ── Recording stat numbers bounce ──────────────────────────── */
+.af-stat-val, .af-stat-number, #elementsCount, #actionsCount,
+#pagesCount, #totalSteps {
+  display: inline-block;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .25s ease !important;
+}
+
+/* ── Section header animated underline ──────────────────────── */
+.af-card-title { position: relative; display: inline-block; }
+
+/* ── Flow timeline step entrance ────────────────────────────── */
+.af-step {
+  animation: pm-slide-right .4s cubic-bezier(.16,1,.3,1) both;
+}
+
+/* ── Toast enhanced ──────────────────────────────────────────── */
+.toast {
+  animation: pm-slide-right .35s cubic-bezier(.16,1,.3,1) both !important;
+}
+
+/* ── Modal pop enhanced ──────────────────────────────────────── */
+.modal {
+  animation: pm-pop-in .38s cubic-bezier(.34,1.56,.64,1) both !important;
+}
+
+/* ── Reduced motion overrides ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pm-nav-enter, .pm-card-enter, .hld-stat,
+  .token-badge, .sub-badge, .topbar .avatar,
+  .af-hero-badge, .af-step, .sidebar-label {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .nav-item:hover, .nav-item.active { transform: none !important; }
+  .af-card:hover, .feature-card:hover { transform: none !important; }
+}
+
+/* ── Mobile overrides ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .af-card:hover { transform: none !important; }
+  .nav-item:hover { transform: none !important; }
+  .btn-primary:hover, .af-btn.primary:hover { transform: none !important; }
+  .hld-stat { animation-duration: .3s; }
+}

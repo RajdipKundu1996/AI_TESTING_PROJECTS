@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise QE - QA-Gen AI | eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Outfit:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css?v=20" />
+  <link rel="stylesheet" href="../css/pages.css?v=18" />
+  <link rel="stylesheet" href="../css/emi.css" />
+</head>
+<body class="theme-light em-light-app page-fade enterprise-page">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="../assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge" title="Token Usage">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>100,000</span> tokens
+      </div>
+      <div class="sub-badge sub-green" id="subBadge" title="Subscription Status"><span data-sub-days>365 days</span></div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>AD</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name>Admin</div>
+          <div class="p-role" data-user-role>Administrator</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+            <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+          </div>
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <button class="dropdown-item" data-action="about">About Us</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD → LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content enterprise-main">
+    <section class="enterprise-workbench">
+      <div class="enterprise-input-panel">
+        <div class="enterprise-input-head">
+          <div>
+            <div class="analysis-eyebrow">Enterprise AI Quality Engineering</div>
+            <h1>QA Intelligence Command Center</h1>
+            <p><strong>Requirement intelligence</strong>, <strong>API detection</strong>, <strong>risk</strong>, <strong>impact</strong>, <strong>defect prediction</strong>, <strong>QA Copilot</strong>, and <strong>test data intelligence</strong>.</p>
+          </div>
+          <span class="panel-chip" id="enterpriseModeChip">Ready</span>
+        </div>
+        <div class="enterprise-source-card">
+          <div class="enterprise-source-toolbar">
+            <span>Requirement Source</span>
+            <div>
+              <button class="repo-action-btn view" id="loadLastOutputBtn" type="button">Load Latest QA Output</button>
+              <button class="repo-action-btn update" id="loadSampleApiBtn" type="button">Sample API Spec</button>
+              <label for="enterpriseFileInput" class="repo-action-btn download enterprise-file-label">Import File</label>
+              <input type="file" id="enterpriseFileInput" accept=".txt,.json,.yaml,.yml" title="Import requirement file (txt, json, yaml)" class="enterprise-file-input">
+            </div>
+          </div>
+          <textarea id="enterpriseRequirementInput" class="enterprise-textarea" spellcheck="false"></textarea>
+          <div class="enterprise-char-count"><span id="enterpriseCharCount">0</span> characters</div>
+        </div>
+        <div class="enterprise-actions">
+          <button class="add-project-btn" id="runEnterpriseAnalysisBtn" type="button"><span class="add-project-icon">AI</span><span>Analyze Requirement</span></button>
+        </div>
+      </div>
+      <div class="enterprise-score-panel" id="enterpriseSummaryCards"></div>
+    </section>
+
+    <div class="enterprise-export-bar enterprise-export-bar--hidden" id="enterpriseExportBar">
+      <span class="enterprise-export-label">Export Analysis:</span>
+      <button class="repo-action-btn download" id="exportJsonBtn" type="button">JSON</button>
+      <button class="repo-action-btn download" id="exportCsvBtn" type="button">CSV (Test Cases)</button>
+      <button class="repo-action-btn view" id="exportPdfBtn" type="button">Print / PDF</button>
+    </div>
+
+    <section class="enterprise-tabs" id="enterpriseTabs" aria-label="Enterprise QA modules">
+      <button class="active" type="button" data-enterprise-tab="requirement"><span class="enterprise-tab-icon">RI</span><span><strong>Requirement</strong><small>Quality & ambiguity</small></span></button>
+      <button type="button" data-enterprise-tab="api"><span class="enterprise-tab-icon">API</span><span><strong>API</strong><small>Contracts & payloads</small></span></button>
+      <button type="button" data-enterprise-tab="risk"><span class="enterprise-tab-icon">RK</span><span><strong>Risk</strong><small>Execution strategy</small></span></button>
+      <button type="button" data-enterprise-tab="impact"><span class="enterprise-tab-icon">IA</span><span><strong>Impact</strong><small>Change analysis</small></span></button>
+      <button type="button" data-enterprise-tab="defects"><span class="enterprise-tab-icon">DP</span><span><strong>Defects</strong><small>Prediction score</small></span></button>
+      <button type="button" data-enterprise-tab="copilot"><span class="enterprise-tab-icon">QC</span><span><strong>Copilot</strong><small>QA assistant</small></span></button>
+      <button type="button" data-enterprise-tab="testdata"><span class="enterprise-tab-icon">TD</span><span><strong>Test Data</strong><small>Data sets</small></span></button>
+      <button type="button" data-enterprise-tab="roadmap"><span class="enterprise-tab-icon">RM</span><span><strong>Roadmap</strong><small>Delivery plan</small></span></button>
+    </section>
+
+    <section class="enterprise-tab-panel active" id="enterprise-tab-requirement"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-api"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-risk"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-impact"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-defects"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-copilot"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-testdata"></section>
+    <section class="enterprise-tab-panel" id="enterprise-tab-roadmap"></section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-brand-row"><div class="footer-emudhra-logo"><svg viewBox="0 0 50 50" width="24" height="24"><circle cx="25" cy="25" r="22" fill="#1a3a6b" stroke="#4a7fcb" stroke-width="2"/><text x="25" y="31" text-anchor="middle" fill="white" font-size="14" font-weight="bold">e</text></svg>eMudhra</div></div>
+    <div class="footer-text">(c) 2026 eMudhra. All rights reserved.</div>
+    <div class="footer-star">*</div>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="settingsModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Settings</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Theme</label><select class="form-input-dark" id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button class="btn btn-primary" onclick="showToast('Settings saved!','success');closeModal('settingsModal')">Save</button></div></div>
+</div>
+<div class="modal-overlay" id="editProfileModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Edit Profile</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><div class="form-group-dark"><label class="form-label-dark">Full Name</label><input type="text" class="form-input-dark" id="editName" /></div><div class="form-group-dark"><label class="form-label-dark">Email</label><input type="email" class="form-input-dark" id="editEmail" /></div><div class="form-group-dark"><label class="form-label-dark">Role</label><input type="text" class="form-input-dark" id="editRole" /></div></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal>Cancel</button><button type="button" class="btn btn-primary" id="saveProfileBtn">Save</button></div></div>
+</div>
+<div class="modal-overlay" id="aboutModal" style="display:none">
+  <div class="modal"><div class="modal-header"><div class="modal-title">About</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><p class="modal-body-text"><a href="https://www.emudhra.com" target="_blank" rel="noopener noreferrer" class="link-accent">www.emudhra.com</a> - eMudhra delivers digital identity and enterprise cybersecurity solutions globally.</p></div><div class="modal-footer"><a href="https://www.emudhra.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Visit eMudhra.com</a><button type="button" class="btn btn-outline" data-close-modal>Close</button></div></div>
+</div>
+<div class="modal-overlay" id="confirmModal" style="display:none">
+  <div class="modal modal-sm"><div class="modal-header"><div class="modal-title">Confirm</div><button type="button" class="modal-close" data-close-modal>x</button></div><div class="modal-body"><p id="confirmMessage" style="color:var(--text-secondary)"></p></div><div class="modal-footer"><button type="button" class="btn btn-outline" data-close-modal id="confirmCancel">No</button><button type="button" class="btn btn-danger" id="confirmOk">Yes</button></div></div>
+</div>
+
+<script src="../js/shared.js?v=20"></script>
+<script src="../js/enterprise_qa_engine.js?v=1"></script>
+<script src="../js/enterprise_dashboard.js?v=4"></script>
+<script src="../js/emi.js"></script>
+</body>
+</html>
+
+
+
+

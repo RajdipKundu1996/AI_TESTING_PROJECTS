@@ -1,0 +1,100 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Settings — eMudhra QA-Gen</title>
+  <link href="/src/styles/login.css" rel="stylesheet">
+</head>
+<body class="settings-body">
+  <header style="padding:20px; display:flex; align-items:center; gap:16px; background:linear-gradient(90deg,#071025, #0b223a); box-shadow: 0 8px 30px rgba(2,6,23,0.5);">
+    <a href="/index.html" style="color:var(--white); font-weight:800; font-size:1.1rem; text-decoration:none;">← Back</a>
+    <img src="/assets/emudhra-logo.jpg" alt="eMudhra logo" class="brand-img header-logo" style="height:44px; margin-left:8px;" onerror="this.onerror=null;this.src='/assets/emudhra-logo.svg'" />
+    <div style="flex:1"></div>
+    <div style="color:var(--text-secondary); font-weight:700;">Settings</div>
+  </header>
+  <main class="settings-page">
+    <div class="settings-card">
+      <h2 style="margin-bottom:8px">Mistral API & Model</h2>
+      <p style="color:var(--text-muted); margin-bottom:12px">Configure your Mistral API key and choose a default model for the UI.</p>
+
+      <label class="mistral-label">Mistral API Key</label>
+      <input id="pageMistralKey" class="mistral-input" placeholder="Paste API key here or leave empty to use server env" />
+
+      <label class="mistral-label" style="margin-top:12px">Filter</label>
+      <input id="pageModelFilter" class="mistral-filter" placeholder="Type to filter models" />
+
+      <label class="mistral-label" style="margin-top:12px">Model</label>
+      <select id="pageModelSelect" class="mistral-select">
+        <option value="">(none)</option>
+      </select>
+      <div id="pageModelList" class="mistral-list" role="listbox" tabindex="0" aria-label="Model list"></div>
+
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="pageSaveKey" class="mistral-btn">Save Key</button>
+        <button id="pageTestKey" class="mistral-btn primary">Test Key</button>
+        <button id="pageAutoDetect" class="mistral-btn ghost">Auto-detect</button>
+        <button id="pageSaveModel" class="mistral-btn">Save Model</button>
+        <button id="pageClearCache" class="mistral-btn">Clear Cache</button>
+      </div>
+
+      <div id="pageStatus" style="margin-top:12px; color:var(--accent-green)">Status: idle</div>
+    </div>
+
+    <div class="settings-card" style="margin-top:20px;">
+      <h2 style="margin-bottom:8px">Deploy Code</h2>
+      <p style="color:var(--text-muted); margin-bottom:16px">Push your test plan code to GitHub or Azure repositories.</p>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+        <button id="deployGitHub" class="mistral-btn primary" style="flex:1;">📤 Push to GitHub</button>
+        <button id="deployAzure" class="mistral-btn primary" style="flex:1;">☁️ Push to Azure</button>
+      </div>
+
+      <div id="deployStatus" style="margin-top:12px; color:var(--text-muted); font-size:0.85rem;"></div>
+    </div>
+  </main>
+
+  <script>
+    // Deployment handlers
+    document.getElementById('deployGitHub').addEventListener('click', async () => {
+      const status = document.getElementById('deployStatus');
+      status.innerHTML = '<span style="color:#10b981;">🟢 Connecting to GitHub...</span>';
+      try {
+        const result = await fetch('http://127.0.0.1:11435/push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo: 'github', branch: 'main' })
+        });
+        if (result.ok) {
+          status.innerHTML = '<span style="color:#10b981;">✅ Pushed to GitHub successfully!</span>';
+        } else {
+          status.innerHTML = '<span style="color:#ef4444;">❌ GitHub push failed</span>';
+        }
+      } catch (err) {
+        status.innerHTML = `<span style="color:#ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    });
+
+    document.getElementById('deployAzure').addEventListener('click', async () => {
+      const status = document.getElementById('deployStatus');
+      status.innerHTML = '<span style="color:#3b82f6;">🟠 Connecting to Azure...</span>';
+      try {
+        const result = await fetch('http://127.0.0.1:11435/push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo: 'azure', branch: 'develop' })
+        });
+        if (result.ok) {
+          status.innerHTML = '<span style="color:#10b981;">✅ Pushed to Azure successfully!</span>';
+        } else {
+          status.innerHTML = '<span style="color:#ef4444;">❌ Azure push failed</span>';
+        }
+      } catch (err) {
+        status.innerHTML = `<span style="color:#ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    });
+  </script>
+  <script src="/src/features/settings.js"></script>
+</body>
+</html>
+

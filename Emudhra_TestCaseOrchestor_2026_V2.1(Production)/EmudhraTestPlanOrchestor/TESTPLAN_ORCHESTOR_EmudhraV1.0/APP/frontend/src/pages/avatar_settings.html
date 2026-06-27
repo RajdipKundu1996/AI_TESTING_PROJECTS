@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Assistant Personalization — QA-Gen AI | eMudhra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/shared.css?v=20" />
+  <link rel="stylesheet" href="/src/styles/pages.css?v=17" />
+  <link rel="stylesheet" href="/src/styles/emi.css" />
+  <style>
+    .av-page { display:grid; grid-template-columns:320px 1fr; gap:24px; padding:24px; max-width:1280px; margin:0 auto; align-items:start; }
+    @media(max-width:900px){ .av-page{grid-template-columns:1fr;gap:16px;padding:16px} }
+
+    .av-preview-card { position:sticky; top:24px; background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:16px; padding:20px 18px; text-align:center; box-shadow:0 2px 16px rgba(0,0,0,0.07); max-height:calc(100vh - 40px); overflow-y:auto; }
+    .av-preview-bg { width:165px; height:196px; border-radius:82px; background:radial-gradient(circle at 60% 35%, #ffe8d4 0%, #ffd5ba 50%, #f5c3a0 100%); margin:0 auto 10px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; box-shadow:0 6px 28px rgba(242,106,33,0.25), 0 0 0 3px rgba(242,106,33,0.15); }
+    .em-light-app .av-preview-bg { background:radial-gradient(circle at 60% 35%, #fff0e8 0%, #fde4d0 50%, #f8d4b8 100%); }
+    #vedaLivePreview { width:165px; height:196px; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.12)); transition:all 0.35s ease; }
+    .av-name-display { font-size:1.15rem; font-weight:800; color:var(--text-primary); margin-bottom:2px; }
+    .av-role-display { font-size:0.72rem; color:var(--text-muted); margin-bottom:8px; }
+    .av-badges-row { display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+    .av-active-chip { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; background:linear-gradient(135deg,#059669 0%,#10b981 100%); color:#fff; font-size:0.68rem; font-weight:700; box-shadow:0 2px 8px rgba(16,185,129,0.35); border:none; }
+    .av-attire-tag { display:inline-flex; align-items:center; padding:4px 10px; border-radius:20px; font-size:0.68rem; font-weight:700; background:linear-gradient(135deg,#e65c10 0%,#f26a21 100%); color:#fff; box-shadow:0 2px 8px rgba(242,106,33,0.35); border:none; margin-top:0; }
+    .av-sparkle { position:absolute; top:8px; right:12px; font-size:1.2rem; animation:sparkleAnim 2.2s ease-in-out infinite; }
+    @keyframes sparkleAnim { 0%,100%{opacity:0.35;transform:scale(0.8) rotate(-10deg)} 50%{opacity:1;transform:scale(1.15) rotate(10deg)} }
+    .av-preview-lbl { font-size:0.65rem; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
+    .av-personality-display { margin-top:0; padding:8px 10px; background:linear-gradient(135deg,rgba(99,102,241,0.12) 0%,rgba(139,92,246,0.06) 100%); border:1px solid rgba(99,102,241,0.22); border-radius:8px; font-size:0.72rem; color:var(--text-secondary); font-style:italic; line-height:1.4; }
+    .em-light-app .av-personality-display { background:linear-gradient(135deg,rgba(99,102,241,0.07) 0%,rgba(139,92,246,0.03) 100%); }
+    .av-open-buddy-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:12px; padding:10px; background:linear-gradient(135deg,#7C3AED 0%,#6366F1 50%,#4F46E5 100%); color:#fff; border:none; border-radius:10px; font-size:0.82rem; font-weight:800; cursor:pointer; text-decoration:none; transition:opacity 0.2s,transform 0.12s; box-shadow:0 3px 12px rgba(99,102,241,0.4); }
+    .av-open-buddy-btn:hover { opacity:0.9; transform:translateY(-1px); }
+
+    .av-settings-card { background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:16px; overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,0.07); }
+    .av-settings-header { padding:18px 24px 0; border-bottom:1px solid var(--border-subtle); }
+    .av-settings-title { font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:3px; }
+    .av-settings-sub { font-size:0.76rem; color:var(--text-muted); margin-bottom:12px; }
+
+    .av-tabs { display:flex; gap:0; }
+    .av-tab { padding:9px 16px; font-size:0.77rem; font-weight:700; cursor:pointer; border:none; border-bottom:3px solid transparent; background:none; color:var(--text-muted); transition:all 0.15s; white-space:nowrap; }
+    .av-tab.active { color:#f26a21; border-bottom-color:#f26a21; }
+    .av-tab:hover:not(.active) { color:var(--text-secondary); border-bottom-color:rgba(242,106,33,0.3); }
+    .av-panel { display:none; padding:22px 24px; }
+    .av-panel.active { display:block; }
+
+    .av-field { margin-bottom:17px; }
+    .av-label { display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:7px; }
+    .av-input { width:100%; background:var(--navy-900,rgba(10,22,40,0.5)); border:1.5px solid var(--border-subtle); border-radius:8px; color:var(--text-primary); font-size:0.84rem; font-family:inherit; padding:9px 12px; box-sizing:border-box; transition:border-color 0.15s; line-height:1.5; }
+    .av-input:focus { outline:none; border-color:#f26a21; }
+    .em-light-app .av-input { background:#f8fafc; }
+    .av-select { width:100%; background:var(--navy-900,rgba(10,22,40,0.5)); border:1.5px solid var(--border-subtle); border-radius:8px; color:var(--text-primary); font-size:0.84rem; font-family:inherit; padding:9px 12px; box-sizing:border-box; -webkit-appearance:none; appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; transition:border-color 0.15s; line-height:1.5; }
+    .av-select:focus { outline:none; border-color:#f26a21; }
+    .em-light-app .av-select { background-color:#f8fafc; }
+    .av-radio-group { display:flex; flex-wrap:wrap; gap:8px; }
+    .av-radio-opt { display:flex; align-items:center; gap:6px; padding:7px 12px; border:1.5px solid var(--border-subtle); border-radius:8px; cursor:pointer; font-size:0.8rem; color:var(--text-secondary); transition:all 0.15s; user-select:none; }
+    .av-radio-opt.selected { border-color:#f26a21; background:rgba(242,106,33,0.08); color:#f26a21; font-weight:700; }
+    .av-radio-opt:hover:not(.selected) { border-color:rgba(242,106,33,0.4); }
+    .av-radio-opt input { display:none; }
+    .av-section-title { font-size:0.77rem; font-weight:800; color:var(--text-primary); margin:0 0 11px; padding-bottom:7px; border-bottom:1px solid var(--border-subtle); }
+    .av-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:600px){ .av-row{grid-template-columns:1fr} }
+
+    .av-skin-swatches { display:flex; gap:12px; flex-wrap:wrap; }
+    .av-skin-swatch { width:38px; height:38px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.15s; box-shadow:0 2px 6px rgba(0,0,0,0.18); }
+    .av-skin-swatch.selected { border-color:#f26a21; box-shadow:0 0 0 3px rgba(242,106,33,0.25); transform:scale(1.1); }
+    .av-skin-swatch:hover:not(.selected) { transform:scale(1.06); }
+    .av-skin-label { font-size:0.65rem; color:var(--text-muted); text-align:center; margin-top:3px; white-space:nowrap; }
+    .av-skin-item { display:flex; flex-direction:column; align-items:center; gap:2px; }
+
+    .av-hair-grid { display:flex; gap:10px; flex-wrap:wrap; }
+    .av-hair-card { display:flex; flex-direction:column; align-items:center; gap:5px; padding:8px 10px; border:2px solid var(--border-subtle); border-radius:10px; cursor:pointer; min-width:70px; transition:all 0.15s; }
+    .av-hair-card.selected { border-color:#f26a21; background:rgba(242,106,33,0.07); }
+    .av-hair-card:hover:not(.selected) { border-color:rgba(242,106,33,0.4); }
+    .av-hair-icon { width:44px; height:44px; }
+    .av-hair-lbl { font-size:0.63rem; font-weight:700; color:var(--text-secondary); text-align:center; line-height:1.3; }
+
+    .av-hair-colors { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; }
+    .av-hair-color-swatch { width:32px; height:32px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all 0.15s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+    .av-hair-color-swatch.selected { border-color:#f26a21; box-shadow:0 0 0 2px rgba(242,106,33,0.3); transform:scale(1.08); }
+
+    .av-outfit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    @media(max-width:500px){ .av-outfit-grid{grid-template-columns:repeat(2,1fr)} }
+    .av-outfit-card { display:flex; flex-direction:column; align-items:center; gap:5px; padding:10px 8px; border:2px solid var(--border-subtle); border-radius:12px; cursor:pointer; transition:all 0.18s; }
+    .av-outfit-card.selected { border-color:#f26a21; background:rgba(242,106,33,0.06); }
+    .av-outfit-card:hover:not(.selected) { border-color:rgba(242,106,33,0.4); background:rgba(242,106,33,0.03); }
+    .av-outfit-preview { width:54px; height:62px; display:flex; align-items:flex-end; justify-content:center; }
+    .av-outfit-name { font-size:0.67rem; font-weight:700; color:var(--text-secondary); text-align:center; line-height:1.3; }
+    .av-outfit-tag { font-size:0.6rem; padding:2px 7px; border-radius:6px; font-weight:700; }
+
+    .av-personality-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    @media(max-width:500px){ .av-personality-grid{grid-template-columns:1fr} }
+    .av-personality-card { display:flex; align-items:center; gap:10px; padding:10px 12px; border:2px solid var(--border-subtle); border-radius:10px; cursor:pointer; transition:all 0.15s; }
+    .av-personality-card.selected { border-color:#f26a21; background:rgba(242,106,33,0.07); }
+    .av-personality-card:hover:not(.selected) { border-color:rgba(242,106,33,0.4); }
+    .av-personality-icon { font-size:1.25rem; flex-shrink:0; width:30px; text-align:center; }
+    .av-personality-body { flex:1; min-width:0; }
+    .av-personality-name { font-size:0.78rem; font-weight:700; color:var(--text-primary); }
+    .av-personality-desc { font-size:0.66rem; color:var(--text-muted); line-height:1.3; margin-top:1px; }
+
+    .av-toggle-row { display:flex; align-items:center; gap:12px; margin-bottom:11px; }
+    .av-toggle-lbl { font-size:0.8rem; color:var(--text-secondary); flex:1; line-height:1.4; }
+    .av-toggle-sw { position:relative; width:40px; height:22px; flex-shrink:0; }
+    .av-toggle-sw input { opacity:0; width:0; height:0; position:absolute; }
+    .av-toggle-sw .av-slider { position:absolute; inset:0; background:#cbd5e1; border-radius:11px; cursor:pointer; transition:0.2s; }
+    .av-toggle-sw .av-slider:before { content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:#fff; border-radius:50%; transition:0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+    .av-toggle-sw input:checked + .av-slider { background:#f26a21; }
+    .av-toggle-sw input:checked + .av-slider:before { transform:translateX(18px); }
+
+    .av-save-btn { width:100%; padding:12px; background:linear-gradient(135deg,#f26a21,#e65c10); color:#fff; border:none; border-radius:10px; font-size:0.88rem; font-weight:800; cursor:pointer; transition:opacity 0.2s,transform 0.1s; letter-spacing:0.2px; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .av-save-btn:hover { opacity:0.9; transform:translateY(-1px); }
+    .av-reset-btn { width:100%; padding:9px; background:transparent; color:var(--text-muted); border:1.5px solid var(--border-subtle); border-radius:10px; font-size:0.8rem; font-weight:700; cursor:pointer; margin-top:8px; transition:all 0.15s; }
+    .av-reset-btn:hover { border-color:#ef4444; color:#ef4444; }
+    .av-save-bar { padding:16px 24px; border-top:1px solid var(--border-subtle); }
+
+    .av-greeting-preview { padding:10px 12px; background:var(--navy-900,rgba(10,22,40,0.4)); border-radius:8px; font-size:0.79rem; color:var(--text-secondary); border-left:3px solid #f26a21; font-style:italic; line-height:1.5; }
+    .em-light-app .av-greeting-preview { background:#f8fafc; }
+  </style>
+</head>
+<body class="theme-light em-light-app page-fade">
+<div class="app-layout">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="/assets/emudhra-logo.jpg?v=6" alt="eMudhra Trust Delivered" class="topbar-logo" />
+      <div class="brand-divider" style="width:1px;height:20px;background:var(--border-subtle);margin:0 4px"></div>
+      <div class="brand-name" style="font-size:1.1rem">QA<span>-Gen AI</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="token-badge" title="Token Usage">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span data-tokens>100,000</span> tokens
+      </div>
+      <div class="sub-badge sub-green" id="subBadge"><span data-sub-days>365 days</span></div>
+      <div class="profile-trigger" id="profileTrigger">
+        <div class="avatar" data-user-initials>SK</div>
+        <div class="profile-info">
+          <div class="p-name" data-user-name>Sahil Khan</div>
+          <div class="p-role" data-user-role>Administrator</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="profileDropdown" style="display:none">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-weight:800;color:var(--text-primary);font-size:0.85rem" data-user-name></div>
+            <div style="font-size:0.72rem;color:var(--text-muted)" data-user-email></div>
+          </div>
+          <button class="dropdown-item" data-action="edit-profile">Edit Profile</button>
+          <button class="dropdown-item" data-action="settings">Settings</button>
+          <button class="dropdown-item" data-action="about">About Us</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a href="dashboard.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+      <a href="home.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Test Management</a>
+      <a href="autoflow.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>AutoFlow Tester</a>
+      <a href="analysis.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Project Analysis</a>
+      <a href="reports.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="enterprise.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Enterprise QE</a>
+      <a href="hld_lld.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>HLD → LLD Maker</a>
+      <a href="testing_buddy.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>Testing Buddy AI</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin Portal</div>
+      <a href="admin.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin Panel</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="margin-top:auto">
+      <button class="nav-item" data-action="logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="av-page">
+
+      <!-- ══════ LEFT: LIVE PREVIEW ══════ -->
+      <div class="av-preview-card">
+        <div class="av-preview-lbl">Live Preview</div>
+        <div class="av-preview-bg">
+          <span class="av-sparkle">✨</span>
+
+          <!-- VEDA AVATAR SVG — viewBox 160×200 upper-body portrait -->
+          <svg id="vedaLivePreview" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg"
+               style="--skin-color:#FDDCC4;--hair-color:#2c1a0e;--lip-color:#C0607A">
+
+            <!-- OUTFIT GROUPS (only active one shown) -->
+            <g id="outfitCorporate">
+              <path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#7B1C3E"/>
+              <path d="M55 130 Q67 140 80 143 Q93 140 105 130 L80 155 Z" fill="#5A0F28"/>
+              <path d="M55 130 Q66 140 79 143 L71 165 L18 155 L30 142 Z" fill="#680F2E"/>
+              <path d="M105 130 Q94 140 81 143 L89 165 L142 155 L130 142 Z" fill="#680F2E"/>
+              <path d="M55 130 Q68 140 80 143 Q92 140 105 130" fill="none" stroke="#fff" stroke-width="2.5"/>
+              <path d="M73 130 L77 150 M87 130 L83 150" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.6"/>
+              <rect x="100" y="153" width="24" height="16" rx="3" fill="#1a3a6b"/>
+              <text x="112" y="164" text-anchor="middle" fill="#DAA520" font-size="5.5" font-weight="bold" font-family="Inter,Arial">QA</text>
+            </g>
+            <g id="outfitAI" style="display:none">
+              <path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#E8F4FF" stroke="#2563EB" stroke-width="1"/>
+              <rect x="18" y="142" width="26" height="10" rx="5" fill="#2563EB"/>
+              <rect x="116" y="142" width="26" height="10" rx="5" fill="#2563EB"/>
+              <path d="M55 130 Q68 140 80 143 Q92 140 105 130" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+              <path d="M60 155 L68 161 M78 152 L86 158 M96 155 L104 161" stroke="#3B82F6" stroke-width="1.2" opacity="0.5"/>
+              <circle cx="80" cy="170" r="9" fill="none" stroke="#2563EB" stroke-width="1.5"/>
+              <text x="80" y="173" text-anchor="middle" fill="#2563EB" font-size="6.5" font-weight="bold" font-family="Inter,Arial">AI</text>
+            </g>
+            <g id="outfitQA" style="display:none">
+              <path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#1E3A5F"/>
+              <path d="M68 130 L72 150 Q80 154 88 150 L92 130" fill="#F0F7FF"/>
+              <path d="M55 130 Q66 140 68 130 L56 160 L18 155 L30 142 Z" fill="#162D4A"/>
+              <path d="M105 130 Q94 140 92 130 L104 160 L142 155 L130 142 Z" fill="#162D4A"/>
+              <rect x="92" y="151" width="30" height="22" rx="3" fill="#0F172A"/>
+              <rect x="94" y="153" width="26" height="18" rx="2" fill="#1E40AF"/>
+              <text x="107" y="165" text-anchor="middle" fill="#60A5FA" font-size="5.5" font-weight="bold" font-family="monospace">&lt;QA/&gt;</text>
+            </g>
+            <g id="outfitConsultant" style="display:none">
+              <path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#1F2937"/>
+              <path d="M71 130 L75 182 Q78 185 80 185 Q82 185 85 182 L89 130" fill="#F9FAFB"/>
+              <path d="M77 131 L80 135 L83 131 L83 170 Q80 175 77 170 Z" fill="#B91C1C"/>
+              <path d="M77 131 L73 133 L80 137 L87 133 L83 131" fill="#DC2626"/>
+              <path d="M55 130 Q66 139 71 130 L59 162 L18 155 L30 142 Z" fill="#111827"/>
+              <path d="M105 130 Q94 139 89 130 L101 162 L142 155 L130 142 Z" fill="#111827"/>
+              <circle cx="30" cy="172" r="4.5" fill="#DAA520"/>
+              <circle cx="130" cy="172" r="4.5" fill="#DAA520"/>
+            </g>
+            <g id="outfitStartup" style="display:none">
+              <path d="M16 158 Q14 182 28 194 L80 200 L132 194 Q146 182 144 158 L130 143 Q110 130 80 128 Q50 130 30 143 Z" fill="#6366F1"/>
+              <path d="M80 128 L80 198" stroke="#4F46E5" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <path d="M58 168 Q80 163 102 168 L102 186 Q80 191 58 186 Z" fill="#4F46E5"/>
+              <line x1="72" y1="128" x2="70" y2="148" stroke="#818CF8" stroke-width="1.8"/>
+              <line x1="88" y1="128" x2="90" y2="148" stroke="#818CF8" stroke-width="1.8"/>
+              <path d="M30 143 Q28 128 44 124 Q62 120 80 121 Q98 120 116 124 Q132 128 130 143" fill="#7C3AED" opacity="0.55"/>
+            </g>
+            <g id="outfitTraditional" style="display:none">
+              <path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#E8630A"/>
+              <path d="M60 130 Q70 140 80 143 Q90 140 100 130 L80 152 Z" fill="#C4510A"/>
+              <path d="M60 130 Q70 140 80 143 Q90 140 100 130" fill="none" stroke="#FCD34D" stroke-width="2"/>
+              <path d="M18 185 Q50 193 80 194 Q110 193 142 185" fill="none" stroke="#FCD34D" stroke-width="3.5"/>
+              <path d="M18 155 Q30 148 42 152 Q36 162 22 168" fill="#FCD34D" opacity="0.6"/>
+              <circle cx="55" cy="158" r="2.5" fill="#FCD34D"/>
+              <circle cx="64" cy="163" r="2" fill="#FCD34D"/>
+              <circle cx="50" cy="166" r="2" fill="#FCD34D"/>
+            </g>
+            <g id="outfitFestival" style="display:none">
+              <path d="M18 155 Q16 180 28 192 L80 198 L132 192 Q144 180 142 155 L130 142 Q110 132 80 129 Q50 132 30 142 Z" fill="#C026D3"/>
+              <path d="M18 178 Q50 186 80 187 Q110 186 142 178" fill="none" stroke="#F59E0B" stroke-width="4.5"/>
+              <path d="M18 183 Q50 191 80 192 Q110 191 142 183" fill="none" stroke="#FDE68A" stroke-width="1.5"/>
+              <circle cx="57" cy="155" r="6" fill="#F59E0B" opacity="0.8"/>
+              <circle cx="80" cy="151" r="6" fill="#F59E0B" opacity="0.8"/>
+              <circle cx="103" cy="155" r="6" fill="#F59E0B" opacity="0.8"/>
+              <path d="M60 130 Q70 140 80 143 Q90 140 100 130" fill="none" stroke="#F59E0B" stroke-width="2.5"/>
+              <circle cx="80" cy="143" r="4" fill="#F59E0B"/>
+              <text x="34" y="145" fill="#FDE68A" font-size="11" font-family="Arial">✦</text>
+              <text x="110" y="145" fill="#FDE68A" font-size="11" font-family="Arial">✦</text>
+            </g>
+
+            <!-- NECK -->
+            <rect x="66" y="104" width="28" height="28" rx="8" fill="var(--skin-color,#FDDCC4)"/>
+
+            <!-- HAIR BACK (behind face) -->
+            <g id="hairBackShort">
+              <path d="M42 70 Q42 32 80 28 Q118 32 118 70 L118 88 Q108 100 80 103 Q52 100 42 88 Z" fill="var(--hair-color,#2c1a0e)" opacity="0.9"/>
+            </g>
+            <g id="hairBackLong" style="display:none">
+              <path d="M42 70 Q38 30 80 24 Q122 30 118 70 L122 112 Q118 145 112 162 Q96 172 80 172 Q64 172 48 162 Q42 145 38 112 Z" fill="var(--hair-color,#2c1a0e)"/>
+            </g>
+            <g id="hairBackWavy" style="display:none">
+              <path d="M42 70 Q38 30 80 24 Q122 30 118 70 L122 105 Q114 130 108 148 Q96 160 80 162 Q64 160 52 148 Q46 130 38 105 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M38 105 Q33 118 38 130 Q43 142 38 152" stroke="var(--hair-color,#2c1a0e)" stroke-width="9" fill="none" stroke-linecap="round"/>
+              <path d="M122 105 Q127 118 122 130 Q117 142 122 152" stroke="var(--hair-color,#2c1a0e)" stroke-width="9" fill="none" stroke-linecap="round"/>
+            </g>
+            <g id="hairBackUpdo" style="display:none">
+              <path d="M42 70 Q40 30 80 26 Q120 30 118 70 L118 85 Q108 98 80 101 Q52 98 42 85 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <ellipse cx="80" cy="24" rx="20" ry="15" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M60 24 Q70 16 80 19 Q90 16 100 24" fill="none" stroke="var(--hair-color,#2c1a0e)" stroke-width="7"/>
+            </g>
+            <g id="hairBackModern" style="display:none">
+              <path d="M42 70 Q40 30 80 26 Q120 30 118 70 L118 88 Q108 100 80 103 Q52 100 42 88 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M118 58 Q130 50 134 62 Q136 76 125 86" fill="var(--hair-color,#2c1a0e)" opacity="0.85"/>
+            </g>
+
+            <!-- FACE -->
+            <ellipse cx="80" cy="72" rx="36" ry="40" fill="var(--skin-color,#FDDCC4)"/>
+
+            <!-- EYEBROWS (female/neutral) -->
+            <path id="eyebrowFemaleL" d="M55 50 Q63 46 70 49" stroke="var(--hair-color,#2c1a0e)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+            <path id="eyebrowFemaleR" d="M90 49 Q97 46 105 50" stroke="var(--hair-color,#2c1a0e)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+            <!-- EYEBROWS (male — thicker, flatter) -->
+            <g id="eyebrowMaleGroup" style="display:none">
+              <path d="M54 50 Q63 47 71 49" stroke="var(--hair-color,#2c1a0e)" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M89 49 Q97 47 106 50" stroke="var(--hair-color,#2c1a0e)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </g>
+
+            <!-- EYES (large anime) -->
+            <ellipse cx="63" cy="66" rx="10" ry="11" fill="#18100A"/>
+            <ellipse cx="63" cy="67" rx="7.5" ry="8.5" fill="#7B2D5F"/>
+            <ellipse cx="63" cy="67.5" rx="4.5" ry="5.5" fill="#5A1040"/>
+            <ellipse cx="63" cy="68" rx="2.5" ry="3" fill="#140822"/>
+            <circle cx="66.5" cy="62" r="2.8" fill="white" opacity="0.95"/>
+            <circle cx="61" cy="70" r="1.3" fill="white" opacity="0.5"/>
+            <ellipse cx="97" cy="66" rx="10" ry="11" fill="#18100A"/>
+            <ellipse cx="97" cy="67" rx="7.5" ry="8.5" fill="#7B2D5F"/>
+            <ellipse cx="97" cy="67.5" rx="4.5" ry="5.5" fill="#5A1040"/>
+            <ellipse cx="97" cy="68" rx="2.5" ry="3" fill="#140822"/>
+            <circle cx="100.5" cy="62" r="2.8" fill="white" opacity="0.95"/>
+            <circle cx="95" cy="70" r="1.3" fill="white" opacity="0.5"/>
+            <!-- Lashes (female) -->
+            <g id="lashGroup">
+              <path d="M53 60 Q56 56 60 57" stroke="#18100A" stroke-width="1.3" fill="none"/>
+              <path d="M55 58 Q58 54 62 55" stroke="#18100A" stroke-width="1.3" fill="none"/>
+              <path d="M73 60 Q70 56 66 57" stroke="#18100A" stroke-width="1.3" fill="none"/>
+              <path d="M87 60 Q90 56 94 57" stroke="#18100A" stroke-width="1.3" fill="none"/>
+              <path d="M89 58 Q92 54 96 55" stroke="#18100A" stroke-width="1.3" fill="none"/>
+              <path d="M107 60 Q104 56 100 57" stroke="#18100A" stroke-width="1.3" fill="none"/>
+            </g>
+
+            <!-- NOSE -->
+            <path d="M76 82 Q80 86 84 82" stroke="#C08060" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+            <!-- EXPRESSIONS -->
+            <g id="exprHappy">
+              <path d="M67 92 Q80 100 93 92" stroke="var(--lip-color,#C0607A)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+              <path d="M71 94 Q80 99 89 94" fill="rgba(192,96,122,0.15)" stroke="var(--lip-color,#C0607A)" stroke-width="1.5"/>
+            </g>
+            <g id="exprThinking" style="display:none">
+              <path d="M68 93 Q80 95 92 93" stroke="var(--lip-color,#C0607A)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </g>
+            <g id="exprSurprised" style="display:none">
+              <ellipse cx="80" cy="94" rx="7.5" ry="7" fill="var(--lip-color,#C0607A)" opacity="0.7"/>
+            </g>
+
+            <!-- BLUSH -->
+            <ellipse id="blushL" cx="46" cy="79" rx="10" ry="6" fill="#FFB3A7" opacity="0.38"/>
+            <ellipse id="blushR" cx="114" cy="79" rx="10" ry="6" fill="#FFB3A7" opacity="0.38"/>
+
+            <!-- HAIR FRONT (over face) -->
+            <g id="hairFrontShort">
+              <path d="M44 68 Q46 36 80 30 Q114 36 116 68 Q108 48 100 50 Q92 44 80 46 Q68 44 60 50 Q52 48 44 68 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M44 68 Q42 76 44 86 Q48 72 50 66" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M116 68 Q118 76 116 86 Q112 72 110 66" fill="var(--hair-color,#2c1a0e)"/>
+            </g>
+            <g id="hairFrontLong" style="display:none">
+              <path d="M44 68 Q43 34 80 28 Q117 34 116 68 Q109 46 100 48 Q92 42 80 44 Q68 42 60 48 Q51 46 44 68 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M44 68 Q42 80 44 96 Q48 78 50 68" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M116 68 Q118 80 116 96 Q112 78 110 68" fill="var(--hair-color,#2c1a0e)"/>
+            </g>
+            <g id="hairFrontWavy" style="display:none">
+              <path d="M45 70 Q47 36 80 30 Q113 36 115 70 Q108 50 98 52 Q90 44 80 46 Q70 44 62 52 Q52 50 45 70 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M45 70 Q42 82 44 96 Q48 80 50 68" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M115 70 Q118 82 116 96 Q112 80 110 68" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M56 48 Q59 44 63 48 Q66 44 70 48" fill="none" stroke="var(--hair-color,#2c1a0e)" stroke-width="1.8" opacity="0.6"/>
+              <path d="M90 48 Q93 44 97 48 Q100 44 104 48" fill="none" stroke="var(--hair-color,#2c1a0e)" stroke-width="1.8" opacity="0.6"/>
+            </g>
+            <g id="hairFrontUpdo" style="display:none">
+              <path d="M44 70 Q44 40 80 32 Q116 40 116 70 Q109 52 102 54 Q94 46 80 48 Q66 46 58 54 Q51 52 44 70 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <line x1="92" y1="32" x2="100" y2="18" stroke="#DAA520" stroke-width="2.2"/>
+              <circle cx="100" cy="16" r="4.5" fill="#DAA520"/>
+              <circle cx="100" cy="16" r="2.2" fill="#FCD34D"/>
+              <line x1="84" y1="29" x2="86" y2="15" stroke="#DAA520" stroke-width="1.5"/>
+              <circle cx="86" cy="14" r="2.5" fill="#DAA520"/>
+            </g>
+            <g id="hairFrontModern" style="display:none">
+              <path d="M45 68 Q45 36 80 28 Q115 36 115 68 Q113 48 104 48 Q96 40 80 42 Q64 40 56 48 Q47 48 45 68 Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M115 60 Q124 52 128 64 Q130 78 120 88" fill="var(--hair-color,#2c1a0e)" opacity="0.9"/>
+              <path d="M45 68 Q42 78 44 90 Q48 76 50 66" fill="var(--hair-color,#2c1a0e)"/>
+            </g>
+
+            <!-- MALE HAIR (shown only when gender = male) -->
+            <g id="hairMaleBack" style="display:none">
+              <path d="M52 68 Q52 38 80 34 Q108 38 108 68 L108 80 Q100 90 80 92 Q60 90 52 80 Z" fill="var(--hair-color,#2c1a0e)"/>
+            </g>
+            <g id="hairMaleFront" style="display:none">
+              <path d="M52 68 Q54 38 80 34 Q106 38 108 68 Q100 48 92 50 Q86 44 80 44 Q74 44 68 50 Q60 48 52 68Z" fill="var(--hair-color,#2c1a0e)"/>
+              <path d="M80 34 Q80 40 80 44" fill="none" stroke="var(--hair-color,#2c1a0e)" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+            </g>
+
+            <!-- HEADSET -->
+            <g id="accessoryHeadset" style="display:none">
+              <path d="M43 70 Q40 50 42 38 Q50 20 80 18 Q110 20 118 38 Q120 50 117 70" fill="none" stroke="#374151" stroke-width="4.5" stroke-linecap="round"/>
+              <rect x="36" y="65" width="15" height="20" rx="6" fill="#374151"/>
+              <circle cx="43.5" cy="75" r="4.5" fill="#3B82F6"/>
+              <rect x="109" y="65" width="15" height="20" rx="6" fill="#374151"/>
+              <circle cx="116.5" cy="75" r="4.5" fill="#3B82F6"/>
+              <path d="M36 78 Q25 86 22 94 Q20 98 22 100" stroke="#374151" stroke-width="2.5" fill="none"/>
+              <circle cx="22" cy="101" r="3" fill="#374151"/>
+            </g>
+
+            <!-- EARRINGS -->
+            <g id="accessoryEarrings">
+              <circle cx="44" cy="87" r="3.5" fill="#DAA520"/>
+              <circle cx="44" cy="87" r="1.8" fill="#FCD34D"/>
+              <circle cx="116" cy="87" r="3.5" fill="#DAA520"/>
+              <circle cx="116" cy="87" r="1.8" fill="#FCD34D"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="av-name-display" id="avNameDisplay">Veda</div>
+        <div class="av-role-display" id="avRoleDisplay">Your QA Intelligence Companion</div>
+        <div class="av-badges-row">
+          <span class="av-active-chip">
+            <svg width="8" height="8" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#fff" opacity="0.8"/><circle cx="5" cy="5" r="2" fill="#fff"/></svg>
+            Active
+          </span>
+          <div class="av-attire-tag" id="avAttireTag">Corporate Professional</div>
+        </div>
+        <div class="av-personality-display" id="avPersonalityDisplay">"Concise, precise, enterprise-focused."</div>
+        <a href="testing_buddy.html" class="av-open-buddy-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Open Testing Buddy
+        </a>
+      </div>
+
+      <!-- ══════ RIGHT: SETTINGS ══════ -->
+      <div class="av-settings-card">
+        <div class="av-settings-header">
+          <div class="av-settings-title">AI Assistant Personalization</div>
+          <div class="av-settings-sub">Customize Veda's identity, appearance, attire, and personality. Changes apply live in Testing Buddy AI.</div>
+          <div class="av-tabs">
+            <button class="av-tab active" data-tab="identity">Identity</button>
+            <button class="av-tab" data-tab="appearance">Appearance</button>
+            <button class="av-tab" data-tab="attire">Attire</button>
+            <button class="av-tab" data-tab="personality">Personality</button>
+          </div>
+        </div>
+
+        <!-- Identity Tab -->
+        <div class="av-panel active" id="avPanel-identity">
+          <div class="av-row">
+            <div class="av-field">
+              <label class="av-label" for="avAssistantName">Assistant Name</label>
+              <input class="av-input" type="text" id="avAssistantName" maxlength="24" placeholder="Veda" />
+            </div>
+            <div class="av-field">
+              <label class="av-label" for="avDisplayName">Display Name</label>
+              <input class="av-input" type="text" id="avDisplayName" maxlength="24" placeholder="Veda" />
+            </div>
+          </div>
+          <div class="av-field">
+            <label class="av-label" for="avRole">Role Title</label>
+            <input class="av-input" type="text" id="avRole" maxlength="60" placeholder="Your QA Intelligence Companion" />
+          </div>
+          <div class="av-field">
+            <label class="av-label">Gender</label>
+            <div class="av-radio-group" id="avGenderGroup">
+              <label class="av-radio-opt selected" data-val="female"><input type="radio" name="avGender" value="female"> Female (she/her)</label>
+              <label class="av-radio-opt" data-val="male"><input type="radio" name="avGender" value="male"> Male (he/him)</label>
+              <label class="av-radio-opt" data-val="neutral"><input type="radio" name="avGender" value="neutral"> Neutral (they/them)</label>
+              <label class="av-radio-opt" data-val="custom"><input type="radio" name="avGender" value="custom"> Custom</label>
+            </div>
+          </div>
+          <div class="av-field">
+            <label class="av-label" for="avGreetingStyle">Greeting Style</label>
+            <select class="av-select" id="avGreetingStyle">
+              <option value="namaste">Namaste (Indian Formal)</option>
+              <option value="friendly">Friendly (Hey / Hello)</option>
+              <option value="formal">Formal (Good day)</option>
+              <option value="energetic">Energetic (Let's go!)</option>
+            </select>
+          </div>
+          <div class="av-field">
+            <label class="av-label">Greeting Preview</label>
+            <div class="av-greeting-preview" id="avGreetingPreview">Namaste 🙏 Welcome back! Ready to generate enterprise-grade test cases today?</div>
+          </div>
+          <div class="av-toggle-row">
+            <span class="av-toggle-lbl">Dynamic Greeting Engine — never repeat consecutive greetings</span>
+            <label class="av-toggle-sw">
+              <input type="checkbox" id="avDynamicGreeting" checked />
+              <span class="av-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Appearance Tab -->
+        <div class="av-panel" id="avPanel-appearance">
+          <div class="av-field">
+            <div class="av-section-title">Skin Tone</div>
+            <div class="av-skin-swatches">
+              <div class="av-skin-item"><div class="av-skin-swatch selected" data-skin="#FDDCC4" style="background:#FDDCC4"></div><div class="av-skin-label">Light</div></div>
+              <div class="av-skin-item"><div class="av-skin-swatch" data-skin="#F0C8A0" style="background:#F0C8A0"></div><div class="av-skin-label">Med Light</div></div>
+              <div class="av-skin-item"><div class="av-skin-swatch" data-skin="#D4956F" style="background:#D4956F"></div><div class="av-skin-label">Medium</div></div>
+              <div class="av-skin-item"><div class="av-skin-swatch" data-skin="#A0694B" style="background:#A0694B"></div><div class="av-skin-label">Med Dark</div></div>
+              <div class="av-skin-item"><div class="av-skin-swatch" data-skin="#5C3317" style="background:#5C3317"></div><div class="av-skin-label">Dark</div></div>
+            </div>
+          </div>
+          <div class="av-field">
+            <div class="av-section-title">Hair Style</div>
+            <div class="av-hair-grid">
+              <div class="av-hair-card selected" data-hair-style="Short">
+                <svg class="av-hair-icon" viewBox="0 0 44 44"><ellipse cx="22" cy="26" rx="14" ry="13" fill="#E0A080"/><path d="M8 22 Q8 8 22 6 Q36 8 36 22 Q34 10 28 12 Q22 10 16 12 Q10 10 8 22Z" fill="#2c1a0e"/><path d="M8 22 Q6 27 8 33 Q10 26 11 22" fill="#2c1a0e"/><path d="M36 22 Q38 27 36 33 Q34 26 33 22" fill="#2c1a0e"/></svg>
+                <div class="av-hair-lbl">Professional<br>Short</div>
+              </div>
+              <div class="av-hair-card" data-hair-style="Wavy">
+                <svg class="av-hair-icon" viewBox="0 0 44 44"><path d="M8 22 Q5 6 22 2 Q39 6 36 22 L38 34 Q34 42 22 43 Q10 42 6 34 Z" fill="#2c1a0e"/><ellipse cx="22" cy="24" rx="13" ry="13" fill="#E0A080"/><path d="M9 24 Q9 10 22 7 Q35 10 35 24 Q33 12 28 14 Q22 12 16 14 Q11 12 9 24Z" fill="#2c1a0e"/></svg>
+                <div class="av-hair-lbl">Wavy</div>
+              </div>
+              <div class="av-hair-card" data-hair-style="Updo">
+                <svg class="av-hair-icon" viewBox="0 0 44 44"><ellipse cx="22" cy="28" rx="14" ry="13" fill="#E0A080"/><path d="M8 25 Q8 12 22 9 Q36 12 36 25 Q34 14 28 16 Q22 14 16 16 Q10 14 8 25Z" fill="#2c1a0e"/><ellipse cx="22" cy="8" rx="10" ry="8" fill="#2c1a0e"/><path d="M12 8 Q18 2 22 5 Q26 2 32 8" fill="none" stroke="#2c1a0e" stroke-width="5"/></svg>
+                <div class="av-hair-lbl">Updo / Bun</div>
+              </div>
+              <div class="av-hair-card" data-hair-style="Long">
+                <svg class="av-hair-icon" viewBox="0 0 44 44"><path d="M7 22 Q5 6 22 2 Q39 6 37 22 L39 38 Q35 44 22 44 Q9 44 5 38 Z" fill="#2c1a0e"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="#E0A080"/><path d="M9 22 Q9 8 22 5 Q35 8 35 22 Q33 10 28 12 Q22 10 16 12 Q11 10 9 22Z" fill="#2c1a0e"/></svg>
+                <div class="av-hair-lbl">Long<br>Straight</div>
+              </div>
+              <div class="av-hair-card" data-hair-style="Modern">
+                <svg class="av-hair-icon" viewBox="0 0 44 44"><ellipse cx="22" cy="26" rx="14" ry="13" fill="#E0A080"/><path d="M8 22 Q8 8 22 6 Q36 8 36 22 Q34 10 26 12 Q22 10 16 12 Q10 10 8 22Z" fill="#2c1a0e"/><path d="M36 18 Q42 12 44 20 Q44 28 38 33" fill="#2c1a0e"/><path d="M8 22 Q6 27 8 33 Q10 26 11 22" fill="#2c1a0e"/></svg>
+                <div class="av-hair-lbl">Modern<br>Corporate</div>
+              </div>
+            </div>
+          </div>
+          <div class="av-field">
+            <div class="av-section-title">Hair Color</div>
+            <div class="av-hair-colors">
+              <div class="av-skin-item"><div class="av-hair-color-swatch selected" data-hair="#2c1a0e" style="background:#2c1a0e"></div><div class="av-skin-label">Black</div></div>
+              <div class="av-skin-item"><div class="av-hair-color-swatch" data-hair="#3d1f00" style="background:#3d1f00"></div><div class="av-skin-label">D.Brown</div></div>
+              <div class="av-skin-item"><div class="av-hair-color-swatch" data-hair="#7B4A2C" style="background:#7B4A2C"></div><div class="av-skin-label">Brown</div></div>
+              <div class="av-skin-item"><div class="av-hair-color-swatch" data-hair="#A0A0A0" style="background:#A0A0A0"></div><div class="av-skin-label">Silver</div></div>
+              <div class="av-skin-item"><div class="av-hair-color-swatch" data-hair="#8B0000" style="background:#8B0000"></div><div class="av-skin-label">Burgundy</div></div>
+              <div class="av-skin-item">
+                <input type="color" id="avHairColorCustom" value="#2c1a0e" style="width:32px;height:32px;border-radius:50%;border:3px solid transparent;cursor:pointer;padding:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.2)" title="Custom"/>
+                <div class="av-skin-label">Custom</div>
+              </div>
+            </div>
+          </div>
+          <div class="av-field">
+            <div class="av-section-title">Accessories</div>
+            <div class="av-toggle-row">
+              <span class="av-toggle-lbl">Gold Earrings</span>
+              <label class="av-toggle-sw"><input type="checkbox" id="avShowEarrings" checked /><span class="av-slider"></span></label>
+            </div>
+            <div class="av-toggle-row">
+              <span class="av-toggle-lbl">Headset (auto for AI &amp; QA outfits)</span>
+              <label class="av-toggle-sw"><input type="checkbox" id="avShowHeadset" /><span class="av-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attire Tab -->
+        <div class="av-panel" id="avPanel-attire">
+          <p style="font-size:0.77rem;color:var(--text-muted);margin:0 0 16px">Choose an outfit that reflects Veda's professional role and context.</p>
+          <div class="av-outfit-grid">
+            <div class="av-outfit-card selected" data-outfit="Corporate">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M6 42 Q4 58 14 63 L27 65 L40 63 Q50 58 48 42 L40 36 Q32 31 27 30 Q22 31 14 36 Z" fill="#7B1C3E"/><path d="M17 30 Q22 37 27 39 Q32 37 37 30 L27 44 Z" fill="#5A0F28"/><rect x="31" y="44" width="12" height="8" rx="2" fill="#1a3a6b"/><text x="37" y="51" text-anchor="middle" fill="#DAA520" font-size="4" font-weight="bold" font-family="Arial">QA</text><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">Corporate<br>Professional</div>
+              <span class="av-outfit-tag" style="background:rgba(123,28,62,0.12);color:#7B1C3E">Business</span>
+            </div>
+            <div class="av-outfit-card" data-outfit="AI">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M6 42 Q4 58 14 63 L27 65 L40 63 Q50 58 48 42 L40 36 Q32 31 27 30 Q22 31 14 36 Z" fill="#E8F4FF" stroke="#2563EB" stroke-width="1"/><rect x="6" y="36" width="10" height="5" rx="2.5" fill="#2563EB"/><rect x="38" y="36" width="10" height="5" rx="2.5" fill="#2563EB"/><circle cx="27" cy="52" r="5" fill="none" stroke="#2563EB" stroke-width="1.5"/><text x="27" y="55" text-anchor="middle" fill="#2563EB" font-size="4" font-weight="bold" font-family="Arial">AI</text><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">Modern AI<br>Assistant</div>
+              <span class="av-outfit-tag" style="background:rgba(37,99,235,0.1);color:#2563EB">Tech</span>
+            </div>
+            <div class="av-outfit-card" data-outfit="QA">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M6 42 Q4 58 14 63 L27 65 L40 63 Q50 58 48 42 L40 36 Q32 31 27 30 Q22 31 14 36 Z" fill="#1E3A5F"/><rect x="30" y="43" width="15" height="11" rx="2" fill="#1E40AF"/><text x="37.5" y="52" text-anchor="middle" fill="#60A5FA" font-size="4.5" font-weight="bold" font-family="monospace">&lt;/&gt;</text><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">QA<br>Engineer</div>
+              <span class="av-outfit-tag" style="background:rgba(30,58,95,0.12);color:#1E3A5F">Dev</span>
+            </div>
+            <div class="av-outfit-card" data-outfit="Consultant">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M6 42 Q4 58 14 63 L27 65 L40 63 Q50 58 48 42 L40 36 Q32 31 27 30 Q22 31 14 36 Z" fill="#1F2937"/><path d="M23 30 L24 57 Q27 60 27 60 Q27 60 30 57 L31 30" fill="#F9FAFB"/><path d="M25 30 L27 33 L29 30 L29 52 Q27 55 25 52 Z" fill="#B91C1C"/><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">Business<br>Consultant</div>
+              <span class="av-outfit-tag" style="background:rgba(31,41,55,0.12);color:#374151">Executive</span>
+            </div>
+            <div class="av-outfit-card" data-outfit="Startup">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M5 44 Q3 60 14 65 L27 67 L40 65 Q51 60 49 44 L40 37 Q32 31 27 30 Q22 31 14 37 Z" fill="#6366F1"/><path d="M19 56 Q27 54 35 56 L35 64 Q27 66 19 64 Z" fill="#4F46E5"/><line x1="23" y1="30" x2="22" y2="42" stroke="#818CF8" stroke-width="1.5"/><line x1="31" y1="30" x2="32" y2="42" stroke="#818CF8" stroke-width="1.5"/><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">Startup<br>Mode</div>
+              <span class="av-outfit-tag" style="background:rgba(99,102,241,0.12);color:#6366F1">Casual</span>
+            </div>
+            <div class="av-outfit-card" data-outfit="Traditional">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M6 42 Q4 58 14 63 L27 65 L40 63 Q50 58 48 42 L40 36 Q32 31 27 30 Q22 31 14 36 Z" fill="#E8630A"/><path d="M6 60 Q18 65 27 66 Q36 65 48 60" fill="none" stroke="#FCD34D" stroke-width="2.5"/><path d="M6 42 Q12 38 18 40 Q14 48 8 51" fill="#FCD34D" opacity="0.7"/><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">Traditional<br>Indian</div>
+              <span class="av-outfit-tag" style="background:rgba(232,99,10,0.12);color:#E8630A">Cultural</span>
+            </div>
+            <div class="av-outfit-card" data-outfit="Festival">
+              <div class="av-outfit-preview"><svg viewBox="0 0 54 62" style="width:54px;height:62px"><path d="M6 42 Q4 58 14 63 L27 65 L40 63 Q50 58 48 42 L40 36 Q32 31 27 30 Q22 31 14 36 Z" fill="#C026D3"/><path d="M6 58 Q18 63 27 64 Q36 63 48 58" fill="none" stroke="#F59E0B" stroke-width="3"/><circle cx="16" cy="47" r="3.5" fill="#F59E0B" opacity="0.85"/><circle cx="27" cy="44" r="3.5" fill="#F59E0B" opacity="0.85"/><circle cx="38" cy="47" r="3.5" fill="#F59E0B" opacity="0.85"/><ellipse cx="27" cy="16" rx="13" ry="14" fill="#FDDCC4"/><path d="M14 11 Q16 6 22 8 Q27 7 32 8 Q38 6 40 11 Q38 5 27 4 Q16 5 14 11Z" fill="#2c1a0e"/></svg></div>
+              <div class="av-outfit-name">Festival<br>Mode</div>
+              <span class="av-outfit-tag" style="background:rgba(192,38,211,0.12);color:#C026D3">Festive</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personality Tab -->
+        <div class="av-panel" id="avPanel-personality">
+          <div class="av-field">
+            <div class="av-section-title">Personality Mode</div>
+            <div class="av-personality-grid">
+              <div class="av-personality-card selected" data-personality="professional"><div class="av-personality-icon">💼</div><div class="av-personality-body"><div class="av-personality-name">Professional</div><div class="av-personality-desc">Concise, precise, enterprise-focused</div></div></div>
+              <div class="av-personality-card" data-personality="friendly"><div class="av-personality-icon">😊</div><div class="av-personality-body"><div class="av-personality-name">Friendly</div><div class="av-personality-desc">Warm, encouraging, conversational</div></div></div>
+              <div class="av-personality-card" data-personality="mentor"><div class="av-personality-icon">🎓</div><div class="av-personality-body"><div class="av-personality-name">Mentor</div><div class="av-personality-desc">Step-by-step, teaching mode</div></div></div>
+              <div class="av-personality-card" data-personality="qa_expert"><div class="av-personality-icon">🔬</div><div class="av-personality-body"><div class="av-personality-name">QA Expert</div><div class="av-personality-desc">Highly technical, industry terms</div></div></div>
+              <div class="av-personality-card" data-personality="product_analyst"><div class="av-personality-icon">📊</div><div class="av-personality-body"><div class="av-personality-name">Product Analyst</div><div class="av-personality-desc">Business value, acceptance criteria</div></div></div>
+              <div class="av-personality-card" data-personality="automation_arch"><div class="av-personality-icon">🤖</div><div class="av-personality-body"><div class="av-personality-name">Automation Architect</div><div class="av-personality-desc">Code-first, ROI of automation</div></div></div>
+              <div class="av-personality-card" data-personality="cheerful"><div class="av-personality-icon">🎉</div><div class="av-personality-body"><div class="av-personality-name">Cheerful</div><div class="av-personality-desc">High energy, emojis, makes QA fun!</div></div></div>
+              <div class="av-personality-card" data-personality="executive"><div class="av-personality-icon">⚡</div><div class="av-personality-body"><div class="av-personality-name">Executive</div><div class="av-personality-desc">Ultra-concise, bottom line first</div></div></div>
+            </div>
+          </div>
+          <div class="av-row">
+            <div class="av-field">
+              <label class="av-label" for="avCommStyle">Communication Style</label>
+              <select class="av-select" id="avCommStyle">
+                <option value="balanced">Balanced</option>
+                <option value="concise">Concise (Bullet-first)</option>
+                <option value="detailed">Detailed (Comprehensive)</option>
+                <option value="socratic">Socratic (Guided discovery)</option>
+              </select>
+            </div>
+            <div class="av-field">
+              <label class="av-label" for="avVoiceTone">Voice Tone</label>
+              <select class="av-select" id="avVoiceTone">
+                <option value="warm">Warm</option>
+                <option value="neutral">Neutral</option>
+                <option value="formal">Formal</option>
+                <option value="energetic">Energetic</option>
+                <option value="calm">Calm</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save Bar -->
+        <div class="av-save-bar">
+          <button class="av-save-btn" onclick="AvatarSettings.save()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Apply &amp; Save Settings
+          </button>
+          <button class="av-reset-btn" onclick="AvatarSettings.reset()">Reset to Defaults</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  <footer class="app-footer" style="display:none"></footer>
+</div>
+
+<script>
+const AVATAR_SETTINGS_KEY = 'veda_avatar_v1';
+
+const PERSONALITY_PREVIEWS = {
+  professional:    '"Concise, precise, enterprise-focused."',
+  friendly:        '"Warm, encouraging, always here to help!"',
+  mentor:          '"Step-by-step guidance, teaching best practices."',
+  qa_expert:       '"Highly technical, deep architectural insights."',
+  product_analyst: '"Business value and acceptance criteria focus."',
+  automation_arch: '"Code-first, ROI of automation mindset."',
+  cheerful:        '"High energy, emojis, making QA fun! 🎉"',
+  executive:       '"Ultra-concise, bullet points, bottom line first."'
+};
+
+const OUTFIT_LABELS = {
+  Corporate:'Corporate Professional', AI:'Modern AI Assistant', QA:'QA Engineer',
+  Consultant:'Business Consultant',   Startup:'Startup Mode', Traditional:'Traditional Indian', Festival:'Festival Mode'
+};
+
+const GREETING_STYLES = {
+  namaste:  [
+    n => `Namaste 🙏 Welcome back, ${n}!`,
+    n => `Namaste 🙏 Ready to build test excellence, ${n}?`,
+    n => `Namaste 🙏 How can I assist your QA journey today?`,
+    n => `Namaste 🙏 ${n}, your AI QA companion is here!`
+  ],
+  friendly: [
+    n => `Hey ${n}! 👋 Let's make some great test cases today!`,
+    n => `Hello ${n}! ✨ Your QA workspace is ready.`,
+    n => `Hi there, ${n}! 😊 What shall we test today?`,
+    n => `Good to see you, ${n}! What are we testing today?`
+  ],
+  formal: [
+    n => `Good day, ${n}. I am ready to assist with your testing requirements.`,
+    n => `Welcome back, ${n}. How may I support your QA initiatives?`,
+    n => `Greetings, ${n}. Your AI QA companion is at your service.`,
+    n => `Good day. How may I assist you with testing today, ${n}?`
+  ],
+  energetic: [
+    n => `Let's go, ${n}! 🚀 Time to crush those test cases!`,
+    n => `${n}! Fired up and ready to find every bug! 🔥`,
+    n => `Ready to roll, ${n}! 💪 What are we testing today?!`,
+    n => `Woo-hoo, ${n}! Let's make software bulletproof! 🎯`
+  ]
+};
+
+const DEFAULT_SETTINGS = {
+  name:'Veda', displayName:'Veda', gender:'female',
+  role:'Your QA Intelligence Companion', greetingStyle:'namaste', dynamicGreeting:true,
+  skin:'#FDDCC4', hairStyle:'Short', hairColor:'#2c1a0e',
+  showEarrings:true, showHeadset:false, outfit:'Corporate',
+  personality:'professional', commStyle:'balanced', voiceTone:'warm'
+};
+
+const AvatarSettings = (() => {
+  let current = { ...DEFAULT_SETTINGS };
+  const _lastIdx = {};
+
+  function loadFromStorage() {
+    try { const s = localStorage.getItem(AVATAR_SETTINGS_KEY); if (s) current = { ...DEFAULT_SETTINGS, ...JSON.parse(s) }; } catch(e) {}
+  }
+
+  function getGreeting(style, name) {
+    const pool = GREETING_STYLES[style] || GREETING_STYLES.namaste;
+    let idx;
+    do { idx = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && idx === _lastIdx[style]);
+    _lastIdx[style] = idx;
+    return pool[idx](name || 'Veda');
+  }
+
+  function applyToSvg(s) {
+    const svg = document.getElementById('vedaLivePreview');
+    if (!svg) return;
+    svg.style.setProperty('--skin-color', s.skin || '#FDDCC4');
+    svg.style.setProperty('--hair-color', s.hairColor || '#2c1a0e');
+
+    const gender = s.gender || 'female';
+    const isMale = gender === 'male';
+
+    // ── Hair: male uses short masculine groups, female/neutral use style groups ──
+    if (isMale) {
+      ['Short','Long','Wavy','Updo','Modern'].forEach(st => {
+        const hb = svg.querySelector(`#hairBack${st}`);
+        const hf = svg.querySelector(`#hairFront${st}`);
+        if (hb) hb.style.display = 'none';
+        if (hf) hf.style.display = 'none';
+      });
+      const mb = svg.querySelector('#hairMaleBack');
+      const mf = svg.querySelector('#hairMaleFront');
+      if (mb) mb.style.display = '';
+      if (mf) mf.style.display = '';
+    } else {
+      const mb = svg.querySelector('#hairMaleBack');
+      const mf = svg.querySelector('#hairMaleFront');
+      if (mb) mb.style.display = 'none';
+      if (mf) mf.style.display = 'none';
+      ['Short','Long','Wavy','Updo','Modern'].forEach(st => {
+        const hb = svg.querySelector(`#hairBack${st}`);
+        const hf = svg.querySelector(`#hairFront${st}`);
+        const on = st === (s.hairStyle || 'Short');
+        if (hb) hb.style.display = on ? '' : 'none';
+        if (hf) hf.style.display = on ? '' : 'none';
+      });
+    }
+
+    // ── Outfits ──
+    ['Corporate','AI','QA','Consultant','Startup','Traditional','Festival'].forEach(o => {
+      const el = svg.querySelector(`#outfit${o}`);
+      if (el) el.style.display = (o === (s.outfit || 'Corporate')) ? '' : 'none';
+    });
+
+    // ── Accessories ──
+    const hs = svg.querySelector('#accessoryHeadset');
+    const er = svg.querySelector('#accessoryEarrings');
+    if (hs) hs.style.display = s.showHeadset ? '' : 'none';
+    if (er) er.style.display = (s.showEarrings && !isMale) ? '' : 'none';
+
+    // ── Gender-specific face features ──
+    const femaleBrowL = svg.querySelector('#eyebrowFemaleL');
+    const femaleBrowR = svg.querySelector('#eyebrowFemaleR');
+    const maleBrows   = svg.querySelector('#eyebrowMaleGroup');
+    const lashes      = svg.querySelector('#lashGroup');
+    const blushL      = svg.querySelector('#blushL');
+    const blushR      = svg.querySelector('#blushR');
+
+    if (isMale) {
+      if (femaleBrowL) femaleBrowL.style.display = 'none';
+      if (femaleBrowR) femaleBrowR.style.display = 'none';
+      if (maleBrows)   maleBrows.style.display   = '';
+      if (lashes)      lashes.style.display      = 'none';
+      if (blushL)      blushL.setAttribute('opacity', '0');
+      if (blushR)      blushR.setAttribute('opacity', '0');
+    } else {
+      if (femaleBrowL) femaleBrowL.style.display = '';
+      if (femaleBrowR) femaleBrowR.style.display = '';
+      if (maleBrows)   maleBrows.style.display   = 'none';
+      if (lashes)      lashes.style.display      = '';
+      if (blushL)      blushL.setAttribute('opacity', gender === 'neutral' ? '0.18' : '0.38');
+      if (blushR)      blushR.setAttribute('opacity', gender === 'neutral' ? '0.18' : '0.38');
+    }
+  }
+
+  function updateLabels(s) {
+    const g = id => document.getElementById(id);
+    if (g('avNameDisplay'))      g('avNameDisplay').textContent      = s.displayName || s.name || 'Veda';
+    if (g('avRoleDisplay'))      g('avRoleDisplay').textContent      = s.role || 'Your QA Intelligence Companion';
+    if (g('avAttireTag'))        g('avAttireTag').textContent        = OUTFIT_LABELS[s.outfit] || s.outfit;
+    if (g('avPersonalityDisplay')) g('avPersonalityDisplay').textContent = PERSONALITY_PREVIEWS[s.personality] || '';
+    if (g('avGreetingPreview'))  g('avGreetingPreview').textContent  = getGreeting(s.greetingStyle || 'namaste', s.name || 'Veda');
+  }
+
+  function populateUI(s) {
+    const g = id => document.getElementById(id);
+    if (g('avAssistantName'))  g('avAssistantName').value  = s.name || 'Veda';
+    if (g('avDisplayName'))    g('avDisplayName').value    = s.displayName || s.name || 'Veda';
+    if (g('avRole'))           g('avRole').value           = s.role || '';
+    if (g('avGreetingStyle'))  g('avGreetingStyle').value  = s.greetingStyle || 'namaste';
+    if (g('avDynamicGreeting')) g('avDynamicGreeting').checked = s.dynamicGreeting !== false;
+    if (g('avCommStyle'))      g('avCommStyle').value      = s.commStyle || 'balanced';
+    if (g('avVoiceTone'))      g('avVoiceTone').value      = s.voiceTone || 'warm';
+    if (g('avShowEarrings'))   g('avShowEarrings').checked = s.showEarrings !== false;
+    if (g('avShowHeadset'))    g('avShowHeadset').checked  = !!s.showHeadset;
+    if (g('avHairColorCustom')) g('avHairColorCustom').value = s.hairColor || '#2c1a0e';
+
+    document.querySelectorAll('.av-radio-opt').forEach(o => o.classList.toggle('selected', o.dataset.val === (s.gender || 'female')));
+    document.querySelectorAll('.av-skin-swatch').forEach(sw => sw.classList.toggle('selected', sw.dataset.skin === (s.skin || '#FDDCC4')));
+    document.querySelectorAll('.av-hair-color-swatch').forEach(sw => sw.classList.toggle('selected', sw.dataset.hair === (s.hairColor || '#2c1a0e')));
+    document.querySelectorAll('.av-hair-card').forEach(c => c.classList.toggle('selected', c.dataset.hairStyle === (s.hairStyle || 'Short')));
+    document.querySelectorAll('.av-outfit-card').forEach(c => c.classList.toggle('selected', c.dataset.outfit === (s.outfit || 'Corporate')));
+    document.querySelectorAll('.av-personality-card').forEach(c => c.classList.toggle('selected', c.dataset.personality === (s.personality || 'professional')));
+  }
+
+  function readFromUI() {
+    const g = id => document.getElementById(id);
+    return {
+      name:         (g('avAssistantName')?.value || 'Veda').trim(),
+      displayName:  (g('avDisplayName')?.value   || '').trim() || (g('avAssistantName')?.value || 'Veda').trim(),
+      gender:       document.querySelector('.av-radio-opt.selected')?.dataset.val || 'female',
+      role:         (g('avRole')?.value || '').trim(),
+      greetingStyle: g('avGreetingStyle')?.value || 'namaste',
+      dynamicGreeting: g('avDynamicGreeting')?.checked !== false,
+      skin:         document.querySelector('.av-skin-swatch.selected')?.dataset.skin || '#FDDCC4',
+      hairStyle:    document.querySelector('.av-hair-card.selected')?.dataset.hairStyle || 'Short',
+      hairColor:    document.querySelector('.av-hair-color-swatch.selected')?.dataset.hair || g('avHairColorCustom')?.value || '#2c1a0e',
+      showEarrings: g('avShowEarrings')?.checked !== false,
+      showHeadset:  !!g('avShowHeadset')?.checked,
+      outfit:       document.querySelector('.av-outfit-card.selected')?.dataset.outfit || 'Corporate',
+      personality:  document.querySelector('.av-personality-card.selected')?.dataset.personality || 'professional',
+      commStyle:    g('avCommStyle')?.value || 'balanced',
+      voiceTone:    g('avVoiceTone')?.value || 'warm'
+    };
+  }
+
+  return {
+    init() {
+      loadFromStorage();
+      populateUI(current);
+      applyToSvg(current);
+      updateLabels(current);
+
+      document.querySelectorAll('.av-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.av-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.av-panel').forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(`avPanel-${tab.dataset.tab}`)?.classList.add('active');
+        });
+      });
+
+      const liveUpdate = () => { const s = readFromUI(); applyToSvg(s); };
+
+      document.querySelectorAll('.av-radio-opt').forEach(opt => {
+        opt.addEventListener('click', () => { document.querySelectorAll('.av-radio-opt').forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); liveUpdate(); });
+      });
+      document.querySelectorAll('.av-skin-swatch').forEach(sw => {
+        sw.addEventListener('click', () => { document.querySelectorAll('.av-skin-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); liveUpdate(); });
+      });
+      document.querySelectorAll('.av-hair-color-swatch').forEach(sw => {
+        sw.addEventListener('click', () => { document.querySelectorAll('.av-hair-color-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); liveUpdate(); });
+      });
+      document.getElementById('avHairColorCustom')?.addEventListener('input', () => { document.querySelectorAll('.av-hair-color-swatch').forEach(s => s.classList.remove('selected')); liveUpdate(); });
+      document.querySelectorAll('.av-hair-card').forEach(c => {
+        c.addEventListener('click', () => { document.querySelectorAll('.av-hair-card').forEach(x => x.classList.remove('selected')); c.classList.add('selected'); liveUpdate(); });
+      });
+      document.querySelectorAll('.av-outfit-card').forEach(c => {
+        c.addEventListener('click', () => {
+          document.querySelectorAll('.av-outfit-card').forEach(x => x.classList.remove('selected')); c.classList.add('selected');
+          liveUpdate();
+          const s = readFromUI();
+          const el = document.getElementById('avAttireTag');
+          if (el) el.textContent = OUTFIT_LABELS[s.outfit] || s.outfit;
+        });
+      });
+      document.querySelectorAll('.av-personality-card').forEach(c => {
+        c.addEventListener('click', () => {
+          document.querySelectorAll('.av-personality-card').forEach(x => x.classList.remove('selected')); c.classList.add('selected');
+          const s = readFromUI();
+          const el = document.getElementById('avPersonalityDisplay');
+          if (el) el.textContent = PERSONALITY_PREVIEWS[s.personality] || '';
+        });
+      });
+      document.querySelectorAll('.av-toggle-sw input').forEach(t => t.addEventListener('change', liveUpdate));
+      document.getElementById('avAssistantName')?.addEventListener('input', e => {
+        const el = document.getElementById('avNameDisplay'); if (el) el.textContent = e.target.value || 'Veda';
+        const gs = document.getElementById('avGreetingStyle')?.value || 'namaste';
+        const gp = document.getElementById('avGreetingPreview'); if (gp) gp.textContent = getGreeting(gs, e.target.value || 'Veda');
+      });
+      document.getElementById('avDisplayName')?.addEventListener('input', e => { const el = document.getElementById('avNameDisplay'); if (el) el.textContent = e.target.value || 'Veda'; });
+      document.getElementById('avRole')?.addEventListener('input', e => { const el = document.getElementById('avRoleDisplay'); if (el) el.textContent = e.target.value || 'Your QA Intelligence Companion'; });
+      document.getElementById('avGreetingStyle')?.addEventListener('change', e => {
+        const n = document.getElementById('avAssistantName')?.value || 'Veda';
+        const gp = document.getElementById('avGreetingPreview'); if (gp) gp.textContent = getGreeting(e.target.value, n);
+      });
+    },
+
+    save() {
+      const settings = readFromUI();
+      try {
+        localStorage.setItem(AVATAR_SETTINGS_KEY, JSON.stringify(settings));
+        current = settings;
+        document.dispatchEvent(new CustomEvent('vedaSettingsChanged', { detail: settings }));
+        if (typeof showToast === 'function') showToast('✓ Avatar settings saved! Changes are now live in Testing Buddy.', 'success');
+        else { const btn = document.querySelector('.av-save-btn'); if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Apply & Save Settings'; }, 2000); } }
+      } catch(e) { if (typeof showToast === 'function') showToast('Failed to save settings', 'error'); }
+    },
+
+    reset() {
+      if (!confirm('Reset all avatar settings to defaults?')) return;
+      localStorage.removeItem(AVATAR_SETTINGS_KEY);
+      current = { ...DEFAULT_SETTINGS };
+      populateUI(current);
+      applyToSvg(current);
+      updateLabels(current);
+      if (typeof showToast === 'function') showToast('Avatar settings reset to defaults', 'info');
+    }
+  };
+})();
+
+document.addEventListener('DOMContentLoaded', () => AvatarSettings.init());
+</script>
+<script src="/src/app/shared.js?v=20"></script>
+<script src="/src/components/ui/emi.js"></script>
+</body>
+</html>
